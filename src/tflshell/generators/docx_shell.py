@@ -135,7 +135,7 @@ class DocxShellGenerator:
         """Insert a Word-native Table of Contents field."""
         doc = self.doc
         doc.add_paragraph("Table of Contents", style=doc.styles["Heading 1"])
-        insert_toc_field(doc, heading_depth=3)
+        insert_toc_field(doc, heading_depth=4)
         doc.add_page_break()
 
     def _build_introduction(self):
@@ -263,14 +263,14 @@ class DocxShellGenerator:
         run.font.color.rgb = RGBColor.from_string(config.HEADER_BG_HEX)
 
     def _add_tfl_shell_heading(self, tfl):
-        """TFL title as styled paragraph (not a heading — avoids bloating TOC)."""
-        p = self.doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(4)
+        """TFL title as Heading 4 — appears in TOC under sub-group."""
+        p = self.doc.add_paragraph(style=self.doc.styles["Heading 4"])
+        p.paragraph_format.space_before = Pt(2)
         p.paragraph_format.space_after = Pt(2)
         p.paragraph_format.keep_with_next = True
         run = p.add_run(f"{tfl.display_label}  {tfl.title}")
         run.font.name = config.FONT_NAME
-        run.font.size = Pt(config.FONT_SIZE_H3)
+        run.font.size = Pt(10)
         run.font.bold = True
 
     def _add_tfl_shell(self, tfl):

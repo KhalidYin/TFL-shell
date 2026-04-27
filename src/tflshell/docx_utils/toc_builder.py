@@ -54,6 +54,7 @@ def add_styles_for_toc(doc):
         (doc.styles["Heading 1"], 14, config.HEADER_BG_HEX),
         (doc.styles["Heading 2"], 12, "1F4E79"),
         (doc.styles["Heading 3"], 11, "2E75B6"),
+        (doc.styles["Heading 4"], 10, "000000"),
     ]
 
     for style, size, color_hex in levels:
