@@ -1,0 +1,32 @@
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Package metadata
+*.egg-info/
+
+# Claude local settings
+.claude/settings.local.json
+
+# Office temp files
+~$*
+
+# Reference / legacy
+ref/
+
+# Node modules (from legacy ref)
+node_modules/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
