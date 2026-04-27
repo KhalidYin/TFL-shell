@@ -263,8 +263,9 @@ class DocxShellGenerator:
         run.font.color.rgb = RGBColor.from_string(config.HEADER_BG_HEX)
 
     def _add_tfl_shell_heading(self, tfl):
-        p = self.doc.add_paragraph(style=self.doc.styles["Heading 3"])
-        p.paragraph_format.space_before = Pt(2)
+        """TFL title as styled paragraph (not a heading — avoids bloating TOC)."""
+        p = self.doc.add_paragraph()
+        p.paragraph_format.space_before = Pt(4)
         p.paragraph_format.space_after = Pt(2)
         p.paragraph_format.keep_with_next = True
         run = p.add_run(f"{tfl.display_label}  {tfl.title}")
