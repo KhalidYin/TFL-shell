@@ -1,17 +1,19 @@
-"""Three-line table (三线表) format for python-docx tables v2.1.
+"""Three-line table (三线表) format for python-docx tables v2.2.
 
 Supports:
-  - Multi-line column headers (split on \n, auto-break on / and (N=xx))
-  - Shell rows using first-column structure plus XX placeholders
-  - First column left-aligned, data columns consistent
-  - NO vertical gridlines, NO internal horizontal gridlines
+  - Rich row metadata (bold, indent) via dict-format data_rows
+  - Gray header background for visual distinction
+  - Left-aligned parameter column, center-aligned data columns
+  - Explicit column widths (param col wider than data cols)
+  - Backward-compatible with flat list[str] data_rows
 """
 
-from docx.shared import Pt
+from docx.shared import Pt, Cm
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from tflshell import config
 from tflshell.docx_utils.xml_helpers import (
     set_table_borders, set_cell_bottom_border, set_cell_text,
+    set_cell_shading, set_cell_width,
 )
 
 
@@ -27,23 +29,14 @@ def apply_three_line_format(table, thick_sz=None, thin_sz=None, color=None):
 
 
 def _split_header_text(text: str) -> list[str]:
-    """Split a column header into multiple lines for readability.
-
-    Rules:
-      - Explicit \n splits first
-      - 'Statistic / Category' → 'Statistic /\nCategory' (break after /)
-      - 'Treatment A (N=xx)' → 'Treatment A\n(N=xx)' (break before N=)
-      - 'n (%)' keeps as-is when short enough
-    """
+    """Split a column header into multiple lines for readability."""
     if "\n" in text:
         return text.split("\n")
 
-    # Break on ' / ' pattern: put category on new line
     if " / " in text and len(text) > 18:
         parts = text.split(" / ", 1)
         return [parts[0] + " /", parts[1]]
 
-    # Break before (N=xx) pattern for treatment columns
     if "(N=" in text and len(text) > 12:
         idx = text.index("(N=")
         if idx > 0:
@@ -52,12 +45,12 @@ def _split_header_text(text: str) -> list[str]:
     return [text]
 
 
-def _format_header_cell(cell, header_text: str, is_first_col: bool = False):
-    """Set multi-line header text in a cell, left-aligned for all shell columns."""
+def _format_header_cell(cell, header_text: str, alignment=None):
+    """Set multi-line header text in a cell, bold."""
+    if alignment is None:
+        alignment = WD_ALIGN_PARAGRAPH.LEFT
     lines = _split_header_text(header_text)
-    alignment = WD_ALIGN_PARAGRAPH.LEFT
 
-    # Clear existing
     for p in cell.paragraphs:
         p.clear()
 
@@ -69,9 +62,8 @@ def _format_header_cell(cell, header_text: str, is_first_col: bool = False):
         run.font.size = Pt(config.FONT_SIZE_TABLE)
         run.font.bold = True
     else:
-        # Multi-line: each line in its own paragraph
         first = True
-        for i, line in enumerate(lines):
+        for line in lines:
             if first:
                 p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
                 first = False
@@ -86,31 +78,110 @@ def _format_header_cell(cell, header_text: str, is_first_col: bool = False):
             run.font.bold = True
 
 
+def _render_data_row(table, row_idx, row_data, col_count, font_size, font_name):
+    """Render a single data row with rich formatting support.
+
+    Spacing rules:
+      - Bold category headers: extra space above (6pt) to separate from previous group
+      - Indented sub-items: tight spacing (0pt above, 1pt after) within the group
+      - Normal rows: standard 1pt spacing
+    """
+    if isinstance(row_data, dict):
+        label = row_data.get("label", "")
+        bold = row_data.get("bold", False)
+        indent = row_data.get("indent", False)
+        values = row_data.get("values", [])
+    else:
+        label = row_data[0] if len(row_data) > 0 else ""
+        values = list(row_data[1:]) if len(row_data) > 1 else []
+        bold = False
+        indent = False
+
+    # Spacing: bold category headers get extra space above to separate groups
+    if bold:
+        space_before, space_after = 6, 1
+    elif indent:
+        space_before, space_after = 0, 1
+    else:
+        space_before, space_after = 1, 1
+
+    # Column 0: Parameter / Label — left-aligned, optional bold/indent
+    display_label = ("    " if indent else "") + label
+    set_cell_text(table.cell(row_idx, 0), display_label,
+                  bold=bold, font_size=font_size, font_name=font_name,
+                  alignment=WD_ALIGN_PARAGRAPH.LEFT,
+                  space_before=space_before, space_after=space_after)
+
+    # Columns 1+: Numeric values — center-aligned, inherit bold from row
+    for col_idx in range(1, col_count):
+        val = values[col_idx - 1] if col_idx - 1 < len(values) else "XX"
+        set_cell_text(table.cell(row_idx, col_idx), val,
+                      bold=bold, font_size=font_size, font_name=font_name,
+                      alignment=WD_ALIGN_PARAGRAPH.CENTER,
+                      space_before=space_before, space_after=space_after)
+
+
 def create_three_line_table(doc, rows, cols, headers, data_rows=None,
                             font_size=None, font_name=None):
+    """Create a three-line table with rich formatting support.
+
+    Args:
+        doc: python-docx Document.
+        rows: Total number of rows (including header).
+        cols: Number of columns.
+        headers: List of column header strings.
+        data_rows: List of dicts or list[list[str]] for data rows.
+        font_size: Override default font size.
+        font_name: Override default font name.
+
+    Returns:
+        python-docx Table object.
+    """
     font_size = font_size or config.FONT_SIZE_TABLE
     font_name = font_name or config.FONT_NAME
 
     table = doc.add_table(rows=rows, cols=cols)
     table.autofit = True
 
-    # Header row with multi-line support
+    # ---- Header row ----
     for col_idx, header_text in enumerate(headers):
         cell = table.rows[0].cells[col_idx]
-        _format_header_cell(cell, header_text, is_first_col=(col_idx == 0))
+        # First column (Parameter) left-aligned; data columns center-aligned
+        align = WD_ALIGN_PARAGRAPH.LEFT if col_idx == 0 else WD_ALIGN_PARAGRAPH.CENTER
+        _format_header_cell(cell, header_text, alignment=align)
+        set_cell_shading(cell, config.HEADER_ROW_BG_HEX)
 
-    # Data rows: use shell rows if provided, else fill with XX placeholders
-    for row_idx in range(1, rows):
-        for col_idx in range(cols):
-            cell = table.rows[row_idx].cells[col_idx]
-            if data_rows and row_idx - 1 < len(data_rows):
-                row_data = data_rows[row_idx - 1]
-                val = row_data[col_idx] if col_idx < len(row_data) else "XX"
+    # ---- Data rows ----
+    if data_rows:
+        for row_idx in range(1, rows):
+            data_idx = row_idx - 1
+            if data_idx < len(data_rows):
+                _render_data_row(table, row_idx, data_rows[data_idx],
+                                 cols, font_size, font_name)
             else:
-                val = "XX"
-            set_cell_text(cell, val, bold=False,
-                          font_size=font_size, font_name=font_name,
-                          alignment=WD_ALIGN_PARAGRAPH.LEFT)
+                # Fill extra rows with XX
+                for col_idx in range(cols):
+                    set_cell_text(table.cell(row_idx, col_idx), "XX",
+                                  font_size=font_size, font_name=font_name,
+                                  alignment=WD_ALIGN_PARAGRAPH.CENTER)
+    else:
+        # No data rows provided: fill with XX placeholders
+        for row_idx in range(1, rows):
+            for col_idx in range(cols):
+                align = WD_ALIGN_PARAGRAPH.LEFT if col_idx == 0 else WD_ALIGN_PARAGRAPH.CENTER
+                set_cell_text(table.cell(row_idx, col_idx), "XX",
+                              font_size=font_size, font_name=font_name,
+                              alignment=align)
 
+    # ---- Column widths ----
+    if cols >= 2:
+        param_width = config.TABLE_PARAM_COL_WIDTH_CM
+        data_width = config.TABLE_DATA_COL_WIDTH_CM
+        for row in table.rows:
+            set_cell_width(row.cells[0], param_width)
+            for col_idx in range(1, cols):
+                set_cell_width(row.cells[col_idx], data_width)
+
+    # ---- Apply three-line borders ----
     apply_three_line_format(table)
     return table

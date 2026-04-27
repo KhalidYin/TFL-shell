@@ -60,7 +60,7 @@ def generate_figure_buffer(tfl_item, mock_data: dict = None) -> io.BytesIO:
 
     fig = cls(
         figsize=(tfl_item.figure_width_inches, tfl_item.figure_height_inches),
-        dpi=150,
+        dpi=200,
     )
     return fig.render(mock_data)
 
@@ -86,12 +86,15 @@ def _auto_generate_mock_data(figure_type: str) -> dict:
         best_pct = rng.normal(-25, 30, 80)
         best_pct = np.clip(best_pct, -100, 200)
         bor = []
-        for p in best_pct:
+        groups = []
+        for i, p in enumerate(best_pct):
             if p < -100: bor.append("CR")
             elif p < -30: bor.append("PR")
             elif p < 20: bor.append("SD")
             else: bor.append("PD")
-        return {"best_pct": best_pct, "bor": bor}
+            groups.append(i % 3)
+        return {"best_pct": best_pct, "bor": bor,
+                "groups": groups, "color_by": "bor"}
 
     if figure_type in ("spider", "swimmer"):
         return {}  # These use internal mock generators

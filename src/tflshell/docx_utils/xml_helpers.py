@@ -139,11 +139,16 @@ def set_cell_bottom_border(cell, sz=4, color="000000"):
 
 
 def set_cell_text(cell, text: str, bold=False, font_size=9,
-                  font_name="Times New Roman", alignment=None):
-    """Clear and set text in a table cell with consistent formatting."""
+                  font_name="Times New Roman", alignment=None,
+                  space_before=1, space_after=1):
+    """Clear and set text in a table cell with consistent formatting.
+
+    Args:
+        space_before: Paragraph space before in points. Use 4-6 for category headers.
+        space_after: Paragraph space after in points.
+    """
     from docx.shared import Pt
     from docx.enum.text import WD_ALIGN_PARAGRAPH
-    from docx.oxml.ns import qn
 
     # Clear existing paragraphs
     for p in cell.paragraphs:
@@ -152,9 +157,38 @@ def set_cell_text(cell, text: str, bold=False, font_size=9,
     p = cell.paragraphs[0] if cell.paragraphs else cell.add_paragraph()
     if alignment is not None:
         p.alignment = alignment
+    p.paragraph_format.space_before = Pt(space_before)
+    p.paragraph_format.space_after = Pt(space_after)
+    p.paragraph_format.line_spacing = Pt(12)
 
     run = p.add_run(str(text))
     run.font.name = font_name
     run.font.size = Pt(font_size)
     run.font.bold = bold
     return p
+
+
+def set_cell_shading(cell, color_hex: str):
+    """Apply background shading to a table cell.
+
+    Args:
+        cell: python-docx cell object.
+        color_hex: Background color in hex format (e.g. 'F2F2F2') without '#'.
+    """
+    from docx.oxml.ns import qn, nsdecls
+    from docx.oxml import parse_xml
+    shading = parse_xml(
+        f'<w:shd {nsdecls("w")} w:fill="{color_hex}" w:val="clear"/>'
+    )
+    cell._tc.get_or_add_tcPr().append(shading)
+
+
+def set_cell_width(cell, width_cm: float):
+    """Set explicit width on a table cell (controls column width).
+
+    Args:
+        cell: python-docx cell object.
+        width_cm: Width in centimeters.
+    """
+    from docx.shared import Cm
+    cell.width = Cm(width_cm)

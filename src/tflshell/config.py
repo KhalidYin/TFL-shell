@@ -37,10 +37,19 @@ FONT_SIZE_HEADER_BLOCK = 9
 THREE_LINE_THICK_SZ = 12  # ~1.5pt
 THREE_LINE_THIN_SZ = 4    # ~0.5pt
 
-# Figure settings (v2.1: reduced for landscape letter fit)
-FIGURE_DPI = 150
+# Figure settings
+FIGURE_DPI = 200
 FIGURE_DEFAULT_WIDTH = 5.5
 FIGURE_DEFAULT_HEIGHT = 3.2
+
+# Figure shell formatting
+FIGURE_SHELL_BORDER_COLOR = "999999"
+FIGURE_SHELL_NOTE_COLOR = (153, 153, 153)
+
+# Table formatting
+HEADER_ROW_BG_HEX = "F2F2F2"
+TABLE_PARAM_COL_WIDTH_CM = 7.5
+TABLE_DATA_COL_WIDTH_CM = 4.1
 
 # Placeholders
 SPONSOR_PLACEHOLDER = "[Sponsor Name]"

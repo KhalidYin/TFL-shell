@@ -24,7 +24,7 @@ class ClinicalFigure(ABC):
         buf = fig.render(data_dict)  # Returns BytesIO PNG buffer
     """
 
-    def __init__(self, figsize=(6.5, 4.5), dpi=150):
+    def __init__(self, figsize=(6.5, 4.5), dpi=200):
         self.figsize = figsize
         self.dpi = dpi
         plt.style.use(color_schemes.PLOT_STYLE)

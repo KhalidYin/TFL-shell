@@ -66,6 +66,7 @@ PLOT_STYLE = {
     "xtick.labelsize": 9,
     "ytick.labelsize": 9,
     "legend.fontsize": 8,
-    "font.family": "sans-serif",
-    "font.sans-serif": ["Arial", "Helvetica", "DejaVu Sans"],
+    "font.family": "serif",
+    "font.serif": ["Times New Roman", "DejaVu Serif"],
+    "figure.dpi": 200,
 }

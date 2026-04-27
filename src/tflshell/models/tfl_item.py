@@ -49,8 +49,8 @@ class TFLItem:
     figure_width_inches: float = config.FIGURE_DEFAULT_WIDTH
     figure_height_inches: float = config.FIGURE_DEFAULT_HEIGHT
 
-    # v2.2 shell semantics
-    shell_rows: list[list[str]] = field(default_factory=list)
+    # v2.2 shell semantics (rich: each row can be list[str] or dict with label/bold/indent/values)
+    shell_rows: list = field(default_factory=list)
     result_placeholder: str = "XX"
     placeholder_style: str = "text"
     shell_family: str = ""
@@ -129,10 +129,45 @@ class TFLItem:
     def has_shell_rows(self) -> bool:
         return bool(self.shell_rows)
 
+    @staticmethod
+    def _normalize_row(row) -> dict:
+        """Normalize a shell row from list or dict form to rich dict form.
+
+        List form: ["Label", "val1", "val2", ...] → {"label": "Label", "bold": False, "indent": False, "values": ["val1", ...]}
+        Dict form: {"label": ..., "bold": ..., "indent": ..., "values": [...]} passes through.
+        """
+        if isinstance(row, dict):
+            return {
+                "label": row.get("label", ""),
+                "bold": row.get("bold", False),
+                "indent": row.get("indent", False),
+                "values": row.get("values", []),
+            }
+        # Flat list form
+        label = row[0] if len(row) > 0 else ""
+        values = list(row[1:]) if len(row) > 1 else []
+        return {"label": label, "bold": False, "indent": False, "values": values}
+
+    @property
+    def shell_data_rows_rich(self) -> list[dict]:
+        """Return shell rows as list of dicts with bold/indent/value metadata.
+
+        Each dict: {"label": str, "bold": bool, "indent": bool, "values": list[str]}
+        """
+        return [self._normalize_row(r) for r in self.shell_rows]
+
     @property
     def shell_data_rows(self) -> list[list[str]]:
+        """Return rows as flat list[list[str]] for backward compatibility."""
         if self.tfl_type == TFLType.FIGURE:
             return []
         if self.shell_rows:
-            return self.shell_rows
+            result = []
+            for row in self.shell_rows:
+                if isinstance(row, dict):
+                    label = ("    " if row.get("indent") else "") + row.get("label", "")
+                    result.append([label] + list(row.get("values", [])))
+                else:
+                    result.append(list(row))
+            return result
         return [[self.placeholder_example] * max(len(self.placeholder_columns), 1) for _ in range(3)]
