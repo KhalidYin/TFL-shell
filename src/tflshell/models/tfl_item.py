@@ -41,6 +41,7 @@ class TFLItem:
     protocol_placeholder: str = config.PROTOCOL_PLACEHOLDER
     dataset_source: str = ""
     program_ref: str = ""
+    source_listing: str = ""
     dictionary_versions: dict = field(default_factory=dict)
     table_notes: str = ""
 
@@ -110,10 +111,12 @@ class TFLItem:
 
     def footnote_text(self) -> list[str]:
         notes = list(self.footnotes)
+        if self.source_listing:
+            notes.insert(0, f"Source Listing: {self.source_listing}")
         if self.dataset_source:
-            notes.append(f"Dataset lineage: Source: {self.dataset_source}."
+            notes.append(f"Dataset: {self.dataset_source}."
                          f" Program: {self.program_ref}." if self.program_ref
-                         else f"Dataset lineage: Source: {self.dataset_source}.")
+                         else f"Dataset: {self.dataset_source}.")
         if self.dictionary_versions:
             dict_str = ", ".join(f"{k} {v}" for k, v in self.dictionary_versions.items())
             notes.append(f"Coding dictionary versions: {dict_str}.")
