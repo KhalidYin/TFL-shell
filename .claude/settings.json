@@ -1,0 +1,35 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(git -C \"g:\\\\Project\\\\Python\\\\TFLshell\" log --oneline -5)",
+      "Bash(git -C \"g:/Project/Python/TFLshell\" log --oneline -5)",
+      "Bash(.venv/Scripts/pip install *)",
+      "Bash(.venv/Scripts/python -m tflshell validate)",
+      "Bash(.venv/Scripts/python -m tflshell generate)",
+      "Bash(.venv/Scripts/python -m tflshell list --section 14.2 --area oncology)",
+      "Bash(.venv/Scripts/python -m tflshell list --area non-oncology)",
+      "Bash(.venv/Scripts/python -m tflshell generate --area oncology --output-dir output/test_oncology)",
+      "Bash(.venv/Scripts/python -m tflshell list --section 14.3)",
+      "WebSearch",
+      "Read(//c/Users/DeanKevin/.claude/plans/**)",
+      "Bash(git -C \"G:/Project/Python/TFLshell\" log --oneline -10)",
+      "Bash(rm -f output/*.docx output/*.xlsx)",
+      "Bash(.venv/Scripts/python -m tflshell generate --sponsor \"PharmaCorp Inc.\" --protocol \"ABC-123-01\")",
+      "Bash(.venv/Scripts/python -m tflshell list --area oncology)",
+      "Bash(.venv/Scripts/python -m tflshell list --section 14.4)",
+      "Bash(.venv/Scripts/python -m tflshell list --section 16.2)",
+      "Read(//c/Users/DeanKevin/src/tflshell/**)",
+      "Read(//c/Users/DeanKevin/src/tflshell/generators/**)",
+      "Read(//c/Users/DeanKevin/src/tflshell/docx_utils/**)",
+      "Read(//c/Users/DeanKevin/src/tflshell/data/**)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(python -)",
+      "Bash(python -c \"from pathlib import Path; p=Path\\(r'G:\\\\Project\\\\Python\\\\TFLshell\\\\src\\\\tflshell\\\\data\\\\definitions.py'\\); text=p.read_text\\(encoding='utf-8'\\); reps={\\\\\"            ['', 'XX', 'XX', 'XX', 'XX'],\\\\n            ['', 'XX', 'XX', 'XX', 'XX'],\\\\n            ['', 'XX', 'XX', 'XX', 'XX'],\\\\\":\\\\\"            ['Age \\(years\\)', 'XX', 'XX', 'XX'],\\\\n            ['  n', 'XX', 'XX', 'XX'],\\\\n            ['  Mean \\(SD\\)', 'XX', 'XX', 'XX'],\\\\n\\\\\",\\\\\"            ['', 'XX', 'XX', 'XX', 'XX'],\\\\n            ['', 'XX', 'XX', 'XX', 'XX'],\\\\n            ['Disease Stage', 'XX', 'XX', 'XX', 'XX'],\\\\n            ['', 'XX', 'XX', 'XX', 'XX'],\\\\\":\\\\\"            ['ECOG Performance Status', 'XX', 'XX', 'XX'],\\\\n            ['Primary Tumor Type', 'XX', 'XX', 'XX'],\\\\n            ['Disease Stage', 'XX', 'XX', 'XX'],\\\\n            ['Time Since Initial Diagnosis \\(months\\)', 'XX', 'XX', 'XX'],\\\\n\\\\\",\\\\\"            ['', 'XX', 'XX', 'XX'],\\\\n            ['Number of cycles started', 'XX', 'XX', 'XX'],\\\\\":\\\\\"            ['Duration of Exposure \\(days\\)', 'XX', 'XX', 'XX'],\\\\n            ['Number of cycles started', 'XX', 'XX', 'XX'],\\\\\",\\\\\"            ['', 'XX', 'XX', 'XX'],\\\\n            ['', 'XX', 'XX', 'XX'],\\\\n            ['EGFR Mutation', 'XX', 'XX', 'XX'],\\\\\":\\\\\"            ['PD-L1 Expression', 'XX', 'XX', 'XX'],\\\\n            ['Tumor Mutation Burden', 'XX', 'XX', 'XX'],\\\\n            ['EGFR Mutation', 'XX', 'XX', 'XX'],\\\\\"};\\\\nfor old,new in reps.items\\(\\):\\\\n    text=text.replace\\(old,new\\)\\\\np.write_text\\(text, encoding='utf-8'\\)\")",
+      "Bash(python -m tflshell.main validate)",
+      "Bash(python -m tflshell.main generate --type all)",
+      "Read(//c/Users/DeanKevin/docs/superpowers/specs/**)",
+      "Bash(git ls-tree *)"
+    ]
+  }
+}

@@ -1,0 +1,5 @@
+Metadata-Version: 2.4
+Name: tflshell
+Version: 2.1.0
+Summary: Clinical TFL Shell Template Generator v2.1 — ICH E3 Compliant Clinical Practice
+Requires-Python: >=3.10
