@@ -201,8 +201,66 @@ class DocxShellGenerator:
                 area = self._normalize_area(self.therapeutic_area)
                 items = [i for i in items if area in i.therapeutic_areas]
 
-            for item in items:
-                self._add_tfl_shell(item)
+            # Sort: tables first, then figures, then listings
+            tables = [i for i in items if i.tfl_type == TFLType.TABLE]
+            figures = [i for i in items if i.tfl_type == TFLType.FIGURE]
+            listings = [i for i in items if i.tfl_type == TFLType.LISTING]
+            tables.sort(key=lambda i: i.sort_key)
+            figures.sort(key=lambda i: i.sort_key)
+            listings.sort(key=lambda i: i.sort_key)
+
+            # For 14.3, group by sub-section
+            if section_enum == Section.SEC_14_3:
+                self._render_143_sub_sections(tables, figures, listings)
+                continue
+
+            if tables:
+                self._add_sub_heading("Tables")
+                for item in tables:
+                    self._add_tfl_shell(item)
+
+            if figures:
+                self._add_sub_heading("Figures")
+                for item in figures:
+                    self._add_tfl_shell(item)
+
+            if listings:
+                self._add_sub_heading("Listings")
+                for item in listings:
+                    self._add_tfl_shell(item)
+
+    def _render_143_sub_sections(self, tables, figures, listings):
+        """Render 14.3 with sub-section headings (14.3.1 AE, 14.3.2 Other, etc.)."""
+        sub_sections = [
+            ("14.3.1  Adverse Events", "1"),
+            ("14.3.2  Other Safety Observations", "2"),
+            ("14.3.3  Clinical Laboratory Evaluations", "3"),
+            ("14.3.4  Vital Signs, ECG, and Physical Examinations", "4"),
+        ]
+        for sub_heading, sub_num in sub_sections:
+            # Filter items by sub-number (first digit after section)
+            sub_tables = [i for i in tables if i.id.split(".")[-2] == sub_num]
+            sub_figs = [i for i in figures if i.id.split(".")[-2] == sub_num]
+            if not sub_tables and not sub_figs:
+                continue
+            self._add_sub_heading(sub_heading)
+            if sub_tables:
+                for item in sub_tables:
+                    self._add_tfl_shell(item)
+            if sub_figs:
+                for item in sub_figs:
+                    self._add_tfl_shell(item)
+
+    def _add_sub_heading(self, text):
+        """Add a sub-heading for 'Tables' / 'Figures' / 'Listings' groups."""
+        p = self.doc.add_paragraph(style=self.doc.styles["Heading 3"])
+        p.paragraph_format.space_before = Pt(6)
+        p.paragraph_format.space_after = Pt(4)
+        run = p.add_run(text)
+        run.font.name = config.FONT_NAME
+        run.font.size = Pt(config.FONT_SIZE_H3)
+        run.font.bold = True
+        run.font.color.rgb = RGBColor.from_string(config.HEADER_BG_HEX)
 
     def _add_tfl_shell_heading(self, tfl):
         p = self.doc.add_paragraph(style=self.doc.styles["Heading 3"])

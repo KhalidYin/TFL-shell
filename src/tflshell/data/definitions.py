@@ -614,7 +614,7 @@ def build_catalog() -> TFLCatalog:
     # General efficacy figures
     items.append(TFLItem(
         id="F14.2.1", title="Forest Plot — Primary Endpoint by Subgroup",
-        tfl_type=F, section=S142, sort_key=9,
+        tfl_type=F, section=S142, sort_key=23,
         population="Intent-to-Treat (ITT) Population",
         figure_description="Forest plot: treatment effect [95% CI] per subgroup, overall diamond, ref line at null.",
         dataset_source="ADSL, ADEFF",
@@ -624,7 +624,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.2", title="Longitudinal Plot — Primary Endpoint Over Time",
-        tfl_type=F, section=S142, sort_key=10,
+        tfl_type=F, section=S142, sort_key=24,
         population="Intent-to-Treat (ITT) Population",
         figure_description="Line plot: Mean (±SE) primary endpoint by visit, two arms.",
         dataset_source="ADSL, ADEFF",
@@ -634,7 +634,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.3", title="Cumulative Distribution Function Plot of Primary Endpoint",
-        tfl_type=F, section=S142, sort_key=11,
+        tfl_type=F, section=S142, sort_key=25,
         population="Intent-to-Treat (ITT) Population",
         figure_description="CDF plot: X=Change from Baseline, Y=Cumulative Proportion, two arms.",
         dataset_source="ADSL, ADEFF",
@@ -646,7 +646,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.9", title="Tumor Response — Best Overall Response (BOR)",
-        tfl_type=T, section=S142, sort_key=12, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=9, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=H2_NPCT,
         shell_rows=[
@@ -671,7 +671,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.10", title="Tumor Response — Objective Response Rate (ORR)",
-        tfl_type=T, section=S142, sort_key=13, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=10, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -694,7 +694,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.11", title="Tumor Response — Disease Control Rate (DCR)",
-        tfl_type=T, section=S142, sort_key=14, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=11, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -714,7 +714,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.12", title="Tumor Response — Duration of Response (DOR)",
-        tfl_type=T, section=S142, sort_key=15, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=12, oncology_only=True,
         population="Responders (Confirmed CR or PR)",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -738,7 +738,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.13", title="Tumor Response — Time to Response (TTR)",
-        tfl_type=T, section=S142, sort_key=16, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=13, oncology_only=True,
         population="Responders (Confirmed CR or PR)",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -760,7 +760,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.14", title="Progression-Free Survival (PFS) — Primary Analysis",
-        tfl_type=T, section=S142, sort_key=17, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=14, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -788,7 +788,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.15", title="Overall Survival (OS) — Primary Analysis",
-        tfl_type=T, section=S142, sort_key=18, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=15, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -816,7 +816,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.16", title="PFS — Sensitivity Analysis",
-        tfl_type=T, section=S142, sort_key=19, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=16, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Analysis",
                              "Med PFS G1\n(months)", "Med PFS G2\n(months)", "...\n...\nHR [95% CI]", "p-value"],
@@ -832,7 +832,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.17", title="PFS — Subgroup Analysis",
-        tfl_type=T, section=S142, sort_key=20, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=17, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Subgroup\nLevel",
                              "G1 n/N\nMed PFS", "G2 n/N\nMed PFS",
@@ -849,7 +849,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.18", title="OS — Subgroup Analysis",
-        tfl_type=T, section=S142, sort_key=21, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=18, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         placeholder_columns=["Subgroup\nLevel",
                              "G1 n/N\nMed OS", "G2 n/N\nMed OS",
@@ -865,7 +865,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.19", title="Summary of Target Lesion Changes from Baseline",
-        tfl_type=T, section=S142, sort_key=22, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=19, oncology_only=True,
         population="ITT with Measurable Disease and Post-Baseline Assessment",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -890,7 +890,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.20", title="Landmark Analysis of OS by 6-Month PFS Status",
-        tfl_type=T, section=S142, sort_key=23, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=20, oncology_only=True,
         population="ITT Alive and On-Study at 6 Months",
         placeholder_columns=["PFS Status at 6M",
                              "G1 n/N\nMed OS", "G2 n/N\nMed OS", "...\n...\nHR [95% CI]"],
@@ -905,7 +905,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.21", title="Time to First Subsequent Therapy (TFST)",
-        tfl_type=T, section=S142, sort_key=24, oncology_only=True,
+        tfl_type=T, section=S142, sort_key=21, oncology_only=True,
         population="ITT Population",
         placeholder_columns=["Parameter",
                              "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
@@ -932,7 +932,7 @@ def build_catalog() -> TFLCatalog:
     # Oncology figures
     items.append(TFLItem(
         id="F14.2.4", title="Waterfall Plot — Best Percentage Change in Target Lesions",
-        tfl_type=F, section=S142, sort_key=25, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=26, oncology_only=True,
         population="ITT with Measurable Disease and Post-Baseline Assessment",
         figure_description="Waterfall: best % change per subject, BOR-colored bars, ref lines +20%/-30%.",
         dataset_source="ADSL, ADRS",
@@ -942,7 +942,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.5", title="Spider Plot — Percentage Change in Tumor Burden Over Time",
-        tfl_type=F, section=S142, sort_key=26, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=27, oncology_only=True,
         population="ITT with Measurable Disease",
         figure_description="Spider: % change trajectories, BOR-colored lines, PD/death terminal markers.",
         dataset_source="ADSL, ADRS",
@@ -952,7 +952,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.6", title="Swimmer Plot — Duration of Treatment and Response",
-        tfl_type=F, section=S142, sort_key=27, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=28, oncology_only=True,
         population="Safety Population",
         figure_description="Swimmer: horizontal bars showing treatment duration, response/progression/ongoing markers.",
         dataset_source="ADSL, ADEX, ADRS",
@@ -962,7 +962,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.7", title="Kaplan-Meier Plot — Progression-Free Survival",
-        tfl_type=F, section=S142, sort_key=28, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=29, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         figure_description="KM PFS: step-function curves, + censoring, number-at-risk table, HR/p-value annotation.",
         dataset_source="ADSL, ADTTE",
@@ -972,7 +972,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.8", title="Kaplan-Meier Plot — Overall Survival",
-        tfl_type=F, section=S142, sort_key=29, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=30, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         figure_description="KM OS: step-function curves, + censoring, number-at-risk table, HR/p-value annotation.",
         dataset_source="ADSL, ADTTE",
@@ -982,7 +982,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.9", title="Forest Plot — PFS by Subgroup",
-        tfl_type=F, section=S142, sort_key=30, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=31, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         figure_description="Forest PFS: HR [95% CI] per subgroup, overall diamond at bottom.",
         dataset_source="ADSL, ADTTE",
@@ -992,7 +992,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.2.10", title="Forest Plot — OS by Subgroup",
-        tfl_type=F, section=S142, sort_key=31, oncology_only=True,
+        tfl_type=F, section=S142, sort_key=32, oncology_only=True,
         population="Intent-to-Treat (ITT) Population",
         figure_description="Forest OS: HR [95% CI] per subgroup, overall diamond at bottom.",
         dataset_source="ADSL, ADTTE",
@@ -1002,7 +1002,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="T14.2.22", title="PK/PD Exposure-Response Correlation Analysis",
-        tfl_type=T, section=S142, sort_key=32,
+        tfl_type=T, section=S142, sort_key=22,
         population="PK/PD Evaluable Population",
         placeholder_columns=["PK Parameter\nQuartile", "N",
                              "Response Rate (%)", "95% CI"],
@@ -3005,7 +3005,7 @@ def build_catalog() -> TFLCatalog:
     # 14.4 Figures
     items.append(TFLItem(
         id="F14.4.1", title="Pharmacokinetic (PK) Plot — Mean Serum Concentration-Time Profiles",
-        tfl_type=F, section=S144, sort_key=8,
+        tfl_type=F, section=S144, sort_key=15,
         population="PK Population",
         figure_description="PK plot: Mean (±SD) serum concentration vs. time, linear/log scales.",
         dataset_source="ADSL, ADPC",
@@ -3015,7 +3015,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.4.2", title="Overlaying Individual PK Concentration Profiles",
-        tfl_type=F, section=S144, sort_key=9,
+        tfl_type=F, section=S144, sort_key=16,
         population="PK Population",
         figure_description="PK overlay: individual concentration-time profiles by treatment group.",
         dataset_source="ADSL, ADPC",
@@ -3025,7 +3025,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.4.3", title="Mean (SD) Soluble EGFR and cMet Over Time",
-        tfl_type=F, section=S144, sort_key=10,
+        tfl_type=F, section=S144, sort_key=17,
         population="PD Population",
         figure_description="PD plot: Mean (±SD) soluble EGFR/cMet concentrations over time.",
         dataset_source="ADSL, ADPD",
@@ -3035,7 +3035,7 @@ def build_catalog() -> TFLCatalog:
 
     items.append(TFLItem(
         id="F14.4.4", title="Boxplot of Biomarkers at Baseline vs. Response Status",
-        tfl_type=F, section=S144, sort_key=11,
+        tfl_type=F, section=S144, sort_key=18,
         oncology_only=True,
         population="Full Analysis Set with Biomarker Data",
         figure_description="Box plot: Biomarker levels at baseline by response status (CR/PR/SD/PD).",
