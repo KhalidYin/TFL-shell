@@ -299,6 +299,125 @@ def build_catalog() -> TFLCatalog:
         dataset_source="ADSL, ADBM", program_ref="t_biomarker_baseline.sas",
     ))
 
+
+    items.append(TFLItem(
+        id="T14.1.12", title="Subject Disposition by Country and Site",
+        tfl_type=T, section=S141, sort_key=12,
+        population="All Randomized Subjects",
+        placeholder_columns=["Country\nSite", "Screened\nn", "Randomized\nn",
+                             "Treated\nn (%)", "Completed\nn (%)", "Discontinued\nn (%)"],
+        shell_rows=[
+            {"label": "Country A", "bold": True},
+            {"label": "  Site 001", "indent": True, "values": ["xx", "xx", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "  Site 002", "indent": True, "values": ["xx", "xx", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Country B", "bold": True},
+            {"label": "  Site 003", "indent": True, "values": ["xx", "xx", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "...", "..."]},
+        ],
+        dataset_source="ADSL", program_ref="t_disp_site.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.1.13", title="Screening Summary — Screen Failure Reasons by Eligibility Criterion",
+        tfl_type=T, section=S141, sort_key=13,
+        population="All Screened Subjects",
+        placeholder_columns=["Eligibility Criterion", "Screen Failures\nn", "Reason\nCategory"],
+        shell_rows=[
+            {"label": "Inclusion Criterion 1: Age >=18", "values": ["xx", "Age <18"]},
+            {"label": "Inclusion Criterion 2: ECOG 0-1", "values": ["xx", "ECOG >=2"]},
+            {"label": "Exclusion Criterion 1: Prior malignancy", "values": ["xx", "History of prior cancer"]},
+            {"label": "Exclusion Criterion 2: Active infection", "values": ["xx", "Active HBV/HCV/HIV"]},
+            {"label": "Total Screen Failures", "bold": True, "values": ["xx", ""]},
+            {"label": "[...]", "values": ["...", "..."]},
+        ],
+        dataset_source="ADSL", program_ref="t_screen_fail.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.1.14", title="Major Protocol Deviations — by Category and Subcategory",
+        tfl_type=T, section=S141, sort_key=14,
+        population="All Randomized Subjects",
+        placeholder_columns=["Deviation Category\nSubcategory",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Eligibility Criteria", "bold": True},
+            {"label": "  Inclusion criteria not met", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Exclusion criteria not met", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Study Procedure", "bold": True},
+            {"label": "  Missed efficacy assessment", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Out-of-window visit", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Study Treatment", "bold": True},
+            {"label": "  Wrong dose administered", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Non-compliance <80%", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Concomitant Medication", "bold": True},
+            {"label": "  Prohibited medication taken", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        dataset_source="ADSL, DV", program_ref="t_protdev_cat.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.1.15", title="Surgical and Procedure History by Body System",
+        tfl_type=T, section=S141, sort_key=15,
+        population="Safety Population",
+        placeholder_columns=["Body System\nProcedure",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Any Surgical/Procedure History", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Cardiovascular", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Coronary artery bypass graft", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Pacemaker insertion", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Gastrointestinal", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Cholecystectomy", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Appendectomy", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Musculoskeletal", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Joint replacement", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        dataset_source="ADSL, ADMH", program_ref="t_surg_hist.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.1.16", title="Prior and Concomitant Medications by WHO ATC Level 3 — >=5% in Any Arm",
+        tfl_type=T, section=S141, sort_key=16,
+        population="Safety Population",
+        placeholder_columns=["ATC Level 3\nPreferred Name",
+                             "Prior\nn (%)", "Concomitant\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "A02BC — Proton Pump Inhibitors", "bold": True},
+            {"label": "  Omeprazole", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Pantoprazole", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "N02BE — Anilides (Paracetamol)", "bold": True},
+            {"label": "  Paracetamol", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "C10AA — HMG-CoA Reductase Inhibitors", "bold": True},
+            {"label": "  Atorvastatin", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["WHO Drug Global [version]. Prior = stopped before first dose. Concomitant = any use on/after first dose."],
+        dataset_source="ADSL, ADCM", program_ref="t_conmed_atc3.sas",
+        dictionary_versions={"WHO-DD": "[version]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.1.17", title="Study Drug Exposure by Duration Category",
+        tfl_type=T, section=S141, sort_key=17,
+        population="Safety Population",
+        placeholder_columns=["Exposure Duration",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Duration of Exposure", "bold": True},
+            {"label": "  Mean (SD), weeks", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Median (Min, Max), weeks", "values": ["xx.x (xx, xx)", "xx.x (xx, xx)", "...", "xx.x (xx, xx)"]},
+            {"label": "Exposure by Duration Category", "bold": True},
+            {"label": "  >=1 month (<30 days)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  >=3 months (>=90 days)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  >=6 months (>=180 days)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  >=12 months (>=360 days)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        dataset_source="ADSL, ADEX", program_ref="t_expo_durcat.sas",
+    ))
+
     # =====================================================================
     # 14.2 EFFICACY (32 items: 11 general + 21 oncology)
     # =====================================================================
@@ -850,11 +969,179 @@ def build_catalog() -> TFLCatalog:
     ))
 
     # =====================================================================
+
+
+    # --- 14.3.1 AE Expansion (CDISC ADAE) ---
+    items.append(TFLItem(
+        id="T14.3.1.24", title="Immune-Related Adverse Events (irAEs) by Preferred Term",
+        tfl_type=T, section=S143, sort_key=24, oncology_only=True,
+        population="Safety Population",
+        placeholder_columns=["Preferred Term",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Any irAE", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Pneumonitis", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Colitis", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Hepatitis", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Dermatitis / Rash", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Thyroiditis", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Nephritis", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["irAEs per protocol-defined list (MedDRA SMQ). Confirmed by adjudication. CTCAE [xx]."],
+        dataset_source="ADSL, ADAE", program_ref="t_irae_pt.sas",
+        dictionary_versions={"MedDRA": "[xx.x]", "CTCAE": "[xx]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.25", title="Infusion-Related Reactions — Onset Timing, Maximum Grade, and Management",
+        tfl_type=T, section=S143, sort_key=25,
+        population="Safety Population",
+        placeholder_columns=["IRR Characteristic",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Subjects with Any IRR", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Maximum CTCAE Grade", "bold": True},
+            {"label": "  Grade 1", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Grade 2", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Grade >=3", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Onset Timing", "bold": True},
+            {"label": "  First infusion (Cycle 1)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Subsequent infusions", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Management", "bold": True},
+            {"label": "  Infusion rate slowed", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Infusion interrupted", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Prophylaxis in subsequent cycles", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["IRR = any AE during or within 24h of infusion start. CTCAE [xx]."],
+        dataset_source="ADSL, ADAE, ADEX", program_ref="t_irr_detail.sas",
+        dictionary_versions={"CTCAE": "[xx]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.26", title="TEAE Outcomes by System Organ Class — Resolved / Recovering / Not Recovered",
+        tfl_type=T, section=S143, sort_key=26,
+        population="Safety Population",
+        placeholder_columns=["System Organ Class",
+                             "Recovered\nn (%)", "Recovering\nn (%)",
+                             "Not Recovered\nn (%)", "Fatal\nn (%)", "Unknown\nn (%)"],
+        shell_rows=[
+            {"label": "Gastrointestinal disorders", "values": ["xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "General disorders", "values": ["xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Blood and lymphatic system disorders", "values": ["xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Skin and subcutaneous tissue disorders", "values": ["xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Nervous system disorders", "values": ["xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Outcome at last follow-up. Recovered = resolved no sequelae. MedDRA [xx.x]."],
+        dataset_source="ADSL, ADAE", program_ref="t_ae_outcome.sas",
+        dictionary_versions={"MedDRA": "[xx.x]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.27", title="Late-Onset TEAEs (>90 Days from First Dose) by SOC and PT",
+        tfl_type=T, section=S143, sort_key=27,
+        population="Safety Population with >90 Days Exposure",
+        placeholder_columns=["System Organ Class\nPreferred Term",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Any Late-Onset TEAE", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Blood and lymphatic system disorders", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Anaemia", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Neutropenia", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Skin disorders", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Rash", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Gastrointestinal disorders", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Late-onset = AE start >90 days after first dose in subjects with >90 days on treatment. MedDRA [xx.x]."],
+        dataset_source="ADSL, ADAE", program_ref="t_ae_late.sas",
+        dictionary_versions={"MedDRA": "[xx.x]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.28", title="TEAEs by Post-Baseline Time Window — Onset Distribution",
+        tfl_type=T, section=S143, sort_key=28,
+        population="Safety Population",
+        placeholder_columns=["Time Window",
+                             "G1\nn (%) [E]", "G2\nn (%) [E]", "...", "Overall\nn (%) [E]"],
+        shell_rows=[
+            {"label": "0-30 Days", "bold": True, "values": ["xx (xx.x) [xx]", "xx (xx.x) [xx]", "...", "xx (xx.x) [xx]"]},
+            {"label": "31-90 Days", "bold": True, "values": ["xx (xx.x) [xx]", "xx (xx.x) [xx]", "...", "xx (xx.x) [xx]"]},
+            {"label": "91-180 Days", "bold": True, "values": ["xx (xx.x) [xx]", "xx (xx.x) [xx]", "...", "xx (xx.x) [xx]"]},
+            {"label": ">180 Days", "bold": True, "values": ["xx (xx.x) [xx]", "xx (xx.x) [xx]", "...", "xx (xx.x) [xx]"]},
+            {"label": "Follow-up (>30d post-last-dose)", "bold": True, "values": ["xx (xx.x) [xx]", "xx (xx.x) [xx]", "...", "xx (xx.x) [xx]"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["TEAEs assigned to window by onset date. [E] = total events. MedDRA [xx.x]."],
+        dataset_source="ADSL, ADAE", program_ref="t_ae_timewindow.sas",
+        dictionary_versions={"MedDRA": "[xx.x]", "CTCAE": "[xx]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.29", title="Treatment-Emergent SAEs by PT and ICH E2A Criterion — Group 1",
+        tfl_type=T, section=S143, sort_key=29,
+        population="Safety Population",
+        placeholder_columns=["Preferred Term",
+                             "Death\nn", "Life-Threat\nn", "Hospital\nn",
+                             "Disability\nn", "Cong. Anom.\nn", "Other\nn", "Total\nn (%)"],
+        shell_rows=[
+            {"label": "Pneumonia", "values": ["xx", "xx", "xx", "0", "0", "xx", "xx (xx.x)"]},
+            {"label": "Febrile Neutropenia", "values": ["xx", "xx", "xx", "0", "0", "0", "xx (xx.x)"]},
+            {"label": "Sepsis", "values": ["xx", "xx", "xx", "0", "0", "xx", "xx (xx.x)"]},
+            {"label": "Pulmonary Embolism", "values": ["xx", "xx", "xx", "0", "0", "0", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["SAE per ICH E2A. Multiple criteria per event possible. SAE listing: L16.2.5. MedDRA [xx.x]."],
+        dataset_source="ADSL, ADAE", program_ref="t_sae_crit.sas",
+        dictionary_versions={"MedDRA": "[xx.x]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.30", title="Recurrent TEAEs — Subjects with Same PT >=2 Occurrences",
+        tfl_type=T, section=S143, sort_key=30,
+        population="Safety Population",
+        placeholder_columns=["System Organ Class\nPreferred Term",
+                             "Subjects >=2\nEvents\nn (%)", "Median Events\nper Subject",
+                             "G1 [E]", "G2 [E]"],
+        shell_rows=[
+            {"label": "Gastrointestinal disorders", "bold": True, "values": ["xx (xx.x)", "xx", "[xx]", "[xx]"]},
+            {"label": "  Nausea", "indent": True, "values": ["xx (xx.x)", "xx", "[xx]", "[xx]"]},
+            {"label": "  Diarrhoea", "indent": True, "values": ["xx (xx.x)", "xx", "[xx]", "[xx]"]},
+            {"label": "Blood and lymphatic system disorders", "bold": True, "values": ["xx (xx.x)", "xx", "[xx]", "[xx]"]},
+            {"label": "  Anaemia", "indent": True, "values": ["xx (xx.x)", "xx", "[xx]", "[xx]"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["[E] = total number of events. Recurrence = same PT >=2 separate occurrences."],
+        dataset_source="ADSL, ADAE", program_ref="t_ae_recur.sas",
+        dictionary_versions={"MedDRA": "[xx.x]"},
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.1.31", title="TEAEs During Follow-up Period (>30 Days Post Last Dose)",
+        tfl_type=T, section=S143, sort_key=31,
+        population="Safety Population with Follow-up Data",
+        placeholder_columns=["System Organ Class\nPreferred Term",
+                             "G1\nn (%)", "G2\nn (%)", "...", "Overall\nn (%)"],
+        shell_rows=[
+            {"label": "Any TEAE During Follow-up", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Blood and lymphatic system disorders", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Anaemia", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Gastrointestinal disorders", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Neoplasms benign, malignant", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Follow-up period = >30 days after last dose through end of study. MedDRA [xx.x]."],
+        dataset_source="ADSL, ADAE", program_ref="t_ae_followup.sas",
+        dictionary_versions={"MedDRA": "[xx.x]"},
+    ))
+
     # 14.3 SAFETY — 30 items (AE → Deaths → Labs → VS → ECG)
     # =====================================================================
 
     items.append(TFLItem(
-        id="T14.3.1", title="Overall Summary of Treatment-Emergent Adverse Events",
+        id="T14.3.1.1", title="Overall Summary of Treatment-Emergent Adverse Events",
         tfl_type=T, section=S143, sort_key=1,
         population="Safety Population",
         placeholder_columns=["Adverse Event Category",
@@ -880,7 +1167,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.2", title="TEAEs by System Organ Class and Preferred Term (>=5% in Any Arm)",
+        id="T14.3.1.2", title="TEAEs by System Organ Class and Preferred Term (>=5% in Any Arm)",
         tfl_type=T, section=S143, sort_key=2,
         population="Safety Population",
         placeholder_columns=H2_EVENTS,
@@ -922,7 +1209,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.3", title="TEAEs by SOC, PT, and Maximum CTCAE Grade (Group 1)",
+        id="T14.3.1.3", title="TEAEs by SOC, PT, and Maximum CTCAE Grade (Group 1)",
         tfl_type=T, section=S143, sort_key=3,
         population="Safety Population",
         placeholder_columns=["System Organ Class\nPreferred Term",
@@ -939,7 +1226,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.4", title="Drug-Related TEAEs by SOC, PT, and Relationship",
+        id="T14.3.1.4", title="Drug-Related TEAEs by SOC, PT, and Relationship",
         tfl_type=T, section=S143, sort_key=4,
         population="Safety Population",
         placeholder_columns=H2_SOCPT,
@@ -955,7 +1242,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.5", title="Serious Adverse Events by SOC and PT",
+        id="T14.3.1.5", title="Serious Adverse Events by SOC and PT",
         tfl_type=T, section=S143, sort_key=5,
         population="Safety Population",
         placeholder_columns=H2_EVENTS,
@@ -977,7 +1264,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.6", title="TEAEs Leading to Treatment Discontinuation by SOC and PT",
+        id="T14.3.1.6", title="TEAEs Leading to Treatment Discontinuation by SOC and PT",
         tfl_type=T, section=S143, sort_key=6,
         population="Safety Population",
         placeholder_columns=H2_SOCPT,
@@ -998,7 +1285,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.7", title="TEAEs Leading to Dose Reduction or Interruption by SOC and PT",
+        id="T14.3.1.7", title="TEAEs Leading to Dose Reduction or Interruption by SOC and PT",
         tfl_type=T, section=S143, sort_key=7,
         population="Safety Population",
         placeholder_columns=H2_SOCPT,
@@ -1014,7 +1301,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.8", title="Summary of Deaths",
+        id="T14.3.2.1", title="Summary of Deaths",
         tfl_type=T, section=S143, sort_key=8,
         population="Safety Population",
         placeholder_columns=H2_NPCT,
@@ -1031,7 +1318,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.9", title="TEAEs Occurring in >=5% of Subjects by PT",
+        id="T14.3.1.8", title="TEAEs Occurring in >=5% of Subjects by PT",
         tfl_type=T, section=S143, sort_key=9,
         population="Safety Population",
         placeholder_columns=H2_SOCPT,
@@ -1048,7 +1335,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.10", title="TEAEs by Cycle / Treatment Period",
+        id="T14.3.1.9", title="TEAEs by Cycle / Treatment Period",
         tfl_type=T, section=S143, sort_key=10,
         population="Safety Population",
         placeholder_columns=["Cycle",
@@ -1066,7 +1353,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.11", title="Exposure-Adjusted TEAE Incidence Rates (per 100 Patient-Years)",
+        id="T14.3.1.10", title="Exposure-Adjusted TEAE Incidence Rates (per 100 Patient-Years)",
         tfl_type=T, section=S143, sort_key=11,
         population="Safety Population",
         placeholder_columns=["Preferred Term",
@@ -1082,7 +1369,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.12", title="TEAEs by Age Group Subgroup",
+        id="T14.3.1.11", title="TEAEs by Age Group Subgroup",
         tfl_type=T, section=S143, sort_key=12,
         population="Safety Population",
         placeholder_columns=["Preferred Term",
@@ -1098,7 +1385,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.13", title="TEAEs by Sex Subgroup",
+        id="T14.3.1.12", title="TEAEs by Sex Subgroup",
         tfl_type=T, section=S143, sort_key=13,
         population="Safety Population",
         placeholder_columns=["Preferred Term",
@@ -1114,7 +1401,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.14", title="Hy's Law Cases — Liver Chemistry Screening",
+        id="T14.3.2.2", title="Hy's Law Cases — Liver Chemistry Screening",
         tfl_type=T, section=S143, sort_key=14,
         population="Safety Population with Baseline and Post-Baseline Labs",
         placeholder_columns=["Subject", "Group", "ALT\n(xULN)", "AST\n(xULN)",
@@ -1128,7 +1415,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.15", title="Laboratory Parameters — Shift Table (Baseline to Worst Post-Baseline)",
+        id="T14.3.3.1", title="Laboratory Parameters — Shift Table (Baseline to Worst Post-Baseline)",
         tfl_type=T, section=S143, sort_key=15,
         population="Safety Population",
         placeholder_columns=["Parameter\n(Unit)", "Baseline\nGrade",
@@ -1146,7 +1433,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.16", title="Hematology Parameters — Summary Statistics by Visit",
+        id="T14.3.3.2", title="Hematology Parameters — Summary Statistics by Visit",
         tfl_type=T, section=S143, sort_key=16,
         population="Safety Population",
         placeholder_columns=H2_LAB,
@@ -1164,7 +1451,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.17", title="Clinical Chemistry Parameters — Summary Statistics by Visit",
+        id="T14.3.3.3", title="Clinical Chemistry Parameters — Summary Statistics by Visit",
         tfl_type=T, section=S143, sort_key=17,
         population="Safety Population",
         placeholder_columns=H2_LAB,
@@ -1182,7 +1469,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.18", title="Laboratory Abnormalities — Grade >=3 Listing",
+        id="T14.3.3.4", title="Laboratory Abnormalities — Grade >=3 Listing",
         tfl_type=T, section=S143, sort_key=18,
         population="Safety Population",
         placeholder_columns=["Subject", "Group", "Visit", "Parameter",
@@ -1196,7 +1483,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.19", title="Laboratory Toxicity Grade Shift Over Time (by Cycle)",
+        id="T14.3.3.5", title="Laboratory Toxicity Grade Shift Over Time (by Cycle)",
         tfl_type=T, section=S143, sort_key=19,
         population="Safety Population",
         placeholder_columns=["Parameter", "Cycle", "Baseline\nGrade",
@@ -1212,7 +1499,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="F14.3.1", title="Mean (+/- SD) Change in Laboratory Parameters Over Time",
+        id="F14.3.3.1", title="Mean (+/- SD) Change in Laboratory Parameters Over Time",
         tfl_type=F, section=S143, sort_key=20,
         population="Safety Population",
         figure_description="Multi-panel line plot: mean ± SD change in Hgb, Plt, ANC, ALT, AST, Creatinine.",
@@ -1221,7 +1508,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="F14.3.2", title="Box Plot — Liver Function Tests by Visit",
+        id="F14.3.3.2", title="Box Plot — Liver Function Tests by Visit",
         tfl_type=F, section=S143, sort_key=21,
         population="Safety Population",
         figure_description="Box plots: ALT, AST, ALP, Total Bilirubin by visit, side-by-side arms, ULN ref lines.",
@@ -1230,7 +1517,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.20", title="Vital Signs — Summary Statistics by Visit",
+        id="T14.3.4.1", title="Vital Signs — Summary Statistics by Visit",
         tfl_type=T, section=S143, sort_key=22,
         population="Safety Population",
         placeholder_columns=H2_LAB,
@@ -1248,7 +1535,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.21", title="Vital Signs — Clinically Notable Abnormalities by Visit",
+        id="T14.3.4.2", title="Vital Signs — Clinically Notable Abnormalities by Visit",
         tfl_type=T, section=S143, sort_key=23,
         population="Safety Population",
         placeholder_columns=["Parameter", "Criterion",
@@ -1263,7 +1550,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="F14.3.3", title="Mean (+/- SD) Vital Signs Over Time",
+        id="F14.3.4.1", title="Mean (+/- SD) Vital Signs Over Time",
         tfl_type=F, section=S143, sort_key=24,
         population="Safety Population",
         figure_description="Multi-panel: mean ± SD of SBP, DBP, HR, Weight over visits.",
@@ -1272,7 +1559,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="F14.3.4", title="Liver Function Panel — Mean Over Time with ULN Reference",
+        id="F14.3.3.3", title="Liver Function Panel — Mean Over Time with ULN Reference",
         tfl_type=F, section=S143, sort_key=25,
         population="Safety Population",
         figure_description="Line plot: ALT, AST, ALP, TBL means over visits with ULN lines.",
@@ -1281,7 +1568,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.22", title="ECG Parameters — Summary Statistics by Visit",
+        id="T14.3.4.3", title="ECG Parameters — Summary Statistics by Visit",
         tfl_type=T, section=S143, sort_key=26,
         population="Safety Population with ECG Data",
         placeholder_columns=H2_LAB,
@@ -1297,7 +1584,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.23", title="ECG QTcF Categorical Analysis",
+        id="T14.3.4.4", title="ECG QTcF Categorical Analysis",
         tfl_type=T, section=S143, sort_key=27,
         population="Safety Population with ECG Data",
         placeholder_columns=["QTcF Category",
@@ -1317,7 +1604,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.24", title="ECG Qualitative Assessment — Shift Table",
+        id="T14.3.4.5", title="ECG Qualitative Assessment — Shift Table",
         tfl_type=T, section=S143, sort_key=28,
         population="Safety Population with ECG Data",
         placeholder_columns=["Baseline", "Worst\nPost-Baseline",
@@ -1333,7 +1620,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.25", title="Infusion-Related Reactions by Preferred Term",
+        id="T14.3.1.13", title="Infusion-Related Reactions by Preferred Term",
         tfl_type=T, section=S143, sort_key=29,
         population="Safety Population",
         placeholder_columns=H2_SOCPT,
@@ -1348,7 +1635,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.26", title="ECOG Performance Status Shift Table",
+        id="T14.3.2.3", title="ECOG Performance Status Shift Table",
         tfl_type=T, section=S143, sort_key=30,
         population="Safety Population",
         placeholder_columns=["Baseline\nECOG", "Worst Post-BL\nECOG",
@@ -1364,7 +1651,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.27", title="Adverse Events of Special Interest (AESI) — Summary",
+        id="T14.3.1.14", title="Adverse Events of Special Interest (AESI) — Summary",
         tfl_type=T, section=S143, sort_key=31,
         population="Safety Population",
         placeholder_columns=["AESI Category",
@@ -1399,7 +1686,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.28", title="AESI — Time to First Occurrence",
+        id="T14.3.1.15", title="AESI — Time to First Occurrence",
         tfl_type=T, section=S143, sort_key=32,
         population="Safety Population",
         placeholder_columns=["AESI Category",
@@ -1423,7 +1710,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.29", title="Laboratory Parameters — Descriptive Statistics and Change from Baseline by Visit",
+        id="T14.3.3.6", title="Laboratory Parameters — Descriptive Statistics and Change from Baseline by Visit",
         tfl_type=T, section=S143, sort_key=33,
         population="Safety Population",
         placeholder_columns=["Parameter\nVisit", "Statistic",
@@ -1477,7 +1764,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.30", title="Laboratory Parameters — CTCAE Grade Shift (Baseline to Worst Post-Baseline)",
+        id="T14.3.3.7", title="Laboratory Parameters — CTCAE Grade Shift (Baseline to Worst Post-Baseline)",
         tfl_type=T, section=S143, sort_key=34,
         population="Safety Population",
         placeholder_columns=["Parameter\nBaseline Grade", "Worst Post-BL Grade",
@@ -1520,7 +1807,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.31", title="TEAEs by Worst CTCAE Grade and System Organ Class",
+        id="T14.3.1.16", title="TEAEs by Worst CTCAE Grade and System Organ Class",
         tfl_type=T, section=S143, sort_key=35,
         population="Safety Population",
         placeholder_columns=["System Organ Class",
@@ -1544,7 +1831,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.32", title="TEAEs by Preferred Term — Full Frequency Listing (All PTs)",
+        id="T14.3.1.17", title="TEAEs by Preferred Term — Full Frequency Listing (All PTs)",
         tfl_type=T, section=S143, sort_key=36,
         population="Safety Population",
         placeholder_columns=["Preferred Term", "SOC",
@@ -1567,7 +1854,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.33", title="TEAEs — Maximum Severity by Relationship to Study Drug",
+        id="T14.3.1.18", title="TEAEs — Maximum Severity by Relationship to Study Drug",
         tfl_type=T, section=S143, sort_key=37,
         population="Safety Population",
         placeholder_columns=["System Organ Class\nPreferred Term",
@@ -1590,7 +1877,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.34", title="Time to Onset of TEAEs by System Organ Class",
+        id="T14.3.1.19", title="Time to Onset of TEAEs by System Organ Class",
         tfl_type=T, section=S143, sort_key=38,
         population="Safety Population",
         placeholder_columns=["System Organ Class",
@@ -1611,7 +1898,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.35", title="Duration of TEAEs by System Organ Class",
+        id="T14.3.1.20", title="Duration of TEAEs by System Organ Class",
         tfl_type=T, section=S143, sort_key=39,
         population="Safety Population",
         placeholder_columns=["System Organ Class",
@@ -1631,7 +1918,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.36", title="TEAEs by Preferred Term and Maximum CTCAE Grade — Group 2",
+        id="T14.3.1.21", title="TEAEs by Preferred Term and Maximum CTCAE Grade — Group 2",
         tfl_type=T, section=S143, sort_key=40,
         population="Safety Population",
         placeholder_columns=["System Organ Class\nPreferred Term",
@@ -1654,7 +1941,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.37", title="TEAEs by Cycle — Detailed On-Treatment Period Analysis",
+        id="T14.3.1.22", title="TEAEs by Cycle — Detailed On-Treatment Period Analysis",
         tfl_type=T, section=S143, sort_key=41,
         population="Safety Population",
         placeholder_columns=["Cycle", "Subjects\nat Risk",
@@ -1677,7 +1964,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.38", title="Laboratory Parameters — Clinically Significant Abnormalities Summary",
+        id="T14.3.3.8", title="Laboratory Parameters — Clinically Significant Abnormalities Summary",
         tfl_type=T, section=S143, sort_key=42,
         population="Safety Population",
         placeholder_columns=["Parameter (Unit)\nDirection / Criterion",
@@ -1716,7 +2003,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.39", title="Hematology — Shift Table by CTCAE Grade (Baseline to Worst Post-Baseline) — Detailed",
+        id="T14.3.3.9", title="Hematology — Shift Table by CTCAE Grade (Baseline to Worst Post-Baseline) — Detailed",
         tfl_type=T, section=S143, sort_key=43,
         population="Safety Population",
         placeholder_columns=["Parameter\nBaseline Grade", "Worst Post-BL\nGrade",
@@ -1749,7 +2036,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.40", title="Clinical Chemistry — Shift Table (Normal Range Based) — Baseline to Worst Post-Baseline",
+        id="T14.3.3.10", title="Clinical Chemistry — Shift Table (Normal Range Based) — Baseline to Worst Post-Baseline",
         tfl_type=T, section=S143, sort_key=44,
         population="Safety Population",
         placeholder_columns=["Parameter (Unit)\nBaseline Category",
@@ -1778,7 +2065,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.41", title="Vital Signs — Shift Table (Normal to Clinically Notable)",
+        id="T14.3.4.6", title="Vital Signs — Shift Table (Normal to Clinically Notable)",
         tfl_type=T, section=S143, sort_key=45,
         population="Safety Population",
         placeholder_columns=["Parameter\nCriterion",
@@ -1808,7 +2095,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.42", title="Body Weight — Change from Baseline by Visit",
+        id="T14.3.4.7", title="Body Weight — Change from Baseline by Visit",
         tfl_type=T, section=S143, sort_key=46,
         population="Safety Population",
         placeholder_columns=["Visit", "Statistic",
@@ -1840,7 +2127,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.43", title="ECG Parameters — Quantitative Change from Baseline by Visit",
+        id="T14.3.4.8", title="ECG Parameters — Quantitative Change from Baseline by Visit",
         tfl_type=T, section=S143, sort_key=47,
         population="Safety Population with ECG Data",
         placeholder_columns=["Parameter\nVisit", "Statistic",
@@ -1870,7 +2157,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.44", title="Laboratory Parameters — Worst Post-Baseline Value by Visit Group",
+        id="T14.3.3.11", title="Laboratory Parameters — Worst Post-Baseline Value by Visit Group",
         tfl_type=T, section=S143, sort_key=48,
         population="Safety Population",
         placeholder_columns=["Parameter (Unit)\nVisit Group", "Statistic",
@@ -1902,7 +2189,7 @@ def build_catalog() -> TFLCatalog:
     ))
 
     items.append(TFLItem(
-        id="T14.3.45", title="Adverse Events — Summary of Multiple Occurrences per Subject",
+        id="T14.3.1.23", title="Adverse Events — Summary of Multiple Occurrences per Subject",
         tfl_type=T, section=S143, sort_key=49,
         population="Safety Population",
         placeholder_columns=["Number of TEAEs\nper Subject",
@@ -1929,6 +2216,531 @@ def build_catalog() -> TFLCatalog:
     ))
 
     # =====================================================================
+
+
+    # --- 14.3.2 Other Safety Expansion ---
+    items.append(TFLItem(
+        id="T14.3.2.4", title="Hy's Law — Component Parameters Detail at Peak Value per Subject",
+        tfl_type=T, section=S143, sort_key=4,
+        population="Safety Population with Baseline and >=1 Post-Baseline Labs",
+        placeholder_columns=["Subject", "Group", "Peak ALT\n(xULN)", "Peak AST\n(xULN)",
+                             "Peak TBL\n(xULN)", "Peak ALP\n(xULN)", "Hy's Law\nMet?"],
+        shell_rows=[
+            ["xxxx/xxx", "Gx", "xx.x", "xx.x", "xx.x", "xx.x", "Yes / No"],
+            ["xxxx/xxx", "Gx", "xx.x", "xx.x", "xx.x", "xx.x", "Yes / No"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Hy's Law: ALT/AST >=3xULN + TBL >=2xULN + ALP <2xULN + no alternative etiology. Listing: L16.2.23."],
+        dataset_source="ADSL, ADLB", program_ref="t_hyslaw_detail.sas",
+    ))
+
+    items.append(TFLItem(
+        id="F14.3.2.1", title="eDISH Plot — Peak ALT vs. Peak Total Bilirubin with Hy's Law Zone",
+        tfl_type=F, section=S143, sort_key=5,
+        population="Safety Population with Baseline and Post-Baseline Labs",
+        figure_description="eDISH: log-log scatter of peak ALT (xULN) vs. peak TBL (xULN). Quadrant at ALT >=3xULN, TBL >=2xULN = Hy's Law zone. Individual subject dots labeled.",
+        dataset_source="ADSL, ADLB", program_ref="f_edish.sas",
+        figure_type="box_plot", figure_width_inches=5.5, figure_height_inches=5.5,
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.2.5", title="Deaths — Primary and Secondary Causes with Narrative Cross-Reference",
+        tfl_type=T, section=S143, sort_key=6,
+        population="All Randomized Subjects",
+        placeholder_columns=["Subject", "Group", "Primary Cause\nof Death", "Secondary Cause",
+                             "Days from\nFirst Dose", "Days from\nLast Dose", "Narrative ID"],
+        shell_rows=[
+            ["xxxx/xxx", "Gx", "Disease Progression", "Respiratory Failure", "xxx", "xx", "NAR-xxxx"],
+            ["xxxx/xxx", "Gx", "Adverse Event", "Sepsis / Multi-organ Failure", "xxx", "xx", "NAR-xxxx"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Primary cause per Investigator assessment. Listing: L16.2.20."],
+        dataset_source="ADSL, ADAE, ADTTE", program_ref="t_death_detail.sas",
+    ))
+
+
+    # --- 14.3.3 Lab Expansion (CDISC ADLB) ---
+    items.append(TFLItem(
+        id="T14.3.3.12", title="Coagulation Panel (PT, INR, aPTT) — Change from Baseline by Visit",
+        tfl_type=T, section=S143, sort_key=12,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nVisit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Prothrombin Time (PT, s)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Week 4 — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "INR", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "aPTT (s)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["PT/INR/aPTT per central laboratory. Listing: L16.2.26."],
+        dataset_source="ADSL, ADLB", program_ref="t_coag_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.13", title="Coagulation Panel — Shift Table (Normal / Prolonged, Baseline to Worst Post-BL)",
+        tfl_type=T, section=S143, sort_key=13,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nBaseline", "Worst Post-BL",
+                             "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "PT", "bold": True},
+            {"label": "  Normal", "indent": True},
+            {"label": "    Normal", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "    Prolonged (>ULN)", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "aPTT", "bold": True},
+            {"label": "  Normal → Prolonged (>ULN)", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        dataset_source="ADSL, ADLB", program_ref="t_coag_shift.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.14", title="Urinalysis — Dipstick Parameters Shift (Baseline to Worst Post-Baseline)",
+        tfl_type=T, section=S143, sort_key=14,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nBaseline Result", "Worst Post-BL Result",
+                             "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "pH", "bold": True},
+            {"label": "  Normal (5.0-8.0) → Abnormal", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Protein", "bold": True},
+            {"label": "  Negative → Trace/+", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  Negative → ++/+++", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Glucose", "bold": True},
+            {"label": "  Negative → Positive", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Blood", "bold": True},
+            {"label": "  Negative → Positive", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Ketones", "bold": True},
+            {"label": "  Negative → Positive", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Dipstick urinalysis. Listing: L16.2.25."],
+        dataset_source="ADSL, ADLB", program_ref="t_ua_dip_shift.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.15", title="Lipid Panel (TC, HDL-C, LDL-C, TG) — Change from Baseline by Visit",
+        tfl_type=T, section=S143, sort_key=15,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nVisit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Total Cholesterol (mmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Week 12 — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "HDL Cholesterol (mmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "LDL Cholesterol (mmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Triglycerides (mmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Fasting lipid panel per central laboratory."],
+        dataset_source="ADSL, ADLB", program_ref="t_lipid_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.16", title="Lipid Panel — NCEP ATP III Category Shift (Baseline to Worst Post-BL)",
+        tfl_type=T, section=S143, sort_key=16,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nBaseline Category", "Worst Post-BL Category",
+                             "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "LDL-C", "bold": True},
+            {"label": "  Optimal (<2.6) → Borderline/High (>=3.4)", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "HDL-C", "bold": True},
+            {"label": "  Normal (>=1.0) → Low (<1.0)", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Triglycerides", "bold": True},
+            {"label": "  Normal (<1.7) → High (>=2.3)", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["NCEP ATP III categories. N = subjects with baseline and >=1 post-baseline value."],
+        dataset_source="ADSL, ADLB", program_ref="t_lipid_shift.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.17", title="Thyroid Function (TSH, Free T3, Free T4) — Change from Baseline by Visit",
+        tfl_type=T, section=S143, sort_key=17,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nVisit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "TSH (mIU/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Free T3 (pmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Free T4 (pmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Thyroid function panel. TSH reference range: 0.4-4.0 mIU/L."],
+        dataset_source="ADSL, ADLB", program_ref="t_thyroid_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.18", title="Glucose Metabolism — Fasting Glucose and HbA1c Change from Baseline",
+        tfl_type=T, section=S143, sort_key=18,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nVisit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Fasting Glucose (mmol/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Week 12 — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "HbA1c (%)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Fasting >=8 hours for glucose and lipid assessments."],
+        dataset_source="ADSL, ADLB", program_ref="t_glucose_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.19", title="Cardiac Biomarkers (hs-Troponin I/T, CK-MB, NT-proBNP) — Summary at Baseline and Worst Post-BL",
+        tfl_type=T, section=S143, sort_key=19,
+        population="Safety Population",
+        placeholder_columns=["Parameter\n(Unit)", "Timepoint", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "hs-Troponin I (ng/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Worst Post-BL — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  >=ULN, n (%)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "CK-MB (ng/mL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "NT-proBNP (pg/mL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Cardiac biomarkers collected at Screening, Baseline, and on-treatment timepoints. Listing: L16.2.27."],
+        dataset_source="ADSL, ADLB", program_ref="t_cardiac_bio.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.20", title="Pancreatic Enzymes (Amylase, Lipase) — Change from Baseline",
+        tfl_type=T, section=S143, sort_key=20,
+        population="Safety Population",
+        placeholder_columns=["Parameter\n(Unit)", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Amylase (U/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Worst Post-BL — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  >=2xULN, n (%)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Lipase (U/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Worst Post-BL — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  >=2xULN, n (%)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Pancreatic enzymes per central laboratory. ULN = Upper Limit of Normal."],
+        dataset_source="ADSL, ADLB", program_ref="t_pancreas.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.21", title="Serum Immunoglobulins (IgG, IgA, IgM, IgE) — Change from Baseline",
+        tfl_type=T, section=S143, sort_key=21,
+        population="Safety Population",
+        placeholder_columns=["Parameter\n(Unit)", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "IgG (g/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "IgA (g/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "IgM (g/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "IgE (IU/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Immunoglobulin panel. Listing: L16.2.27."],
+        dataset_source="ADSL, ADLB", program_ref="t_ig_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.22", title="Lymphocyte Subsets (CD3, CD4, CD8, CD19, CD16+CD56) — Change from Baseline by Visit",
+        tfl_type=T, section=S143, sort_key=22,
+        population="Safety Population",
+        placeholder_columns=["Parameter\n(Unit)", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "CD3+ T Cells (cells/uL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "  Week 4 — Mean Chg (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "CD4+ Helper T Cells (cells/uL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "  End of Treatment — Mean Chg (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "CD8+ Cytotoxic T Cells (cells/uL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "CD4/CD8 Ratio", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "CD19+ B Cells (cells/uL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "CD16+CD56+ NK Cells (cells/uL)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx (xx)", "xx (xx)", "...", "xx (xx)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Lymphocyte subsets by flow cytometry. Listing: L16.2.28."],
+        dataset_source="ADSL, ADLB", program_ref="t_lymph_subset.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.23", title="Inflammatory Cytokine Panel (IL-6, TNF-a, IFN-g, IL-1b, IL-10) — Change from Baseline",
+        tfl_type=T, section=S143, sort_key=23,
+        population="Safety Population (Subset with Cytokine Data)",
+        placeholder_columns=["Cytokine\n(Unit)", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "IL-6 (pg/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Cycle 2 — Fold Chg from BL", "indent": True, "values": ["xx.x", "xx.x", "...", "xx.x"]},
+            {"label": "TNF-alpha (pg/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "IFN-gamma (pg/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "IL-1beta (pg/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "IL-10 (pg/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Cytokine panel by multiplex immunoassay. Listing: L16.2.28."],
+        dataset_source="ADSL, ADLB", program_ref="t_cytokine.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.24", title="Renal Function — AKI Staging per KDIGO Criteria",
+        tfl_type=T, section=S143, sort_key=24,
+        population="Safety Population",
+        placeholder_columns=["KDIGO Stage", "Criterion",
+                             "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "Stage 1", "values": ["Cr >=1.5-1.9x BL or >=26.5 umol/L increase", "xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Stage 2", "values": ["Cr >=2.0-2.9x BL", "xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Stage 3", "values": ["Cr >=3.0x BL or >=353.6 umol/L or RRT", "xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Any AKI (Stage 1-3)", "bold": True, "values": ["", "xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+        ],
+        footnotes=["KDIGO 2012 criteria. BL = Baseline creatinine. RRT = Renal Replacement Therapy. N = subjects with >=1 post-BL creatinine."],
+        dataset_source="ADSL, ADLB", program_ref="t_aki_kdigo.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.3.25", title="Urine Chemistry — Protein, Creatinine, and Protein/Creatinine Ratio",
+        tfl_type=T, section=S143, sort_key=25,
+        population="Safety Population",
+        placeholder_columns=["Parameter\n(Unit)", "Visit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Urine Protein (g/24h)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Week 12 — Mean Chg (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "UPCR (mg/mmol)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Week 12 — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Microalbumin (mg/L)", "bold": True},
+            {"label": "  Baseline — Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["UPCR = Urine Protein/Creatinine Ratio. Listing: L16.2.25."],
+        dataset_source="ADSL, ADLB", program_ref="t_urine_chem.sas",
+    ))
+
+    items.append(TFLItem(
+        id="F14.3.3.4", title="Renal Safety Panel — eGFR Trajectory Over Time by Treatment Arm",
+        tfl_type=F, section=S143, sort_key=26,
+        population="Safety Population",
+        figure_description="Line plot: mean (+/-SD) eGFR (CKD-EPI) over visits, individual subject spaghetti lines in background, treatment arms in different colors.",
+        dataset_source="ADSL, ADLB", program_ref="f_egfr_traj.sas",
+        figure_type="longitudinal", figure_width_inches=5.5, figure_height_inches=3.5,
+    ))
+
+    items.append(TFLItem(
+        id="F14.3.3.5", title="Laboratory Toxicity Heatmap — CTCAE Grade by Parameter and Subject",
+        tfl_type=F, section=S143, sort_key=27,
+        population="Safety Population",
+        figure_description="Heatmap: subjects (rows) vs. lab parameters (columns), color = worst CTCAE grade. Sidebar: treatment arm. Parameters: Hgb, Plt, Neut, ALT, AST, TBL, Cr.",
+        dataset_source="ADSL, ADLB", program_ref="f_lab_heatmap.sas",
+        figure_type="box_plot", figure_width_inches=6.5, figure_height_inches=4,
+    ))
+
+
+    # --- 14.3.4 VS/ECG/PE Expansion (CDISC ADVS, ADEG, ADPE) ---
+    items.append(TFLItem(
+        id="T14.3.4.9", title="Pulse Oximetry (SpO2) — Change from Baseline by Visit",
+        tfl_type=T, section=S143, sort_key=9,
+        population="Safety Population",
+        placeholder_columns=["Visit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Baseline", "bold": True},
+            {"label": "  n", "indent": True, "values": ["xx", "xx", "...", "xx"]},
+            {"label": "  Mean (SD), %", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Week 4 — Mean Chg (SD)", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "End of Treatment — Mean Chg (SD)", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "SpO2 <92%, n (%)", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+        ],
+        dataset_source="ADSL, ADVS", program_ref="t_spo2_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.10", title="Respiratory Rate — Change from Baseline by Visit",
+        tfl_type=T, section=S143, sort_key=10,
+        population="Safety Population",
+        placeholder_columns=["Visit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Baseline — Mean (SD), breaths/min", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Week 4 — Mean Chg (SD)", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "End of Treatment — Mean Chg (SD)", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "RR >20 breaths/min, n (%)", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        dataset_source="ADSL, ADVS", program_ref="t_rr_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.11", title="Body Temperature — Change from Baseline and Fever Incidence",
+        tfl_type=T, section=S143, sort_key=11,
+        population="Safety Population",
+        placeholder_columns=["Visit / Criterion", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Baseline — Mean (SD), deg C", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "End of Treatment — Mean Chg (SD)", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Fever (>=38.0 deg C) at Any Visit, n (%)", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Grade 1 (38.0-39.0 deg C)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Grade >=2 (>39.0 deg C)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Temperature measurement method per site SOP. CTCAE [xx]."],
+        dataset_source="ADSL, ADVS", program_ref="t_temp_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.12", title="Vital Signs — Categorical Outlier Summary (All Visits Pooled)",
+        tfl_type=T, section=S143, sort_key=12,
+        population="Safety Population",
+        placeholder_columns=["Parameter\nCriterion",
+                             "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "SBP >=160 mmHg", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "SBP <=90 mmHg (with >=20 mmHg decrease)", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "DBP >=100 mmHg", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "DBP <=50 mmHg (with >=15 mmHg decrease)", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "HR >=120 bpm", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "HR <=45 bpm", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "SpO2 <92%", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "RR >24 breaths/min", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["N = subjects with >=1 post-baseline assessment for each parameter."],
+        dataset_source="ADSL, ADVS", program_ref="t_vs_outlier.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.13", title="Holter Monitoring Summary — Heart Rate and Arrhythmia Events (Phase 1)",
+        tfl_type=T, section=S143, sort_key=13,
+        population="Safety Population (Subset with Holter Data)",
+        placeholder_columns=["Parameter", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "HR — Mean (SD), bpm", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "HR — Minimum, bpm", "values": ["xx", "xx", "...", "xx"]},
+            {"label": "HR — Maximum, bpm", "values": ["xx", "xx", "...", "xx"]},
+            {"label": "Ventricular Ectopics — Total per 24h, Median (Range)", "values": ["xx (x-xx)", "xx (x-xx)", "...", "xx (x-xx)"]},
+            {"label": "Supraventricular Ectopics — Total per 24h, Median (Range)", "values": ["xx (x-xx)", "xx (x-xx)", "...", "xx (x-xx)"]},
+            {"label": "Ventricular Tachycardia (>=3 beats), n (%)", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+        ],
+        footnotes=["24-hour Holter monitoring at Baseline and post-dose timepoints (Phase 1 only)."],
+        dataset_source="ADSL, ADEG", program_ref="t_holter.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.14", title="ECG — T-Wave and ST-Segment Morphology Findings by Visit",
+        tfl_type=T, section=S143, sort_key=14,
+        population="Safety Population with ECG Data",
+        placeholder_columns=["Visit\nFinding", "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "Baseline", "bold": True},
+            {"label": "  Normal", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  T-wave abnormality", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  ST-segment abnormality", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Worst Post-Baseline", "bold": True},
+            {"label": "  Normal", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  New T-wave abnormality", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  New ST-segment abnormality", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Morphology findings per central cardiologist over-read. N = subjects with ECG at that timepoint."],
+        dataset_source="ADSL, ADEG", program_ref="t_ecg_morph.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.15", title="Physical Examination — Abnormal Findings by Body System at Baseline and EOT",
+        tfl_type=T, section=S143, sort_key=15,
+        population="Safety Population",
+        placeholder_columns=["Body System\nFinding",
+                             "Baseline\nn (%)", "End of Treatment\nn (%)"],
+        shell_rows=[
+            {"label": "General Appearance", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Head/Eyes/Ears/Nose/Throat", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Cardiovascular", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Respiratory", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Abdomen", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Musculoskeletal", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Neurological", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Dermatological", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "Lymph Nodes", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "..."]},
+        ],
+        footnotes=["Physical examination per protocol schedule. Listing: L16.2.24."],
+        dataset_source="ADSL, ADPE", program_ref="t_pe_findings.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.16", title="Physical Examination — New or Worsened Findings from Baseline by Body System",
+        tfl_type=T, section=S143, sort_key=16,
+        population="Safety Population",
+        placeholder_columns=["Body System", "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "Any New or Worsened Finding", "bold": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Cardiovascular", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Respiratory", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Abdomen", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Neurological", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Dermatological", "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["New = not present at Baseline. Worsened = increased severity from Baseline. N = subjects with both BL and >=1 post-BL exam."],
+        dataset_source="ADSL, ADPE", program_ref="t_pe_new_worse.sas",
+    ))
+
+    items.append(TFLItem(
+        id="F14.3.4.2", title="QTcF vs. Plasma Drug Concentration Scatter Plot with LOESS Fit",
+        tfl_type=F, section=S143, sort_key=17,
+        population="Safety Population with Time-Matched PK and ECG",
+        figure_description="Scatter: placebo-adjusted change from baseline QTcF vs. plasma concentration, LOESS fit with 90% CI band, ICH E14 reference line at 10 ms.",
+        dataset_source="ADSL, ADEG, ADPC", program_ref="f_qtcf_conc.sas",
+        figure_type="longitudinal", figure_width_inches=5.5, figure_height_inches=3.5,
+    ))
+
     # 14.4 SPECIAL ASSESSMENTS — Tables + Figures ONLY (no listings)
     # =====================================================================
 
@@ -2088,6 +2900,149 @@ def build_catalog() -> TFLCatalog:
     ))
 
     # =====================================================================
+
+    # --- 14.4 Expansion (CDISC ADIS, ADBM, ADPC) ---
+    items.append(TFLItem(
+        id="T14.4.8", title="ADA Titer Distribution by Visit — Negative, Low, Medium, High",
+        tfl_type=T, section=S144, sort_key=8,
+        population="Safety Population with ADA Samples",
+        placeholder_columns=["Visit\nADA Titer Category",
+                             "G1\nn/N (%)", "G2\nn/N (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "Baseline", "bold": True},
+            {"label": "  ADA Negative", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  Low Titer (1:<xxx)", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  Medium Titer", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  High Titer (>=1:xxxx)", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Post-Baseline (Any)", "bold": True},
+            {"label": "  ADA Negative", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  Low Titer", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  Medium Titer", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  High Titer", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "  Treatment-Emergent ADA Positive", "bold": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["ADA assessed by validated bridging immunoassay. Titer categories defined per assay validation report. Listing: L16.2.16."],
+        dataset_source="ADSL, ADIS", program_ref="t_ada_titer.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.9", title="ADA Impact on Pharmacokinetics — Cmax and AUC in ADA+ vs. ADA- Subjects",
+        tfl_type=T, section=S144, sort_key=9,
+        population="PK Population with ADA Data",
+        placeholder_columns=["PK Parameter\nADA Status", "Statistic",
+                             "ADA Positive\n(N=XX)", "ADA Negative\n(N=XX)",
+                             "Ratio\n(ADA+/ADA-)"],
+        shell_rows=[
+            {"label": "Cmax (ng/mL)", "bold": True},
+            {"label": "  ADA Positive — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "", ""]},
+            {"label": "  ADA Negative — Geo Mean (CV%)", "indent": True, "values": ["", "xx.x (xx.x)", ""]},
+            {"label": "  Geometric Mean Ratio (90% CI)", "indent": True, "values": ["", "", "x.xx (x.xx, x.xx)"]},
+            {"label": "AUC0-tau (ng*h/mL)", "bold": True},
+            {"label": "  ADA Positive — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "", ""]},
+            {"label": "  ADA Negative — Geo Mean (CV%)", "indent": True, "values": ["", "xx.x (xx.x)", ""]},
+            {"label": "  Geometric Mean Ratio (90% CI)", "indent": True, "values": ["", "", "x.xx (x.xx, x.xx)"]},
+        ],
+        footnotes=["ADA+ = treatment-emergent ADA positive. ADA- = ADA negative throughout. GMR = geometric mean ratio."],
+        dataset_source="ADSL, ADIS, ADPP", program_ref="t_ada_pk_impact.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.10", title="Neutralizing Antibody (Nab) — Incidence, Titer, and Cross-Reactivity Status",
+        tfl_type=T, section=S144, sort_key=10,
+        population="Safety Population with ADA Samples",
+        placeholder_columns=["Nab Parameter",
+                             "G1\nn/N1 (%)", "G2\nn/N2 (%)", "...", "Overall\nn/N (%)"],
+        shell_rows=[
+            {"label": "Nab Evaluable Subjects", "bold": True, "values": ["xx", "xx", "...", "xx"]},
+            {"label": "Nab Positive, n (%)", "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Among ADA Positive Subjects", "indent": True, "values": ["xx/xx (xx.x)", "xx/xx (xx.x)", "...", "xx/xx (xx.x)"]},
+            {"label": "Nab Titer Distribution", "bold": True},
+            {"label": "  Low (<1:xx)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  Medium (1:xx-1:xxx)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "  High (>=1:xxxx)", "indent": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "Cross-Reactivity to Endogenous Protein", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Nab = neutralizing antibody. N1/N2 = number of ADA-evaluable subjects. Cross-reactivity assessed by competitive ligand-binding assay."],
+        dataset_source="ADSL, ADIS", program_ref="t_nab_detail.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.11", title="Soluble Pharmacodynamic Biomarker Change from Baseline Over Time",
+        tfl_type=T, section=S144, sort_key=11,
+        population="PD Population",
+        placeholder_columns=["Biomarker\nVisit", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Soluble Target X (ng/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Cycle 1 Day 8 — Fold Chg from BL", "indent": True, "values": ["x.xx", "x.xx", "...", "x.xx"]},
+            {"label": "  Cycle 2 Day 1 — Fold Chg from BL", "indent": True, "values": ["x.xx", "x.xx", "...", "x.xx"]},
+            {"label": "  End of Treatment — Fold Chg from BL", "indent": True, "values": ["x.xx", "x.xx", "...", "x.xx"]},
+            {"label": "Soluble Biomarker Y (pg/mL)", "bold": True},
+            {"label": "  Baseline — Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  Cycle 2 Day 1 — Fold Chg from BL", "indent": True, "values": ["x.xx", "x.xx", "...", "x.xx"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["PD biomarkers assessed by validated assays. Fold change = post-baseline / baseline."],
+        dataset_source="ADSL, ADBM", program_ref="t_pd_bio_chg.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.12", title="Trough PK Concentration (Ctrough) by Cycle — Target Attainment",
+        tfl_type=T, section=S144, sort_key=12,
+        population="PK Population",
+        placeholder_columns=["Cycle\nDay", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Cycle 1 Day 15 — Mean (SD), ng/mL", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Cycle 2 Day 1 — Mean (SD), ng/mL", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Cycle 3 Day 1 — Mean (SD), ng/mL", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Cycle 4 Day 1 — Mean (SD), ng/mL", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Cycle 6 Day 1 — Mean (SD), ng/mL", "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Ctrough Above Target Threshold, n (%)", "bold": True, "values": ["xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"]},
+            {"label": "[...]", "values": ["...", "...", "...", "..."]},
+        ],
+        footnotes=["Ctrough = pre-dose concentration. Target threshold per PK/PD modeling. Listing: L16.2.14."],
+        dataset_source="ADSL, ADPC", program_ref="t_ctrough.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.13", title="Steady-State Attainment — Trough Concentrations Across Dosing Cycles (ANOVA)",
+        tfl_type=T, section=S144, sort_key=13,
+        population="PK Population",
+        placeholder_columns=["Cycle Comparison",
+                             "GMR (90% CI)", "CV%",
+                             "Conclusion"],
+        shell_rows=[
+            {"label": "Cycle 2 vs. Cycle 1 Ctrough", "values": ["x.xx (x.xx, x.xx)", "xx.x", "Steady state / Not yet"]},
+            {"label": "Cycle 3 vs. Cycle 2 Ctrough", "values": ["x.xx (x.xx, x.xx)", "xx.x", "Steady state / Not yet"]},
+            {"label": "Cycle 4 vs. Cycle 3 Ctrough", "values": ["x.xx (x.xx, x.xx)", "xx.x", "Steady state achieved"]},
+            {"label": "Cycle 6 vs. Cycle 4 Ctrough", "values": ["x.xx (x.xx, x.xx)", "xx.x", "Steady state maintained"]},
+        ],
+        footnotes=["Steady state = no statistically significant increase between consecutive cycles (ANOVA on log-transformed Ctrough, 90% CI of GMR within 0.80-1.25)."],
+        dataset_source="ADSL, ADPC", program_ref="t_steady_state.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.14", title="Urine Pharmacokinetic Parameters — Renal Excretion and Cumulative Recovery",
+        tfl_type=T, section=S144, sort_key=14,
+        population="PK Population (Subset with Urine PK)",
+        placeholder_columns=["PK Parameter\n(Unit)", "Statistic",
+                             "G1\n(N=XX)", "G2\n(N=XX)", "...", "Overall\n(N=XX)"],
+        shell_rows=[
+            {"label": "Ae (Amount Excreted Unchanged, mg)", "bold": True},
+            {"label": "  Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "  % of Dose, Mean (SD)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Renal Clearance (CLr, L/h)", "bold": True},
+            {"label": "  Geo Mean (CV%)", "indent": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+            {"label": "Cumulative Urinary Recovery (% Dose, 0-24h)", "bold": True, "values": ["xx.x (xx.x)", "xx.x (xx.x)", "...", "xx.x (xx.x)"]},
+        ],
+        footnotes=["Urine PK collected over 0-4h, 4-8h, 8-12h, 12-24h intervals post-dose. Ae = cumulative amount excreted unchanged."],
+        dataset_source="ADSL, ADPP", program_ref="t_urine_pk.sas",
+    ))
+
     # 16.2 PATIENT DATA LISTINGS (21 items — including PK/ADA/Biomarker from 14.4)
     # =====================================================================
 
@@ -2402,6 +3357,183 @@ def build_catalog() -> TFLCatalog:
             ["[...]", "...", "...", "...", "...", "...", "..."],
         ],
         dataset_source="ADSL, ADCM", program_ref="l_prior_cancer_proc.sas",
+    ))
+
+    
+    # --- 16.2 Listing Expansion (CDISC Source Data) ---
+    items.append(TFLItem(
+        id="L16.2.22", title="Listing of Adverse Events of Special Interest (AESI)",
+        tfl_type=L, section=S162, sort_key=22,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "AESI Category", "Preferred Term",
+                             "CTCAE Grade", "Start Date", "End Date",
+                             "Outcome", "Serious?", "Relationship", "Narrative ID"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Hepatotoxicity", "ALT Increased",
+             "3", "DDMMMYYYY", "DDMMMYYYY", "Recovered", "N", "Related", "NAR-xxxx"],
+            ["xxx", "xxxx/xxx", "Gx", "Infusion Reaction", "Anaphylaxis",
+             "4", "DDMMMYYYY", "DDMMMYYYY", "Recovered/Resolved with Sequelae", "Y", "Related", "NAR-xxxx"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["AESI categories per protocol. MedDRA [xx.x]. CTCAE [xx]. Refer to Section 14.3.1 for AESI summary tables."],
+        dataset_source="ADSL, ADAE", program_ref="l_aesi.sas",
+        dictionary_versions={"MedDRA": "[xx.x]", "CTCAE": "[xx]"},
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.23", title="Listing of Subjects with Hy's Law Laboratory Criteria",
+        tfl_type=L, section=S162, sort_key=23,
+        population="Safety Population with Baseline and Post-Baseline Labs",
+        placeholder_columns=["Site", "Subject", "Group", "Visit", "ALT (U/L)",
+                             "ALT xULN", "AST (U/L)", "AST xULN",
+                             "TBL (umol/L)", "TBL xULN", "ALP (U/L)",
+                             "ALP xULN", "Hy's Law?", "Alternative Etiology"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Wk 8", "xxx", "x.x", "xxx", "x.x",
+             "xx.x", "x.x", "xxx", "x.x", "Yes", "xxxxxxx"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Hy's Law: ALT/AST >=3xULN, TBL >=2xULN, ALP <2xULN, no alternative etiology. Refer to T14.3.2.2 and T14.3.2.4."],
+        dataset_source="ADSL, ADLB", program_ref="l_hyslaw.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.24", title="Listing of Physical Examination Findings",
+        tfl_type=L, section=S162, sort_key=24,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "Visit",
+                             "Body System", "Finding",
+                             "Baseline Status", "Current Status"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Screening", "Cardiovascular", "Murmur Grade II/VI",
+             "N/A", "Abnormal NCS"],
+            ["xxx", "xxxx/xxx", "Gx", "EOT", "Respiratory", "Crackles left base",
+             "Normal", "Abnormal CS"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["NCS = Not Clinically Significant. CS = Clinically Significant. Refer to T14.3.4.15-T14.3.4.16."],
+        dataset_source="ADSL, ADPE", program_ref="l_pe.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.25", title="Listing of Urinalysis Results — Dipstick and Microscopic",
+        tfl_type=L, section=S162, sort_key=25,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "Visit",
+                             "pH", "Protein", "Glucose", "Blood",
+                             "Ketones", "Microscopic Findings"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Baseline", "6.0", "Neg", "Neg", "Neg",
+             "Neg", "No casts/crystals"],
+            ["xxx", "xxxx/xxx", "Gx", "Wk 12", "7.5", "++", "Neg", "+",
+             "Neg", "Hyaline casts: 2-5/LPF"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Dipstick: Neg/Trace/+/++/+++. LPF = Low Power Field. Refer to T14.3.3.14."],
+        dataset_source="ADSL, ADLB", program_ref="l_ua.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.26", title="Listing of Coagulation Panel Results",
+        tfl_type=L, section=S162, sort_key=26,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "Visit",
+                             "PT (s)", "PT Ref Range", "INR",
+                             "aPTT (s)", "aPTT Ref Range", "Flag"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Baseline", "xx.x", "xx.x-xx.x", "x.xx",
+             "xx.x", "xx.x-xx.x", "N"],
+            ["xxx", "xxxx/xxx", "Gx", "Wk 4", "xx.x", "xx.x-xx.x", "x.xx",
+             "xx.x", "xx.x-xx.x", "H"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Flag: L=Below, N=Within, H=Above reference range. Refer to T14.3.3.12-T14.3.3.13."],
+        dataset_source="ADSL, ADLB", program_ref="l_coag.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.27", title="Listing of Cardiac Biomarkers and Immunoglobulins",
+        tfl_type=L, section=S162, sort_key=27,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "Visit",
+                             "hs-Troponin I (ng/L)", "CK-MB (ng/mL)",
+                             "NT-proBNP (pg/mL)", "IgG (g/L)", "IgM (g/L)"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Baseline", "xx.x", "xx.x", "xxx", "xx.x", "xx.x"],
+            ["xxx", "xxxx/xxx", "Gx", "Wk 12", "xx.x", "xx.x", "xxx", "xx.x", "xx.x"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Refer to T14.3.3.19 and T14.3.3.21 for summary tables."],
+        dataset_source="ADSL, ADLB", program_ref="l_cardiac_bio.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.28", title="Listing of Lymphocyte Subsets and Cytokine Panel",
+        tfl_type=L, section=S162, sort_key=28,
+        population="Safety Population (Subset with Immunophenotyping)",
+        placeholder_columns=["Site", "Subject", "Group", "Visit",
+                             "CD3 (cells/uL)", "CD4 (cells/uL)", "CD8 (cells/uL)",
+                             "CD4/CD8 Ratio", "CD19 (cells/uL)", "CD16+56 (cells/uL)"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Baseline", "xxx", "xxx", "xxx", "x.xx", "xxx", "xxx"],
+            ["xxx", "xxxx/xxx", "Gx", "Cycle 2 D1", "xxx", "xxx", "xxx", "x.xx", "xxx", "xxx"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Flow cytometry. Refer to T14.3.3.22-T14.3.3.23 for summary tables."],
+        dataset_source="ADSL, ADLB", program_ref="l_lymph_cyto.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.29", title="Listing of Infusion-Related Reactions — Timing and Management Detail",
+        tfl_type=L, section=S162, sort_key=29,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "Cycle/Infusion",
+                             "IRR PT", "CTCAE Grade", "Onset from Start (min)",
+                             "Infusion Rate Change", "Prophylaxis Given",
+                             "Completed Infusion?", "Outcome"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "C1/Inf1", "Chills", "2", "45",
+             "Rate reduced 50%", "Antihistamine", "Y", "Recovered"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["IRR = infusion-related reaction (onset during or within 24h of infusion). Refer to T14.3.1.13 and T14.3.1.25."],
+        dataset_source="ADSL, ADAE, ADEX", program_ref="l_irr.sas",
+        dictionary_versions={"CTCAE": "[xx]"},
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.30", title="Listing of Dose Modifications — Interruptions and Reductions Detail",
+        tfl_type=L, section=S162, sort_key=30,
+        population="Safety Population",
+        placeholder_columns=["Site", "Subject", "Group", "Cycle",
+                             "Modification Type", "Reason",
+                             "AE-Related PT", "Original Dose",
+                             "Modified Dose", "Days Interrupted"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "C3", "Interruption", "Neutropenia",
+             "Neutropenia Gr3", "xxx mg", "0 mg", "7"],
+            ["xxx", "xxxx/xxx", "Gx", "C5", "Reduction", "Fatigue",
+             "Fatigue Gr2", "xxx mg", "xx mg", "0"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Refer to T14.3.1.7 and T14.3.1.25 for summary tables."],
+        dataset_source="ADSL, ADEX", program_ref="l_dose_mod.sas",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.31", title="Listing of Reproductive Hormone Panel Results",
+        tfl_type=L, section=S162, sort_key=31,
+        population="Safety Population (Subset with Hormone Data)",
+        placeholder_columns=["Site", "Subject", "Group", "Sex", "Visit",
+                             "FSH (IU/L)", "LH (IU/L)", "Estradiol (pmol/L)",
+                             "Testosterone (nmol/L)", "AMH (pmol/L)"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "F", "Baseline", "xx.x", "xx.x", "xxx", "x.x", "xx.x"],
+            ["xxx", "xxxx/xxx", "Gx", "M", "Baseline", "xx.x", "xx.x", "xxx", "xx.x", "N/A"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Reproductive hormones collected per protocol. AMH = Anti-Mullerian Hormone (females only where applicable)."],
+        dataset_source="ADSL, ADLB", program_ref="l_hormone.sas",
     ))
 
     return TFLCatalog(items)
