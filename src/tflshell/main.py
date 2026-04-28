@@ -148,18 +148,22 @@ def _infer_source_type(file_path: str) -> str:
     return "study_note"
 
 
-def cmd_recommend(args):
+def _build_sources(text_values, input_files) -> list[InputSource]:
     sources: list[InputSource] = []
-    for text in args.text or []:
+    for text in text_values or []:
         sources.append(InputSource(source_type="user_prompt", content_text=text))
-    for file_path in args.input_file or []:
+    for file_path in input_files or []:
         sources.append(
             InputSource(
                 source_type=_infer_source_type(file_path),
                 file_path=file_path,
             )
         )
+    return sources
 
+
+def cmd_recommend(args):
+    sources = _build_sources(args.text, args.input_file)
     if not sources:
         print("At least one --text or --input-file source is required for recommend.")
         return 1

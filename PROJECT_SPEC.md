@@ -1,22 +1,20 @@
-# PROJECT_SPEC
+# 项目规范
 
-## 1. Specification Purpose
+## 1. 文档目的
 
-This document defines the governed project specification for the `TFLshell`
-repository. It is the primary source for:
+本文档定义 `TFLshell` 项目的受控规范，是 `TFLs-Shell Product` 的核心规则来源。
 
-- scope boundaries
-- numbering and labeling rules
-- applicability rules
-- phase and therapeutic-area coverage expectations
-- shell-family selection logic
-- metadata expectations for future automation
+它主要回答：
 
-## 2. Controlled Scope
+- 当前治理范围是什么
+- shell 编号与标签如何保持一致
+- applicability 如何受控
+- 各类 shell family 的覆盖预期是什么
+- 元数据需要满足哪些最低要求
 
-### 2.1 In-Scope CSR Sections
+## 2. 受控范围
 
-The governed master-shell scope is restricted to:
+### 2.1 当前纳入范围
 
 - `14.1` Demographics and Baseline Characteristics
 - `14.2` Efficacy
@@ -24,59 +22,55 @@ The governed master-shell scope is restricted to:
 - `14.4` Special Assessments
 - `16.2` Patient Data Listings
 
-### 2.2 Out of Scope
+### 2.2 当前不纳入范围
 
-The following are out of scope for the governed master library unless this
-document is revised explicitly:
+- `16.1`
+- 最终统计结果
+- study-specific SAP 最终裁决
+- 受试者级伪造数据
+- 仅围绕 owner、deadline、status 的项目追踪流程
 
-- `16.1` statistical tables and supporting narratives outside the defined shell
-  outputs
-- final study results
-- study-specific SAP decision making
-- subject-level mock datasets
-- project-tracker workflows centered on owners, due dates, or status flags
+## 3. 输出类型
 
-## 3. Output Types
-
-The library governs three output classes:
+本项目治理三类输出：
 
 - `Table`
 - `Figure`
 - `Listing`
 
-Tables and listings are shell-only and result-free.
-Figures may retain simulated visuals for reviewer understanding.
+其中：
 
-## 4. Numbering and Labeling Rules
+- `Table` 与 `Listing` 保持 shell-only、result-free
+- `Figure` 可以保留模拟示意，但不得暗示最终分析结果
 
-### 4.1 Internal IDs
+## 4. 编号与标签规则
 
-Internal IDs follow:
+### 4.1 内部 ID
+
+内部 ID 采用：
 
 `[Type][Section].[Sequence]`
 
-Examples:
+示例：
 
 - `T14.2.11`
 - `F14.2.4`
 - `L16.2.3`
 
-### 4.2 Reviewer-Facing Labels
+### 4.2 对外标签
 
-Reviewer-facing labels omit the leading type letter from the numeric portion.
-
-Examples:
+对外展示标签应去掉类型字母后的数字部分，例如：
 
 - `Table 14.2.11`
 - `Figure 14.2.4`
 - `Listing 16.2.3`
 
-### 4.3 Synchronization Rule
+### 4.3 同步规则
 
-The following must always stay aligned:
+以下字段必须保持一致：
 
 - internal ID
-- reviewer-facing label
+- display label
 - section
 - title
 - type
@@ -85,69 +79,63 @@ The following must always stay aligned:
 - study phase scope
 - coverage summary
 
-Any change to one of these fields requires review of the catalog, generators,
-and guidance documents in the same change set.
+修改其中任一字段时，应同步检查 catalog、生成器与文档。
 
-## 5. Applicability Rules
+## 5. Applicability 规则
 
-Each shell must carry one controlled applicability label:
+每个 shell 必须带一个受控 applicability 标签：
 
 - `General`
 - `Oncology only`
 - `Non-Oncology only`
 
-### 5.1 Interpretation
+### 5.1 含义
 
-- `General` means intended for both oncology and non-oncology studies unless the
-  protocol or SAP requires otherwise.
-- `Oncology only` means the shell is based on oncology-specific endpoint or
-  review practice and should not be reused by default outside oncology.
-- `Non-Oncology only` means the shell is driven by non-oncology practice and
-  should not be generalized automatically.
+- `General`：默认可用于 oncology 与 non-oncology，除非 protocol 或 SAP 另有限制
+- `Oncology only`：依赖 oncology 特定终点或审阅习惯，不应默认外推
+- `Non-Oncology only`：依赖 non-oncology 特定实践，不应自动泛化
 
-### 5.2 Current Governance Note
+### 5.2 当前状态
 
-Current repository implementation is still stronger for `Oncology only` than for
-`Non-Oncology only`, but the library now includes explicit non-oncology-only
-shells for responder, event-rate, time-to-event, respiratory exacerbation,
-cardiovascular event, and autoimmune flare review.
+当前 Product 在 oncology 覆盖上仍然更强，但已加入若干明确的
+`Non-Oncology only` 家族，例如：
 
-## 6. Shell Construction Rules
+- responder
+- event-rate
+- time-to-event
+- respiratory exacerbation
+- cardiovascular event
+- autoimmune flare
+
+## 6. Shell 构造规则
 
 ### 6.1 Tables
 
-- preserve structural rows needed to communicate intended display semantics
-- keep result-bearing cells generic and non-final
-- allow placeholder styles that match the target display format
-- use controlled `Group 1` / `Group 2` headers with an optional separate
-  ellipsis expansion column where the master shell needs to indicate more groups
-- do not merge the ellipsis expansion column with `Overall`, `Total`, `HR`, or
-  other analytic columns
-- allow `Overall` only when a pooled summary is clinically standard and should
-  remain in the governed shell
-- keep sample-size headers generic, for example `N=xx`
-- do not retain subgroup-only tables when the same analytical intent is better
-  covered by the main table plus a forest plot
-- require source-listing references to be specific when a governed listing
-  exists
+- 保留表达展示语义所需的结构行
+- 结果相关单元格保持通用 placeholder
+- 允许使用与目标展示相符的 placeholder 样式
+- 使用受控的 `Group 1 / Group 2` 结构
+- 如需表示更多组，允许额外 ellipsis expansion 列，但不要与分析列合并
+- 仅在临床上合理时保留 `Overall`
+- 样本量表头保持通用，例如 `N=xx`
+- 若主表加 forest plot 更合适，则不保留冗余 subgroup-only 表
+- 如存在受控 listing，应使用具体 source-listing 引用
 
 ### 6.2 Listings
 
-- preserve listing structure and key variable labels
-- do not introduce fabricated subject-level records
-- preserve sort and display guidance where relevant
+- 保留 listing 结构与关键变量标签
+- 不引入虚构受试者记录
+- 在需要时保留排序与展示规则
 
 ### 6.3 Figures
 
-- simulated visuals are allowed as shell artifacts
-- simulated visuals must not imply final analysis output
-- figure title, body, notes, and pagination should remain grouped where
-  reasonably possible
+- 允许模拟示意图
+- 不得暗示最终分析输出
+- 标题、图体、注释与分页应尽量保持成组
 
-## 7. Metadata Requirements
+## 7. 元数据要求
 
-Each governed shell should be traceable through metadata. The minimum governed
-metadata model is:
+每个受控 shell 至少应保留以下元数据：
 
 - `TFL ID`
 - `Display Label`
@@ -166,20 +154,9 @@ metadata model is:
 - `Footnotes`
 - `Remarks`
 
-The future preferred metadata model should additionally include:
+## 8. 覆盖矩阵
 
-- `Shell Family`
-- `Endpoint Class`
-- `Analysis Class`
-- `Regulatory Criticality`
-- item-level phase tagging that is more specific than `Study Phase Scope`
-- machine-checkable coverage classification beyond the current `Coverage Summary`
-
-## 8. Coverage Matrix
-
-The matrix below defines governance expectations at the shell-family level.
-
-| Study Context | Demographics `14.1` | Efficacy `14.2` | Safety `14.3` | Special `14.4` | Listings `16.2` |
+| 研究语境 | `14.1` | `14.2` | `14.3` | `14.4` | `16.2` |
 | --- | --- | --- | --- | --- | --- |
 | Phase I Oncology | Core | Conditional | Core | Core | Core |
 | Phase I Non-Oncology | Core | Conditional | Core | Core | Core |
@@ -188,120 +165,53 @@ The matrix below defines governance expectations at the shell-family level.
 | Phase III Oncology | Core | Core | Core | Conditional | Core |
 | Phase III Non-Oncology | Core | Core | Core | Conditional | Core |
 
-### 8.1 Matrix Interpretation
+说明：
 
-- `Core` means the shell family should normally be represented in a governed
-  study package for this context.
-- `Conditional` means the shell family depends on modality, endpoint strategy,
-  therapeutic mechanism, or protocol design.
-- `Gap` is not shown at the family row level above because the gap is more often
-  at the subfamily level and is listed below.
+- `Core`：通常应纳入
+- `Conditional`：依赖方案、终点或机制
+- `Gap`：治理上已识别但当前未充分覆盖
 
-## 9. Subfamily Expectations
+## 9. Study-specific Tailoring 规则
 
-### 9.1 Phase I Core or Conditional Subfamilies
+主库是受控基线，允许 study-specific tailoring，但必须遵循：
 
-| Subfamily | Status |
-| --- | --- |
-| Subject disposition, demographics, populations | Core |
-| Exposure, dose intensity, treatment duration | Core |
-| AE, SAE, deaths, laboratory, vital signs, ECG/QTc | Core |
-| PK concentration and parameter summaries | Core when PK is collected |
-| Dose-escalation, DLT, MTD, RP2D, cohort review | Core to Conditional |
-| Food-effect or crossover-specific summaries | Conditional |
-| Intensive ECG or TQT-oriented interpretation | Conditional to Gap depending on program |
-| Exploratory efficacy or biomarker summaries | Conditional |
+- 保持编号控制，除非已正式批准调整
+- 仅保留当前研究真正适用的 shell 变体
+- 用 protocol / SAP 语言定制标题、population 与 footnote
+- 可以替换 placeholder，但不得破坏治理边界
+- 不得静默删除 traceability 内容
 
-### 9.2 Phase II Core or Conditional Subfamilies
+## 10. Product 与 SKILL 的规范关系
 
-| Subfamily | Status |
-| --- | --- |
-| Primary and secondary efficacy summaries | Core |
-| Sensitivity, subgroup, and estimand-supporting tables | Core |
-| Standard safety package | Core |
-| Biomarker, PK/PD, ADA, PRO | Conditional |
-| Early go/no-go design summaries or adaptive decision displays | Gap |
+在当前口径下：
 
-### 9.3 Phase III Core or Conditional Subfamilies
+- `TFLs-Shell Product` 是本规范的主要落地层
+- `TFLs-Shell SKILL` 应参考本规范来提高推荐与生成的一致性
 
-| Subfamily | Status |
-| --- | --- |
-| Confirmatory efficacy package | Core |
-| Multiplicity-aware interpretation support | Core |
-| Standard integrated safety package | Core |
-| Exposure-response, immunogenicity, exploratory biomarkers | Conditional |
-| Formal intercurrent-event governance surfaces beyond general estimand wording | Gap |
+SKILL 不直接等于本规范，但若要生成高保真结果，应尽量对齐本规范与 Product。
 
-### 9.4 Oncology-Specific Subfamilies
+## 11. 风险提示
 
-| Subfamily | Status |
-| --- | --- |
-| BOR, ORR, DCR, DOR, TTR | Core where tumor response is relevant |
-| PFS, OS, KM, forest, subgroup survival | Core in registrational and many Phase II/III settings |
-| Waterfall, spider, swimmer | Core to Conditional depending on study objective |
-| RECIST and central review traceability | Core |
+- `技术风险`：元数据失控会削弱自动化可靠性
+- `维护风险`：不受控复用会造成领域漂移
+- `项目风险`：若 coverage 声明超出真实实现，会误导评审与审计
 
-### 9.5 Non-Oncology-Specific Subfamilies
+## 12. 优化建议
 
-| Subfamily | Status |
-| --- | --- |
-| General confirmatory efficacy shells | Core |
-| Domain-specific clinical endpoint packages | Conditional to Core depending on program |
-| Explicit non-oncology-only shell variants | Core in supported families |
-| Respiratory exacerbation packages | Core where protocol-defined exacerbations drive efficacy |
-| Cardiovascular MACE / HF hospitalization packages | Core where adjudicated cardiovascular outcomes drive efficacy |
-| Autoimmune flare / responder packages | Core where protocol-defined flare or responder rules are central |
+### 12.1 立即可做
 
-## 10. Study-Specific Tailoring Rules
+- 保持非肿瘤家族显式化
+- 保持规范、SOP 与 workbook 同步
+- 保持 cross-output 规则可检查
 
-The master library is a controlled baseline. Study-specific use is expected, but
-tailoring must follow these rules:
+### 12.2 中长期
 
-- retain shell numbering control unless the change is formally approved
-- keep only applicable shell variants for the study context
-- tailor populations, titles, and footnotes using protocol and SAP language
-- replace placeholders with study-specific terminology only when governance
-  remains intact
-- do not remove traceability notes without an approved justification
-- do not convert a `General` shell into a therapeutic-area-specific shell
-  silently
+- 建立更细粒度的 shell family registry
+- 继续扩充 Phase I 设计家族
+- 增强 machine-checkable coverage 规则
 
-## 11. Required Review Questions
+### 12.3 工具链
 
-Before declaring a study package complete, reviewers should confirm:
-
-1. Are all `Core` shell families represented?
-2. Are all selected `Conditional` shell families justified by protocol or SAP?
-3. Are known `Gap` areas documented and consciously handled?
-4. Are applicability labels still accurate after study-specific tailoring?
-5. Are workbook, SOP, and DOCX terms still aligned?
-
-## 12. Risk Reminder
-
-- `Technical risk`: ungoverned metadata growth can make automation unreliable.
-- `Maintenance risk`: shell reuse without controlled applicability can create
-  silent domain drift.
-- `Project risk`: phase-coverage claims can become overstated unless `Gap`
-  status is tracked explicitly.
-
-## 13. Optimization Direction
-
-### 13.1 Immediate
-
-- keep supported non-oncology families explicit and governed
-- align SOP wording with the coverage matrix and workbook metadata
-- preserve machine-checkable cross-output rules for representative IDs
-
-### 13.2 Mid-term
-
-- add testable invariants for numbering, scope, applicability, and cross-output
-  wording
-- build a controlled shell-family registry
-- expand Phase I design families for `3+3`, BOIN, CRM, dose expansion, TQT, DDI,
-  and renal/hepatic impairment
-
-### 13.3 Toolchain
-
-- automate coverage-matrix validation against catalog metadata
-- validate label and field consistency across DOCX, XLSX, SOP, and spec wording
-- run `generate`, `validate`, and `pytest` in CI before controlled release
+- 自动校验 coverage matrix 与 catalog 元数据
+- 校验 DOCX、XLSX、SOP 与规范文案一致性
+- 在 CI 中运行 `generate`、`validate` 与 `pytest`

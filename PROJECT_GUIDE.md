@@ -1,67 +1,88 @@
-# PROJECT_GUIDE
+# 项目指南
 
-## 1. Project Purpose
+## 1. 文档目的
 
-`TFLshell` is a governed template-generation project for the statistical section
-of a clinical study report (CSR). Its primary purpose is to provide:
+本文档用于说明 `TFLshell` 项目的当前定位、边界、交付物分类与推荐阅读顺序。
 
-- reusable TFL shell templates for tables, figures, and listings
-- a synchronized catalog workbook for shell governance and study-specific
-  selection
-- an SOP-style reference document for controlled usage
+本项目的核心目标不是生成最终统计结果，而是维护一个受控的 TFL shell 主库、
+参考生成能力与相关产品化资产。
 
-The repository is intended to support pre-production shell design, review, and
-handoff. It is not intended to generate final statistical results or replace
-study-specific SAP interpretation.
+## 2. 项目定位
 
-## 2. Primary Users
+`TFLshell` 当前应被理解为 `TFLs-Shell Product` 的维护仓库。
 
-The project is designed for three review and operating perspectives:
+它主要承担以下职责：
 
-### 2.1 Lead Statistician
+- 维护受控 TFL shell 主库
+- 维护 DOCX / XLSX / SOP 生成器
+- 维护格式契约与输出基线
+- 维护推荐与生成相关实现资产
+- 作为 `TFLs-Shell SKILL` 的主要参考 source
 
-Focus:
+## 3. 四层边界
 
-- shell completeness against protocol and SAP
-- endpoint and population alignment
-- methodological note adequacy
-- fit-for-purpose use across study phases and therapeutic areas
+请始终区分以下四层：
 
-### 2.2 Statistical Programming Lead
+### 3.1 `TFLs-Shell SKILL`
 
-Focus:
+位于 `.trae/skills/` 下的可复用应用层 Skill 包。
 
-- maintainable shell catalog structure
-- metadata traceability
-- synchronized output generation across DOCX, XLSX, and SOP
-- extensibility for study-specific implementation
+它负责定义：
 
-### 2.3 QA or Regulatory Reviewer
+- 何时调用
+- 接收什么输入
+- 如何理解与推荐
+- 如何生成与说明
+- 输出契约与风险提示
 
-Focus:
+### 3.2 `TFLs-Shell Product`
 
-- scope control
-- numbering and traceability consistency
-- explicit applicability rules
-- documentation alignment between generator behavior and governed guidance
+本仓库中的产品化实现层。
 
-## 3. Current Deliverables
+它负责维护：
 
-The repository currently centers on three coordinated outputs:
+- shell catalog
+- 推荐逻辑
+- 生成器
+- 格式契约
+- 测试基线
+- 项目规范与设计材料
 
-- CSR-facing DOCX shell template
-- XLSX TFL catalog and usage guide
-- SOP DOCX for shell usage and governance
+### 3.3 `Governance Docs`
 
-The repository now also includes an early governed `recommend` prototype that
-interprets prompt / protocol / SAP-like text and suggests a shell package before
-formal output generation.
+项目中的规范、设计稿、测试契约、开发约束等文档。
 
-The DOCX shell generator now also supports governed presentation profiles for
-spacing, grouping, indentation, and page-fit behavior, with `csr_standard` as
-the default baseline.
+### 3.4 `Formal Outputs`
 
-The implementation target remains limited to the following CSR sections:
+由 Product 生成的正式业务输出，例如：
+
+- `TFL_Shell_Template_v<version>.docx`
+- `TFL_TOC_v<version>.xlsx`
+- `TFL_Shell_SOP_v<version>.docx`
+
+## 4. 当前交付物
+
+本仓库当前维护的主要交付物包括：
+
+- CSR 面向的 DOCX shell 模板
+- XLSX TFL catalog 与使用工作簿
+- SOP DOCX
+- `TFLs-Shell SKILL` 的参考文档与支撑资产
+- 设计文档、测试契约与规范文档
+
+## 5. 目录说明
+
+- `src/tflshell/`：Product 代码实现，包括模型、catalog、生成器与推荐支持逻辑
+- `.trae/skills/`：可复用 Skill 包
+- `scripts/`：Skill 包维护脚本与轻量校验脚本
+- `docs/superpowers/specs/`：设计与治理收口文档
+- `docs/superpowers/`：Product 层交付说明与历史材料
+- `tests/`：回归与契约测试
+- `output/`：正式业务输出，不是规范真值源
+
+## 6. 当前治理范围
+
+当前受控范围包括：
 
 - `14.1` Demographics and Baseline Characteristics
 - `14.2` Efficacy
@@ -69,120 +90,86 @@ The implementation target remains limited to the following CSR sections:
 - `14.4` Special Assessments
 - `16.2` Patient Data Listings
 
-The project does not currently govern `16.1`, and it does not produce actual
-analysis results.
+当前不包括：
 
-## 4. Operating Principles
+- `16.1`
+- 最终统计结果
+- 最终 study-specific SAP 决策
+- 绕过治理约束的任意模板编辑
 
-- `Shell-first`: tables and listings are result-free structures, not mock result
-  packages.
-- `Traceability-first`: shells should retain dataset, program, dictionary, and
-  footnote context where applicable.
-- `Cross-output alignment`: DOCX, XLSX, SOP, and future tests must describe the
-  same rules.
-- `Governance before automation`: project rules and metadata definitions must be
-  documented before code expansion.
+## 7. Product 与 SKILL 的关系
 
-## 5. Coverage Model
+当前正式口径如下：
 
-The repository should be interpreted as a governed master library, not as a
-claim that every clinical design is fully covered. Coverage is organized by:
+- `TFLs-Shell SKILL` 是可复用的应用层工作流包
+- `TFLs-Shell Product` 是仓库内的产品化实现与维护主 source
 
-- study phase: Phase I, Phase II, Phase III
-- therapeutic domain: oncology, non-oncology
-- shell family: demographics, efficacy, safety, special assessments, listings
+Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使调用 SKILL 后
+产出的东西尽可能接近本项目中维护的正式生成物。
 
-### 5.1 Coverage Status Terms
+## 8. 推荐阅读顺序
 
-- `Core`: expected baseline shell family for common studies in the given context
-- `Conditional`: used only for certain designs, modalities, endpoints, or
-  development strategies
-- `Gap`: recognized governance need not yet covered adequately
+建议按以下顺序阅读：
 
-### 5.2 Phase and Domain View
+1. `PROJECT_GUIDE.md`
+2. `PROJECT_SPEC.md`
+3. `CODE_STYLE.md`
+4. `test_guide.md`
+5. `.trae/skills/tfls-shell/`
+6. `docs/superpowers/specs/`
+7. `src/tflshell/`
 
-| Context | Current Interpretation |
-| --- | --- |
-| Phase I | Safety, tolerability, PK, ECG/QTc, dose-escalation, DLT, MTD/RP2D, and selected food-effect / crossover clinical pharmacology shells are now explicitly represented, but escalation-design variants are still not exhaustive. |
-| Phase II | Early efficacy, subgroup, sensitivity, biomarker, and PRO shells are broadly represented. |
-| Phase III | Confirmatory efficacy, multiplicity-aware interpretation, safety summaries, and standard listings are represented at a high level. |
-| Oncology | Explicitly stronger than other domains, especially in `14.2` efficacy figures and response endpoints. |
-| Non-Oncology | General shells remain the baseline, but the library now also includes explicit non-oncology-only families for responder, event-rate, respiratory exacerbation, cardiovascular event, and autoimmune flare review. |
+## 9. 工作原则
 
-## 6. Practical Scope by Shell Family
+- `shell-first`：shell 是结构模板，不是最终结果包
+- `governance-first`：规则优先于局部实现便利
+- `product-as-source`：Product 是格式与行为的主要维护源
+- `skill-for-reuse`：SKILL 是复用入口，不是仓库实现别名
+- `cross-output-alignment`：DOCX、XLSX、SOP 与文档口径保持一致
 
-| Shell Family | Current State |
-| --- | --- |
-| `14.1` Demographics and baseline | Strong baseline support for disposition, populations, history, medications, and exposure. |
-| `14.2` Efficacy | Strongest in oncology, but now also includes explicit non-oncology families for responder, event-rate, respiratory exacerbation, MACE/HF hospitalization, and autoimmune flare time-to-event review. |
-| `14.3` Safety | Broad and practical; includes AE, SAE, deaths, laboratory, vital signs, ECG, QTc, AESI, and dedicated Phase I dose-escalation / DLT / RP2D shells. |
-| `14.4` Special assessments | Good support for PK, ADA, biomarkers, PD, and PRO, with new food-effect and crossover PK shells for Phase I clinical pharmacology. |
-| `16.2` Listings | Broad listing inventory, including safety and special-assessment support plus new DLT review, food-effect PK, respiratory exacerbation, cardiovascular event, and autoimmune flare listings. |
+## 10. 已知问题与方向
 
-## 7. Current Gaps
+当前仍需持续收敛的点包括：
 
-The following are known governance gaps and should be treated as active project
-work, not as hidden assumptions:
+- 非肿瘤领域覆盖仍需继续扩展
+- phase/domain 选择逻辑仍需继续结构化
+- Product 与 SKILL 的引用关系仍可进一步规范
+- 输出格式回归与文档术语一致性仍可进一步自动化
 
-- explicit non-oncology-only shell governance now covers several high-value domains, but disease-area-specific breadth is still limited beyond respiratory, cardiovascular, and autoimmune patterns
-- phase-specific selection logic is now represented at the metadata layer, but not yet fully programmatic at the item-rule level
-- some Phase I shell families remain under-specified, especially cohort-expansion, `3+3`, BOIN, CRM, formal TQT, DDI, and organ-impairment variants
-- confirmatory-program governance for Phase III is not yet separated cleanly
-  from general efficacy coverage
-- CI-level release checks should still mature beyond the current baseline generation, validation, and regression tests
+当前已完成的近期收敛包括：
 
-## 8. Recommended Workflow
+- `TFLs-Shell SKILL` 的 `recommend_then_generate` 已返回 schema-first 的 `validation_results`
+- `xlsx` 主表最小内容级一致性检查已覆盖 TFL ID、Display Label、Section、Shell Family、Applicability 与行数
+- `xlsx` 主表现已进一步覆盖 Type、Study Phase Scope、Coverage Summary、Population 等治理字段
+- `docx` 主模板现已进一步覆盖 header block 的 `Display Label / Title / Analysis Set` 顺序以及 `Protocol / Sponsor` 行存在性
+- `sop` 现已进一步覆盖头表关键标签、`CONFIDENTIAL` 分类值、关键 Heading 结构与 Appendix heading
+- 上述细节 contract 已开始从入口脚本中抽离到独立 helper，并可通过结构化字段声明本次实际引用内容
+- `TFLs-Shell SKILL` 包内已开始补齐最小自包含资产，包括 contract registry、catalog 子集、最小依赖清单与样例请求
+- `TFLs-Shell SKILL` 包内已新增最小 runtime 层，包括 catalog loader、registry loader、三类输出 wrapper 与受控导出脚本
+- 上述检查已同步进入测试契约，作为当前 Skill 输出对齐的最小基线
 
-Recommended usage order:
+## 11. 风险提示
 
-1. Review project scope and coverage assumptions in this guide.
-2. Use `PROJECT_SPEC.md` to determine whether a shell family is `Core`,
-   `Conditional`, or a `Gap`.
-3. Use the `recommend` prototype when the study context is still being translated
-   from prompt, protocol, or SAP language into a governed shell package.
-4. Select applicable shells in the workbook.
-5. Tailor titles, populations, footnotes, and study-specific terminology against
-   protocol and SAP.
-6. Preserve the governed structure while creating study-specific derivatives.
+- `技术风险`：如果 SKILL 与 Product 边界再次混淆，输出格式将逐步漂移
+- `维护风险`：如果项目文档与实现不同步，后续会形成双重真值
+- `项目风险`：如果没有明确 Product 是主 source，SKILL 的可靠性会下降
 
-## 9. Risk Reminder
+## 12. 优化建议
 
-- `Technical risk`: documentation and output behavior can drift if versioning
-  and dependency governance are not tightened.
-- `Maintenance risk`: oncology growth can outpace non-oncology governance and
-  create a hidden bias in the library.
-- `Project risk`: without explicit phase/domain coverage rules, users may
-  overstate repository completeness during review or audit.
+### 12.1 立即可做
 
-## 10. Optimization Roadmap
+- 继续统一术语为 `TFLs-Shell SKILL / TFLs-Shell Product`
+- 保持文档、实现、测试同步更新
+- 以 Product 输出为 SKILL 高保真参考基线
+- 使用 `scripts/validate_skill_package.py` 对正式 Skill 包做基础结构校验
+- 继续把 `validation_results` 向更细粒度的跨输出 contract 扩展，而不只停留在最小内容级校验
+- 优先抽离可复用的 contract helper，避免 Skill 入口脚本持续堆积格式感知逻辑
+- 优先把稳定细节做成可声明引用的 helper/注册表，而不是散落在单个脚本中
+- 优先把跨项目复用必需的最小资产封进 Skill 包，而不是默认依赖当前仓库环境补齐
+- 优先让入口脚本走包内 runtime 层，再逐步减少对 `src/tflshell` 的直接暴露
 
-### 10.1 Immediate
+### 12.2 中长期
 
-- formalize phase/domain coverage rules in `PROJECT_SPEC.md`
-- align documentation wording across guide, spec, SOP, and workbook guidance
-- define the future test contract in `test_guide.md`
-- extend non-oncology families where endpoint semantics are already stable
-
-### 10.2 Mid-term
-
-- expand non-oncology-specific shell governance into additional disease domains
-- extend Phase I into a design-oriented shell library for escalation and specialty pharmacology
-- add machine-checkable metadata fields for shell family and study-phase
-  applicability
-
-### 10.3 Toolchain
-
-- maintain automated catalog and cross-output consistency checks
-- use `pre-commit` for fast local validation and `CI` for generate/validate/test quality gates
-
-## 11. Document Ownership
-
-This file is the project-level orientation document. If a change affects:
-
-- project purpose
-- scope boundaries
-- coverage interpretation
-- review roles
-- roadmap priorities
-
-then `PROJECT_GUIDE.md` must be reviewed in the same change set.
+- 为 SKILL 增加样例、术语映射与引用资产
+- 为 Product 增加更稳定的格式回归与输出基线
+- 逐步建立 SKILL 与 Product 的更明确接口关系

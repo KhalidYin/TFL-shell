@@ -1,5 +1,9 @@
 # TFL Skill V1 格式契约与 Presentation Profile 设计（中文版）
 
+> 当前术语说明：本文中的格式契约设计，在现行口径下主要归属于
+> `TFLs-Shell Product`，用于支撑 `TFLs-Shell SKILL` 产出更接近正式项目
+> 格式的结果。
+
 日期：2026-04-28  
 主题：TFL Skill V1 中格式策略、版式契约与 DOCX 渲染边界设计  
 状态：V1，presentation profile 最小实现已接入主 DOCX 生成链路，供 review

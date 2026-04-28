@@ -1,5 +1,10 @@
 # TFL Skill V1 工作流与最小实现计划（中文版）
 
+> 当前术语说明：本文中的 `Skill V1` 在现行口径下主要归属于
+> `TFLs-Shell Product` 的支撑设计，用于说明仓库内的产品化实现方向。
+> 正式可复用交付物请以 `.trae/skills/tfls-shell/` 下的
+> `TFLs-Shell SKILL` 为准。
+
 日期：2026-04-28  
 主题：基于当前 TFLshell 仓库能力的 Skill V1 工作流设计与最小实现计划  
 状态：V1，`recommend` 原型已落首版基线，供 review

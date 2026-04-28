@@ -1,232 +1,125 @@
-# CODE_STYLE
+# 代码与文档规范
 
-## 1. Purpose
+## 1. 文档目的
 
-This document defines repository-level coding and governance conventions for the
-`TFLshell` project. It applies to:
+本文档定义 `TFLshell` 仓库的代码、文档与治理同步规则。
 
-- Python source code
-- shell catalog definitions
-- generated DOCX and XLSX guidance behavior
-- project documentation that describes generator rules
+它主要服务于 `TFLs-Shell Product` 的持续维护，并间接为
+`TFLs-Shell SKILL` 提供稳定参考基线。
 
-## 2. General Principles
+## 2. 通用原则
 
-- prefer small, explicit, domain-readable changes over broad implicit changes
-- keep generator behavior aligned with governed documentation
-- treat shell metadata as controlled project data, not as informal content
-- prefer light automation and repeatable validation over manual convention drift
+- 优先做小而明确、可读性强的改动
+- 规则变化必须同步到文档
+- shell metadata 视为受控项目数据，而不是随意文本
+- 优先使用轻量、可自动化的检查方式
 
-## 3. Source Organization
+## 3. 目录职责
 
-Expected responsibility boundaries:
+- `src/tflshell/data/`：shell 定义与受控内容源
+- `src/tflshell/models/`：领域模型与共享语义
+- `src/tflshell/generators/`：DOCX、XLSX、Figure 等生成器
+- `src/tflshell/`：Product 支撑逻辑，例如推荐、验证与工具方法
+- `scripts/`：仓库级辅助脚本，优先放置 Skill 包校验与轻量提炼工具
+- `.trae/skills/`：可复用 Skill 包
+- `docs/`：设计、规范与交付说明
+- `tests/`：回归与契约测试
 
-- `src/tflshell/data/`: shell definitions and governed content sources
-- `src/tflshell/models/`: domain models and shared shell semantics
-- `src/tflshell/generators/`: output builders for DOCX, XLSX, and figures
-- `src/tflshell/docx_utils/`: Word-specific document helpers
-- `src/tflshell/figures/`: reusable shell-figure rendering components
-- `docs/`: design notes and governed project documentation
-
-Do not mix long-form governance wording directly into unrelated generator code
-when it belongs in a shared content source or project document.
-
-## 4. Naming Conventions
+## 4. 命名规则
 
 ### 4.1 Python
 
-- modules: `snake_case`
-- functions: `snake_case`
-- classes: `PascalCase`
-- constants: `UPPER_SNAKE_CASE`
-- enum members: `UPPER_SNAKE_CASE`
+- 模块：`snake_case`
+- 函数：`snake_case`
+- 类：`PascalCase`
+- 常量：`UPPER_SNAKE_CASE`
 
 ### 4.2 Clinical Shell Domain
 
-- internal TFL IDs must remain in controlled form, for example `T14.3.1`
-- reviewer-facing labels must be derived consistently from IDs
-- section terminology must use the controlled CSR section numbers
-- applicability labels must use only the governed set:
-  `General`, `Oncology only`, `Non-Oncology only`
+- TFL ID 保持受控格式，如 `T14.3.1`
+- reviewer-facing label 从 ID 稳定派生
+- section 术语使用受控 CSR section 编号
+- applicability 仅使用受控集合
 
-### 4.3 Filenames
+### 4.3 文件名
 
-Generated master files should use stable controlled names, for example:
+正式输出文件保持稳定命名，例如：
 
 - `TFL_Shell_Template_v<version>.docx`
 - `TFL_TOC_v<version>.xlsx`
 - `TFL_Shell_SOP_v<version>.docx`
 
-Project documents should use explicit names:
+## 5. 文档同步规则
 
-- `PROJECT_GUIDE.md`
-- `PROJECT_SPEC.md`
-- `CODE_STYLE.md`
-- `test_guide.md`
+任何影响以下内容的改动，都必须同步检查文档：
 
-## 5. Version Governance
-
-Versioning must be internally consistent across:
-
-- package version
-- output filenames
-- document properties
-- title-page or cover-page display text
-- SOP version references
-- guidance documents
-
-### 5.1 Change Rule
-
-If a version changes, review all version-bearing surfaces in the same pass.
-Do not leave legacy version strings in:
-
-- docstrings
-- constants
-- document metadata
-- generated cover pages
-- workbook change logs
-
-### 5.2 Current Rule
-
-Future code changes must treat version governance as a controlled task rather
-than a cosmetic cleanup.
-
-## 6. Catalog and Metadata Rules
-
-### 6.1 Required Metadata
-
-Each shell definition should preserve:
-
-- ID
-- title
-- type
-- section
-- shell family
-- study phase scope
-- coverage summary
-- population
-- applicability
-- dataset source
-- program reference
-- dictionary versions where relevant
-- placeholder style
-- footnote context where relevant
-
-### 6.2 Metadata Design
-
-- keep metadata explicit rather than inferred when the meaning is governed
-- avoid adding free-text fields when a controlled field would be more stable
-- do not overload one field with mixed governance meaning
-- treat future phase/domain coverage attributes as first-class metadata
-
-### 6.3 Traceability
-
-Traceability wording should be short and operational:
-
-- dataset lineage belongs in metadata or footnotes
-- long policy text belongs in documents or shared content structures
-- generator code should render traceability consistently rather than redefining
-  it ad hoc
-
-## 7. Documentation Synchronization Rules
-
-Any change affecting shell behavior must review the matching documentation
-surfaces.
-
-### 7.1 Required Sync Group
-
-Review together when rules change:
-
-- `PROJECT_GUIDE.md`
-- `PROJECT_SPEC.md`
-- `CODE_STYLE.md`
-- `test_guide.md`
-- design notes in `docs/superpowers/specs/`
-- governed SOP content
-- workbook usage guidance
-- main DOCX introduction text
-
-### 7.2 Trigger Examples
-
-Run a documentation sync review when changing:
-
-- scope boundaries
+- 范围边界
 - section coverage
 - applicability wording
-- placeholder rules
-- versioning logic
-- output field names
-- shell-family interpretation
-- phase or therapeutic-area coverage
+- metadata 字段
+- 输出字段名
+- shell family 解释
+- phase / domain coverage
+- `TFLs-Shell SKILL` 的触发条件、输出契约或配套规则
 
-## 8. Editing Standards
+## 6. Skill 与 Product 口径
 
-- use UTF-8 for project text files
-- prefer Markdown for governance and project documentation
-- keep comments short and purposeful
-- do not add placeholder text such as `TBD` or `TODO` in governed documents
-  that are meant to define an approved baseline
+后续一律采用：
 
-## 9. Change Discipline
+- `TFLs-Shell SKILL`：可复用应用层包
+- `TFLs-Shell Product`：仓库内产品化实现层
 
-### 9.1 Small Changes
+不要再把某个 `skill.py` 或 CLI 子命令写成 Skill 本体。
 
-For localized fixes:
+## 7. 编辑标准
 
-- update the nearest relevant document
-- note the impacted governed rule
-- avoid unrelated refactoring
+- 项目文档统一使用 Markdown
+- 文档统一使用中文
+- 注释保持简洁且有必要
+- 已批准的规范文档中不要留下 `TBD`、`TODO`
 
-### 9.2 Structural Changes
+## 8. 变更纪律
 
-For new shell families, new metadata, or output-rule changes:
+### 8.1 小改动
 
-- update the project documents first or in the same change set
-- update design notes if the change shifts project behavior materially
-- update future tests or test guidance expectations
+- 更新最近相关文档
+- 说明受影响规则
+- 避免无关重构
 
-## 10. Formatting and Tooling
+### 8.2 结构性改动
 
-Recommended lightweight tooling:
+如涉及新 shell family、新 metadata 或输出规则变化：
 
-- `black` for Python formatting
-- `ruff` or equivalent for linting
-- `pre-commit` for lightweight validation hooks
+- 文档与代码必须同一轮更新
+- 如行为有明显变化，需同步更新设计稿
+- 同步更新测试或测试说明
 
-Tooling should remain lightweight and automatable. Avoid introducing a heavy
-process burden for small governance-safe changes.
+## 9. 推荐工具链
 
-### 10.1 Automation Contract
+- `black`
+- `ruff`
+- `pre-commit`
+- `pytest`
 
-- use `pre-commit` for fast local checks such as catalog validation and pytest
-- use CI for the full quality gate: output generation, catalog validation,
-  regression tests, and generated-artifact drift detection
-- if output generation rules change, update the automation config in the same
-  change set
+## 10. 风险提示
 
-## 11. Risk Reminder
+- `技术风险`：版本或元数据漂移会破坏输出可信度
+- `维护风险`：不受控自由文本会增加未来清理成本
+- `项目风险`：代码变了文档不变，会造成对外口径冲突
 
-- `Technical risk`: version or metadata drift can silently break trust in
-  generated outputs.
-- `Maintenance risk`: uncontrolled free-text growth in shell definitions makes
-  future validation harder.
-- `Project risk`: code changes without document sync can cause regulatory-facing
-  wording conflicts.
+## 11. 优化建议
 
-## 12. Optimization Guidance
+### 11.1 立即可做
 
-### 12.1 Immediate
+- 继续集中管理版本与命名
+- 减少重复指导文案
 
-- centralize version-bearing strings further
-- reduce duplicated guidance wording across generator surfaces
+### 11.2 中长期
 
-### 12.2 Mid-term
+- 增强 metadata 完整性自动校验
+- 增强 cross-output 规则检查
 
-- add a machine-readable shell-family layer
-- validate metadata completeness automatically
-- grow the automation gate toward richer cross-output checks
+### 11.3 工具链
 
-### 12.3 Toolchain
-
-- add pre-commit checks for Markdown hygiene and version-string drift
-- add tests for numbering, applicability, and cross-output wording consistency
+- 增加 Markdown 术语一致性检查
+- 增加版本字符串漂移检查

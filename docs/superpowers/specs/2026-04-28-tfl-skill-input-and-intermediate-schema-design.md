@@ -1,5 +1,9 @@
 # TFL Skill V1 输入与中间状态 Schema 设计（中文版）
 
+> 当前术语说明：本文中的 `Skill` 输入与中间状态 schema，在现行口径下主要
+> 服务于 `TFLs-Shell Product` 的实现与对齐；正式可复用交付物请以
+> `.trae/skills/tfls-shell/` 下的 `TFLs-Shell SKILL` 为准。
+
 日期：2026-04-28\
 主题：面向 TFL mock shell 生成与治理审阅的 Skill V1 输入、处理中间状态与输出 schema\
 状态：V1，供 review

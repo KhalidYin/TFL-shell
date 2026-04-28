@@ -1,179 +1,98 @@
-# Documentation Governance Design
+# 文档治理设计
 
-Date: 2026-04-28
-Topic: Documentation baseline for TFL shell governance review
-Status: Approved for documentation-only execution
+日期：2026-04-28  
+主题：统一 `TFLshell` 项目中的规范文档、设计稿与维护口径  
+状态：历史设计稿，现已按 `TFLs-Shell SKILL / TFLs-Shell Product` 口径收口
 
-## 1. Objective
+## 1. 设计目的
 
-Create a project documentation baseline that turns the current repository from a
-"working generator with review notes" into a governed template library with
-clear scope, selection logic, and future testability.
+本文档记录项目文档治理的核心目标：
 
-This documentation pass must:
+- 文档先于实现
+- 规范先于扩展
+- 术语保持一致
+- 不让实现细节替代治理真值
 
-- define project purpose, users, and deliverables
-- define the controlled scope for CSR TFL shells
-- define how Phase I, II, and III expectations map to shell families
-- define how oncology and non-oncology applicability is interpreted
-- define code and metadata governance expectations
-- define a future testing contract without implementing tests in this round
+## 2. 核心问题
 
-## 2. Approved Scope
+本项目在治理上曾出现以下风险：
 
-### 2.1 In scope
+- oncology 与 non-oncology 覆盖口径不一致
+- Phase I / II / III 的选择逻辑没有被充分文档化
+- 版本口径存在历史残留
+- cross-output 一致性有共识但缺少明确文档锚点
+- “Skill”“实现”“输出物”之间边界容易混淆
 
-- Add `PROJECT_GUIDE.md`
-- Add `PROJECT_SPEC.md`
-- Add `CODE_STYLE.md`
-- Add `test_guide.md`
-- Add a new design note in `docs/superpowers/specs/`
-- Consolidate the recent review findings into stable project rules
-- Introduce a phase-by-therapy-area coverage matrix
-- Define future test categories and the intended `tests/` structure
+## 3. 设计原则
 
-### 2.2 Out of scope
+### 3.1 文档驱动
 
-- No Python code changes
-- No changes to generated DOCX or XLSX outputs
-- No initialization of the `tests/` directory in this round
-- No automated consistency checks in this round
-- No git commit in this round unless explicitly requested later
+规则变化必须先改文档，或至少与实现同一轮改动同步完成。
 
-## 3. Problem Statement
+### 3.2 现状与目标分开写
 
-The repository already provides a broad TFL shell catalog and synchronized
-DOCX/XLSX/SOP outputs, but the governance layer is incomplete.
+每份文档应明确区分：
 
-Current gaps identified during review:
+- 当前已经实现的内容
+- 当前已识别的 gap
+- 下一步的目标与方向
 
-- oncology coverage is explicit, but non-oncology-specific governance is not
-- Phase I, II, and III expectations are not documented as controlled selection
-  rules
-- version governance still contains legacy `v2.0` references in code and
-  metadata
-- project dependencies are not fully declared in `pyproject.toml`
-- cross-output consistency is expected conceptually but not yet verified by
-  tests
+不要把愿景写成现状。
 
-## 4. Design Principles
+### 3.3 面向审阅
 
-### 4.1 Documentation-first
+文档应同时服务于：
 
-The project rules require documentation to lead implementation. Therefore this
-round must define stable documentation artifacts before any code or test
-changes.
+- lead statistician
+- statistical programming lead
+- QA / regulatory reviewer
+- 后续维护者
 
-### 4.2 Governance over aspiration
+### 3.4 可测试
 
-Each document must describe current scope, current gaps, and intended next
-steps separately. Documentation must not imply that Phase I-III and
-oncology/non-oncology parity are already fully achieved.
+规范不应只停留在叙述层，应尽量能被后续测试或校验脚本验证。
 
-### 4.3 Role-aware reviewability
+## 4. 文档体系
 
-The new documentation must be readable and useful for:
+推荐的文档分层如下：
 
-- lead statisticians
-- statistical programming leads
-- QA or regulatory reviewers
+- `PROJECT_GUIDE.md`：项目定位、边界、层级关系
+- `PROJECT_SPEC.md`：受控规则、范围、元数据与覆盖矩阵
+- `CODE_STYLE.md`：代码与文档同步规则、命名与变更纪律
+- `test_guide.md`：测试契约与回归重点
+- `.trae/skills/`：可复用 Skill 包
+- `docs/superpowers/specs/`：设计与治理决策
 
-### 4.4 Future-testable structure
+## 5. 当前收口口径
 
-The documents must define metadata and invariants in a way that can later be
-validated automatically.
+当前正式术语为：
 
-## 5. Deliverable Design
+- `TFLs-Shell SKILL`：可复用应用层 Skill 包
+- `TFLs-Shell Product`：仓库内产品化实现与维护主 source
 
-### 5.1 `PROJECT_GUIDE.md`
+从这一口径出发：
 
-Purpose:
+- Product 负责维护高保真格式与行为基线
+- SKILL 负责复用与调用层定义
+- 文档负责说明规则与边界
+- 输出物不是规范真值源
 
-- explain what the project is for
-- define intended users and review perspectives
-- summarize current maturity and roadmap
-- describe the Phase I-III and oncology/non-oncology coverage model at a high
-  level
+## 6. 风险提示
 
-### 5.2 `PROJECT_SPEC.md`
+- `技术风险`：文档失真会导致实现和输出逐步漂移
+- `维护风险`：术语不一致会形成双重真值
+- `项目风险`：外部使用者会误判仓库真实能力边界
 
-Purpose:
+## 7. 优化建议
 
-- define the controlled scope and boundaries
-- define shell numbering, applicability, and selection logic
-- define the coverage matrix and shell-family expectations
-- define required metadata and tailoring principles
+### 7.1 立即可做
 
-### 5.3 `CODE_STYLE.md`
+- 全部文档统一中文化
+- 全部相关文档统一使用 `SKILL / Product` 新口径
+- 历史材料保留，但需标明当前归类
 
-Purpose:
+### 7.2 中长期
 
-- define naming, versioning, metadata, and documentation synchronization rules
-- define how generator changes must remain aligned with project docs
-- define acceptable change patterns for catalog, outputs, and guidance wording
-
-### 5.4 `test_guide.md`
-
-Purpose:
-
-- define the future test contract
-- define the intended `tests/` structure
-- define minimum regression checks for catalog and cross-output consistency
-
-## 6. Coverage-Matrix Strategy
-
-The new documentation will not claim that every study design is already fully
-implemented. Instead it will introduce a governance matrix with three states:
-
-- `Core`: expected baseline shell family for common studies in this phase/domain
-- `Conditional`: only needed for certain designs, endpoints, or modalities
-- `Gap`: recognized need that is not yet governed well enough in the repository
-
-This is preferred over a binary "covered / not covered" model because it better
-matches real clinical reporting practice.
-
-## 7. Risks and Mitigations
-
-### Risk 1: Documents overstate repository maturity
-
-Mitigation:
-
-- separate current implementation from target governance state
-- explicitly label current gaps and next-step priorities
-
-### Risk 2: New docs drift from existing design note
-
-Mitigation:
-
-- reuse the same core boundaries: sections 14.1, 14.2, 14.3, 14.4, 16.2 only
-- keep applicability, placeholder, and governance wording aligned
-
-### Risk 3: Future implementation ignores the new baseline
-
-Mitigation:
-
-- include explicit synchronization rules in `CODE_STYLE.md`
-- include explicit test expectations in `test_guide.md`
-
-## 8. Acceptance Criteria
-
-- The repository contains the five new markdown documents defined in scope.
-- `PROJECT_GUIDE.md` explains purpose, users, scope, and roadmap clearly.
-- `PROJECT_SPEC.md` contains a phase/domain coverage matrix and shell selection
-  rules.
-- `CODE_STYLE.md` defines version governance and documentation synchronization
-  rules.
-- `test_guide.md` defines a future `tests/` structure and minimum regression
-  checks.
-- No document contains `TBD`, `TODO`, or contradictory scope claims.
-
-## 9. Execution Note
-
-This is a documentation-only governance pass. It establishes the baseline needed
-for the next implementation round, which is expected to address:
-
-- version cleanup
-- dependency declaration cleanup
-- cross-output consistency checks
-- `tests/` initialization
-- non-oncology-specific shell governance expansion
+- 增加术语一致性检查
+- 增加文档与输出基线的回归验证
+- 继续把 Product 中稳定规则沉淀为 SKILL 可引用资产

@@ -1,5 +1,10 @@
 # TFL Skill V1 `recommend` 模式最小实现切片设计（中文版）
 
+> 当前术语说明：本文中的 `Skill V1` 在现行口径下主要归属于
+> `TFLs-Shell Product` 的支撑设计，用于说明仓库内的推荐实现切片。
+> 正式可复用交付物请以 `.trae/skills/tfls-shell/` 下的
+> `TFLs-Shell SKILL` 为准。
+
 日期：2026-04-28  
 主题：TFL Skill V1 中 `recommend` 模式的首个可落地闭环设计  
 状态：V1，已对应首版 recommend 原型实现基线，供 review

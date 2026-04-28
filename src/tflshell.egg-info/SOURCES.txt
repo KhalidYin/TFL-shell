@@ -3,6 +3,8 @@ src/tflshell/__init__.py
 src/tflshell/__main__.py
 src/tflshell/config.py
 src/tflshell/main.py
+src/tflshell/presentation.py
+src/tflshell/recommend.py
 src/tflshell.egg-info/PKG-INFO
 src/tflshell.egg-info/SOURCES.txt
 src/tflshell.egg-info/dependency_links.txt

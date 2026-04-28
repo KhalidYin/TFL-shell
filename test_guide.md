@@ -1,26 +1,27 @@
-# test_guide
+# 测试指南
 
-## 1. Purpose
+## 1. 文档目的
 
-This document defines the active testing contract for the `TFLshell` project.
-It was designed before test implementation and is now used as the baseline for
-the initialized `tests/` suite.
+本文档定义 `TFLshell` 仓库当前有效的测试契约。
 
-## 2. Testing Principles
+它主要服务于 `TFLs-Shell Product` 的回归保障，并为 `TFLs-Shell SKILL`
+提供稳定参考基线。
 
-- tests must verify governed behavior, not just implementation details
-- cross-output consistency is a first-class project requirement
-- tests should stay lightweight, targeted, and easy to run locally
-- new functional changes should add or update focused tests
-- the canonical test root must be `tests/`
+## 2. 测试原则
 
-## 3. Test Root
+- 测试应验证治理行为，而不只是实现细节
+- cross-output consistency 是一等要求
+- 测试应轻量、聚焦、可本地运行
+- 新功能或行为变化应配套新增或更新测试
+- `tests/` 是唯一规范测试根目录
 
-Use the canonical test root:
+## 3. 目录约定
+
+规范测试根目录：
 
 `tests/`
 
-Recommended initial structure:
+建议结构：
 
 ```text
 tests/
@@ -38,172 +39,139 @@ tests/
     output_samples/
 ```
 
-### 3.1 Directory Intent
-
-- `tests/unit/models/`: ID, label, applicability, placeholder, and metadata
-  semantics
-- `tests/unit/utils/`: naming and formatting helpers
-- `tests/unit/data/`: catalog integrity and metadata completeness
-- `tests/unit/generators/`: focused output-generation behaviors where full file
-  rendering is not required
-- `tests/integration/catalog/`: catalog coverage and summary behavior
-- `tests/integration/outputs/`: generated DOCX/XLSX/SOP structural checks
-- `tests/integration/consistency/`: cross-output agreement checks
-- `tests/fixtures/`: stable sample inputs and lightweight output fixtures
-
-## 4. Minimum Regression Set
-
-The active minimum regression set should include the following categories.
+## 4. 最小回归集合
 
 ### 4.1 Catalog Integrity
 
-- every TFL ID is unique
-- every non-figure shell has placeholder columns
-- every non-figure shell has shell rows
-- every shell has dataset source metadata
-- every shell has shell family, study phase scope, and coverage summary metadata
-- every shell section matches its ID
-- every label derived from an ID is stable and reviewer-facing
+- TFL ID 唯一
+- 非 figure shell 保持 placeholder 列
+- 非 figure shell 保持 shell rows
+- 每个 shell 保留 dataset source 等关键元数据
 
 ### 4.2 Scope Control
 
-- only governed sections are present
-- `16.1` remains excluded unless the project specification changes
-- applicability labels remain within the controlled set
+- 仅出现受控 section
+- `16.1` 保持排除，除非规范变化
+- applicability 标签保持在受控集合内
 
-### 4.3 Coverage Governance
+### 4.3 Output Structure
 
-- shell families can be mapped to the phase/domain coverage model
-- oncology-only shells remain explicitly tagged
-- non-oncology-specific governance content remains visible and testable
-- supported non-oncology families remain represented for respiratory, cardiovascular, and autoimmune review
-- phase-scope and coverage-summary metadata remain complete and valid
+- DOCX shell 输出包含 TOC field
+- SOP 输出包含 TOC field
+- workbook sheet 与字段符合治理模型
+- 生成输出保持受控标题与标签
 
-### 4.4 Output Structure
+### 4.4 Cross-Output Consistency
 
-- DOCX shell output includes a TOC field
-- SOP output includes a TOC field
-- workbook contains all expected sheets
-- workbook header columns match the governed metadata model
-- workbook includes governance metadata columns for shell family and phase scope
-- generated outputs preserve controlled labels and titles
-- retained tables may use a separate ellipsis expansion column, but not a merged ellipsis-plus-analytic header
-- retained tables keep header/value column counts aligned
-- representative source-listing references are specific rather than generic
+- ID 与 display label 在 DOCX、XLSX、SOP 中一致
+- section naming 一致
+- applicability wording 一致
+- workbook 字段与项目规范一致
 
-### 4.5 Cross-Output Consistency
+## 5. 何时加测试
 
-- ID and display label align across DOCX, XLSX, and SOP
-- representative new shell families appear in DOCX and XLSX together
-- section naming aligns across outputs
-- applicability wording aligns across outputs
-- placeholder-policy wording does not drift materially
-- workbook field names and project spec names remain synchronized
-- removed redundant subgroup tables stay removed from generated outputs
+出现以下变化时，应新增或更新测试：
 
-## 5. Test Priorities
+- 新 shell family
+- 范围边界变化
+- applicability 或编号规则变化
+- workbook 字段变化
+- 生成器文案或结构变化
+- recommendation 逻辑或输出契约变化
+- `TFLs-Shell SKILL` 的触发条件、示例或输出契约变化
+- Product 的格式契约或输出基线变化
 
-### 5.1 Priority 1
+## 6. 不要过度测试什么
 
-Implement first:
+避免低价值测试，例如：
 
-- catalog integrity checks
-- workbook sheet and field checks
-- label and numbering consistency checks
+- 机械重复每条硬编码字符串
+- 脆弱的逐行文档快照
+- 会因无关文案变化而大面积失败的测试
 
-### 5.2 Priority 2
-
-Implement second:
-
-- DOCX and SOP structural checks
-- section-scope verification
-- applicability and placeholder wording checks
-- representative shell-family spot checks across generated outputs
-
-### 5.3 Priority 3
-
-Implement later:
-
-- coverage-matrix validation against richer item-level metadata
-- snapshot-like checks for stable guidance text
-- richer output comparisons for controlled sections
-
-## 6. Test Design Rules
-
-- prefer direct semantic assertions over fragile full-file snapshots
-- inspect Office outputs structurally rather than visually where possible
-- use sample fixtures that are small but representative
-- isolate domain rules from rendering rules when writing tests
-
-## 7. When to Add Tests
-
-Add or update tests when:
-
-- a new shell family is introduced
-- scope boundaries are changed
-- applicability or numbering behavior changes
-- workbook field definitions change
-- generator guidance wording changes materially
-- version-governance logic is refactored
-- shell header structure rules are tightened
-- source-listing mapping rules are corrected
-- recommendation heuristics, interpreted context fields, or recommend CLI output
-  contracts are changed
-- presentation profile defaults, spacing policies, or generate CLI rendering
-  options are changed
-
-## 8. What Not to Test Excessively
-
-Avoid low-value tests that only repeat implementation structure, such as:
-
-- restating every hardcoded string without checking its governed meaning
-- brittle line-by-line document snapshots
-- very broad tests that fail for unrelated wording changes
-
-## 9. Suggested Tooling
-
-Recommended future tooling:
+## 7. 工具建议
 
 - `pytest`
 - fixture-based unit tests
-- lightweight structural readers for DOCX and XLSX outputs
-- `pre-commit` integration for fast local checks
-- CI execution of `generate`, `validate`, and `pytest`
+- DOCX / XLSX 结构读取工具
+- `pre-commit`
+- CI 中执行 `generate`、`validate` 与 `pytest`
 
-## 10. Definition of Done for Future Test Initialization
+## 8. Skill 与 Product 的测试口径
 
-Testing should not be considered initialized until all of the following are
-true:
+当前测试重点仍在 `TFLs-Shell Product`。
 
-1. `tests/` exists as the canonical test root.
-2. At least one unit test validates catalog integrity.
-3. At least one integration test validates workbook structure.
-4. At least one consistency test validates cross-output label agreement.
-5. Test instructions are documented in repository-level guidance.
+如果后续需要测试 `TFLs-Shell SKILL`，应重点关注：
 
-## 11. Risk Reminder
+- 触发条件
+- 输入解释
+- 中间状态 schema
+- 输出契约
+- validation 摘要
+- 与 Product 的对齐结果
 
-- `Technical risk`: without tests, documentation and output behavior may drift
-  silently.
-- `Maintenance risk`: broad shell growth without validation will make future
-  cleanup expensive.
-- `Project risk`: coverage claims can outpace verified implementation behavior.
+当前最小内容级对齐检查应至少覆盖：
 
-## 12. Optimization Guidance
+- `xlsx` 主表中的 TFL ID 与 catalog 一致
+- `xlsx` 主表中的 Display Label 与 catalog 一致
+- `xlsx` 主表中的 Type 与 catalog 一致
+- `xlsx` 主表中的 Section 与 catalog 一致
+- `xlsx` 主表中的 Shell Family 与 catalog 一致
+- `xlsx` 主表中的 Study Phase Scope 与 catalog 一致
+- `xlsx` 主表中的 Coverage Summary 与 catalog 一致
+- `xlsx` 主表中的 Population 与 catalog 一致
+- `xlsx` 主表中的 Applicability 与 catalog 一致
+- `xlsx` 主表行数与推荐后的 shell 数量一致
+- `docx` 中 Heading 4 的 `Display Label + Title` 顺序与 catalog 一致
+- `docx` 中 shell heading 数量与推荐后的 shell 数量一致
+- `docx` 中推荐涉及的顶层 section heading 已出现
+- `docx` 中 header block 的 `Display Label / Title / Analysis Set` 顺序与 catalog 一致
+- `docx` 中每个 shell 的 `Protocol:` 与 `Sponsor:` 行已出现
+- `sop` 中标准标题与受控 scope 文案存在
+- `sop` 中三类正式输出的对齐要求文案存在
+- `sop` 中 generation、catalog validation、regression tests 的 quality gate 文案存在
+- `sop` 中头表关键标签与 `Classification = CONFIDENTIAL` 存在
+- `sop` 中关键 Heading 结构与 Appendix heading 存在
+- `validation_results.declared_references` 已声明当前脚本实际引用的细节 helper 与字段集合
+- 顶层 `package_bundle` 已声明当前 Skill 包是否具备 contract registry、catalog 子集、最小运行依赖与样例请求
+- 顶层 `runtime_summary` 已声明当前是否优先走 Skill 包内 runtime，以及 catalog / registry / wrapper 来源
 
-### 12.1 Immediate
+不要把某个仓库内临时 CLI 原型误当成 Skill 官方测试面。
 
-- keep this guide aligned with `PROJECT_SPEC.md`
-- prioritize tests that verify governed invariants
-- keep recommend-prototype tests focused on governed defaults, ambiguity
-  handling, and stable recommendation outputs rather than on prompt wording
+当前已增加基础校验脚本：
 
-### 12.2 Mid-term
+- `scripts/validate_skill_package.py`
 
-- add fixtures for representative oncology and non-oncology shell sets
-- add phase-aware metadata checks after the catalog model evolves
+其测试重点应包括：
 
-### 12.3 Toolchain
+- Skill 包目录结构
+- `SKILL.md` frontmatter
+- 必需配套文件
+- 最小自包含资产
+- runtime loader / wrapper 与导出脚本
+- 明显的错误绑定表述
 
-- keep `pytest` in the managed workflow
-- keep local hooks and CI aligned with the controlled quality gate
+## 9. 风险提示
+
+- `技术风险`：无测试时，文档与输出行为会静默漂移
+- `维护风险`：shell 扩张但无验证，会提高未来维护成本
+- `项目风险`：覆盖声明可能超出真实实现
+
+## 10. 优化建议
+
+### 10.1 立即可做
+
+- 保持测试与 `PROJECT_SPEC.md` 同步
+- 优先验证治理不变量
+- 保持 Product 输出结构的稳定回归
+
+### 10.2 中长期
+
+- 增加 oncology / non-oncology 代表性 fixture
+- 增加 phase-aware metadata checks
+
+### 10.3 工具链
+
+- 在 CI 中保留 `pytest`
+- 增加关键输出格式回归
+- 增加 SKILL 包结构与术语一致性检查
