@@ -8,12 +8,12 @@ Supports:
   - Backward-compatible with flat list[str] data_rows
 """
 
-from docx.shared import Pt, Cm
+from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
 from tflshell import config
 from tflshell.docx_utils.xml_helpers import (
     set_table_borders, set_cell_bottom_border, set_cell_text,
-    set_cell_shading, set_cell_width,
+    set_cell_shading, set_table_autofit_to_page,
 )
 
 
@@ -97,6 +97,13 @@ def _render_data_row(table, row_idx, row_data, col_count, font_size, font_name):
         bold = False
         indent = False
 
+    expected_value_count = max(col_count - 1, 0)
+    if len(values) != expected_value_count:
+        raise ValueError(
+            f"Row '{label}' has {len(values)} value cells but expected "
+            f"{expected_value_count} based on the table header."
+        )
+
     # Spacing: bold category headers get extra space above to separate groups
     if bold:
         space_before, space_after = 6, 1
@@ -114,7 +121,7 @@ def _render_data_row(table, row_idx, row_data, col_count, font_size, font_name):
 
     # Columns 1+: Numeric values — center-aligned, inherit bold from row
     for col_idx in range(1, col_count):
-        val = values[col_idx - 1] if col_idx - 1 < len(values) else "XX"
+        val = values[col_idx - 1]
         set_cell_text(table.cell(row_idx, col_idx), val,
                       bold=bold, font_size=font_size, font_name=font_name,
                       alignment=WD_ALIGN_PARAGRAPH.CENTER,
@@ -142,6 +149,7 @@ def create_three_line_table(doc, rows, cols, headers, data_rows=None,
 
     table = doc.add_table(rows=rows, cols=cols)
     table.autofit = True
+    set_table_autofit_to_page(table)
 
     # ---- Header row ----
     for col_idx, header_text in enumerate(headers):
@@ -172,15 +180,6 @@ def create_three_line_table(doc, rows, cols, headers, data_rows=None,
                 set_cell_text(table.cell(row_idx, col_idx), "XX",
                               font_size=font_size, font_name=font_name,
                               alignment=align)
-
-    # ---- Column widths ----
-    if cols >= 2:
-        param_width = config.TABLE_PARAM_COL_WIDTH_CM
-        data_width = config.TABLE_DATA_COL_WIDTH_CM
-        for row in table.rows:
-            set_cell_width(row.cells[0], param_width)
-            for col_idx in range(1, cols):
-                set_cell_width(row.cells[col_idx], data_width)
 
     # ---- Apply three-line borders ----
     apply_three_line_format(table)

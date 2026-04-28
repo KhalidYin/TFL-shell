@@ -59,7 +59,7 @@ def _generate_mock_demographics(n=300, seed=42):
     """Generate mock demographics data for figures."""
     import numpy as np
     rng = np.random.default_rng(seed)
-    arms = ["Treatment A"] * (n // 2) + ["Treatment B"] * (n - n // 2)
+    arms = ["Group 1"] * (n // 2) + ["Group 2"] * (n - n // 2)
     ages = rng.normal(58, 12, n).clip(18, 90)
     sex = rng.choice(["Male", "Female"], n)
     return {"arm": arms, "age": ages, "sex": sex}
@@ -106,7 +106,7 @@ def _generate_mock_lab_data(n=200, seed=42):
     import numpy as np
     rng = np.random.default_rng(seed)
     visits = ["Baseline", "Week 4", "Week 8", "Week 12", "Week 16"]
-    arms = ["Treatment A", "Treatment B"]
+    arms = ["Group 1", "Group 2"]
     data = {}
     for arm in arms:
         for param in ["ALT (U/L)", "AST (U/L)", "ALP (U/L)"]:

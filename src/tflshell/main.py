@@ -1,4 +1,4 @@
-"""CLI entry point for TFLshell v2.0."""
+"""CLI entry point for TFLshell."""
 
 import argparse
 import os
@@ -131,7 +131,7 @@ def cmd_validate(args):
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="tflshell",
-        description="Clinical TFL Shell Template Generator v2.0",
+        description=f"Clinical TFL Shell Template Generator v{__version__}",
     )
     parser.add_argument("--version", action="version", version=f"tflshell {__version__}")
     subparsers = parser.add_subparsers(dest="command")

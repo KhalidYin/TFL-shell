@@ -117,7 +117,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                     "title": "Governed Deliverables",
                     "content": [
                         "The generator produces three coordinated deliverables: a DOCX shell template, a companion XLSX catalog workbook, and this SOP document.",
-                        "All three deliverables must stay aligned on internal TFL ID, reviewer-facing display label, title, section, type, applicability, and versioning conventions.",
+                        "All three deliverables must stay aligned on internal TFL ID, reviewer-facing display label, title, section, type, applicability, shell family, study phase scope, coverage summary, and versioning conventions.",
                     ],
                 },
                 {
@@ -126,7 +126,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                     "content": [
                         "Tables and listings preserve first-column structural examples such as row labels, categories, terms, or subject-structure identifiers needed to show the intended layout.",
                         "Non-structural cells use shell-style placeholders such as XX, xx (xx.x), x.xxx, or CI-like formats as appropriate to the intended display. No mock numeric results, subject-level details, or fabricated derived values are permitted in governed shell outputs.",
-                        "Expandable treatment/group structures may use ellipsis (...) columns together with a Total column, and header sample sizes must remain generic (for example N=xx) rather than concrete counts.",
+                        "Controlled tables should use `Group 1`, `Group 2`, and an optional separate ellipsis (`...`) expansion column. The expansion column must remain distinct and must not be merged with Overall, HR, Total, or other analytic columns. Header sample sizes must remain generic (for example N=xx) rather than concrete counts.",
                         "Listing shells must not introduce fabricated subject-level records; only structural examples and result-free placeholders are permitted.",
                         "If a shell requires placeholder headers before study-specific terminology is finalized, neutral labels may be used temporarily so long as they remain governance-appropriate and result-free.",
                     ],
@@ -158,6 +158,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                         "It contains the master TFL inventory, section-level sheets, field definitions, usage guidance, and a controlled change log.",
                         "The workbook should retain both internal IDs for traceability and reviewer-facing display labels for presentation consistency with the DOCX shell template.",
                         "Applicability labels must clearly distinguish general, oncology-only, and non-oncology-only shells, and those labels guide shell selection for a specific study.",
+                        "Governance metadata such as shell family, study phase scope, and coverage summary should be reviewed together with applicability before study-specific shell selection is finalized.",
                     ],
                 },
                 {
@@ -178,6 +179,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                         "Template-level updates must be recorded in the Change_Log sheet of the XLSX workbook.",
                         "Changes that affect scope, numbering, shell wording, traceability notes, or formatting conventions require versioned release control.",
                         "Superseded deliverables should be retained according to the organization's document retention policy.",
+                        "Automated quality gates should verify generation, catalog validation, and regression tests before release or controlled reuse.",
                     ],
                 },
             ],

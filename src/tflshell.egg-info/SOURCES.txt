@@ -7,6 +7,7 @@ src/tflshell.egg-info/PKG-INFO
 src/tflshell.egg-info/SOURCES.txt
 src/tflshell.egg-info/dependency_links.txt
 src/tflshell.egg-info/entry_points.txt
+src/tflshell.egg-info/requires.txt
 src/tflshell.egg-info/top_level.txt
 src/tflshell/data/__init__.py
 src/tflshell/data/definitions.py

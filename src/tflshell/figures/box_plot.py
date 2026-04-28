@@ -64,8 +64,8 @@ class BoxPlotFigure(ClinicalFigure):
         # Legend
         from matplotlib.patches import Patch
         legend_items = [
-            Patch(facecolor=TRT_COLORS["A"], alpha=0.6, label="Treatment A"),
-            Patch(facecolor=TRT_COLORS["B"], alpha=0.6, label="Treatment B"),
+            Patch(facecolor=TRT_COLORS["A"], alpha=0.6, label="Group 1"),
+            Patch(facecolor=TRT_COLORS["B"], alpha=0.6, label="Group 2"),
         ]
         ax.legend(handles=legend_items, loc="upper right", fontsize=8)
         ax.spines["top"].set_visible(False)

@@ -30,8 +30,8 @@ class LongitudinalFigure(ClinicalFigure):
         arm_a_sd = data.get("arm_a_sd", [])
         arm_b_mean = data.get("arm_b_mean", [])
         arm_b_sd = data.get("arm_b_sd", [])
-        arm_a_label = data.get("arm_a_label", "Treatment A")
-        arm_b_label = data.get("arm_b_label", "Treatment B")
+        arm_a_label = data.get("arm_a_label", "Group 1")
+        arm_b_label = data.get("arm_b_label", "Group 2")
         xlabel = data.get("xlabel", "Visit")
         ylabel = data.get("ylabel", "Mean (+/- SD)")
         ref_line = data.get("ref_line", None)
@@ -39,13 +39,13 @@ class LongitudinalFigure(ClinicalFigure):
         x = np.arange(len(visits))
         fig, ax = plt.subplots(figsize=self.figsize)
 
-        # Treatment A
+        # Group 1
         ax.errorbar(x - 0.15, arm_a_mean, yerr=arm_a_sd,
                     color=TRT_COLORS["A"], marker="o", markersize=6,
                     linewidth=1.8, capsize=4, capthick=1.2,
                     label=arm_a_label)
 
-        # Treatment B
+        # Group 2
         ax.errorbar(x + 0.15, arm_b_mean, yerr=arm_b_sd,
                     color=TRT_COLORS["B"], marker="s", markersize=6,
                     linewidth=1.8, capsize=4, capthick=1.2,

@@ -35,6 +35,9 @@ MASTER_COLUMNS = [
     "Title",
     "Type",
     "Section",
+    "Shell Family",
+    "Study Phase Scope",
+    "Coverage Summary",
     "Population",
     "Applicability",
     "Dataset Source",
@@ -44,7 +47,7 @@ MASTER_COLUMNS = [
     "Footnotes",
     "Remarks",
 ]
-MASTER_WIDTHS = [14, 18, 42, 10, 10, 28, 18, 20, 22, 28, 24, 12, 30]
+MASTER_WIDTHS = [14, 18, 42, 10, 10, 22, 28, 32, 28, 18, 20, 22, 28, 24, 12, 30]
 SECTION_SHEETS = [
     ("14.1_Demographics", Section.SEC_14_1),
     ("14.2_Efficacy", Section.SEC_14_2),
@@ -118,6 +121,9 @@ class XlsxTocGenerator:
             ["Title", "Governance-approved descriptive shell title.", "Summary of Treatment-Emergent Adverse Events"],
             ["Type", "Output class.", "Table / Figure / Listing"],
             ["Section", "CSR section aligned to ICH E3 scope.", "14.3"],
+            ["Shell Family", "Governed shell-family grouping used for coverage and maintenance planning.", "Safety"],
+            ["Study Phase Scope", "High-level phase scope supported by the shell family or item.", "Phase I-III"],
+            ["Coverage Summary", "Governance summary derived from the approved coverage matrix.", "Core"],
             ["Population", "Analysis set named in the shell header.", "Safety Population"],
             ["Applicability", "Whether the shell is general, oncology only, or non-oncology only.", "Oncology only"],
             ["Dataset Source", "Primary ADaM/SDTM source or derived dataset lineage.", "ADAE"],
@@ -138,6 +144,7 @@ class XlsxTocGenerator:
         rows = [
             ["Workbook purpose", "This workbook is a synchronized catalog and usage guide for the DOCX TFL shell template. It is not a workflow tracker."],
             ["Scope", "The workbook covers CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2 only; Section 16.1 is out of scope for this generator."],
+            ["Coverage metadata", "Use Shell Family, Study Phase Scope, and Coverage Summary as governance metadata to interpret where a shell sits in the approved coverage matrix."],
             ["Applicability", "Use the Applicability column to identify shells relevant to oncology, non-oncology, or both. These labels guide study-specific shell selection rather than serving as workflow status flags."],
             ["Placeholder convention", "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Expandable treatment/group patterns may include ellipsis (...) and a Total column, without concrete sample sizes in headers."],
             ["Figures", "Figure entries correspond to simulated shell illustrations that should be replaced with study-specific outputs in production."],
@@ -179,6 +186,9 @@ class XlsxTocGenerator:
             item.title,
             item.tfl_type.value,
             item.section.number,
+            item.shell_family_label,
+            item.study_phase_scope_label,
+            item.coverage_summary_label,
             item.population,
             item.applicability_label,
             item.dataset_source,

@@ -20,8 +20,8 @@ class ForestFigure(ClinicalFigure):
             "rows": list[dict] with: subgroup, hr, ci_low, ci_high,
             "xlabel": str,
             "xscale": str ("linear" or "log", default "linear"),
-            "favors_left_label": str (default "Favors Treatment A"),
-            "favors_right_label": str (default "Favors Treatment B"),
+            "favors_left_label": str (default "Favors Group 1"),
+            "favors_right_label": str (default "Favors Group 2"),
         }
     """
 
@@ -32,8 +32,8 @@ class ForestFigure(ClinicalFigure):
         rows = data.get("rows", [])
         xlabel = data.get("xlabel", "Hazard Ratio (95% CI)")
         xscale = data.get("xscale", "linear")
-        favors_left = data.get("favors_left_label", "Favors Treatment A")
-        favors_right = data.get("favors_right_label", "Favors Treatment B")
+        favors_left = data.get("favors_left_label", "Favors Group 1")
+        favors_right = data.get("favors_right_label", "Favors Group 2")
         n = len(rows)
 
         fig, ax = plt.subplots(figsize=(8, max(3, n * 0.45)))

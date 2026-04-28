@@ -100,11 +100,11 @@ class SwimmerFigure(ClinicalFigure):
         # Legend
         from matplotlib.patches import Patch
         legend_items = [
-            Patch(facecolor=TRT_COLORS_LIST[0], alpha=0.7, label="Treatment A"),
-            Patch(facecolor=TRT_COLORS_LIST[1], alpha=0.7, label="Treatment B"),
+            Patch(facecolor=TRT_COLORS_LIST[0], alpha=0.7, label="Group 1"),
+            Patch(facecolor=TRT_COLORS_LIST[1], alpha=0.7, label="Group 2"),
         ]
         if len(TRT_COLORS_LIST) >= 3:
-            legend_items.append(Patch(facecolor=TRT_COLORS_LIST[2], alpha=0.7, label="Treatment C"))
+            legend_items.append(Patch(facecolor=TRT_COLORS_LIST[2], alpha=0.7, label="Group 3"))
         legend_items.extend([
             Patch(facecolor="lightgray", alpha=0.5, label="Post-Treatment FU"),
             Line2D([0], [0], marker="*", color="gold", label="CR",

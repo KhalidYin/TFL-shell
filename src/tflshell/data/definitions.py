@@ -1,11 +1,11 @@
-"""TFL Shell Catalog v2.2 — shell-first structure with ... expansion pattern.
+"""TFL Shell Catalog v2.3 — controlled multi-arm-expansion shell library.
 
-Column convention for ALL tables:
+Column convention for standard controlled tables:
   Col 0 = structural labels (first column)
-  Col 1 = XXX Group 1 (N=XX)
-  Col 2 = XXX Group 2 (N=XX)
-  Col 3 = ... (expansion placeholder)
-  Col 4 = Overall (N=XX)
+  Col 1 = Group 1 (N=XX)
+  Col 2 = Group 2 (N=XX)
+  Col 3 = ... (expansion placeholder for additional groups where applicable)
+  Col 4 = Overall (N=XX) only where clinically standard and explicitly retained
 
 Placeholder styles per column type:
   n (%)   → xx (xx.x)
@@ -26,30 +26,295 @@ T, F, L = TFLType.TABLE, TFLType.FIGURE, TFLType.LISTING
 S141, S142, S143, S144 = Section.SEC_14_1, Section.SEC_14_2, Section.SEC_14_3, Section.SEC_14_4
 S162 = Section.SEC_16_2
 
-# Standard 5-column header templates (v2.2: "..." and "Overall" are separate columns)
+# Standard controlled header templates
 H2_SIMPLE = ["Parameter\nCategory / Statistic",
-             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+             "Group 1\n(N=XX)", "Group 2\n(N=XX)",
              "...", "Overall\n(N=XX)"]
 H2_NPCT = ["Parameter\nCategory",
-            "XXX Group 1\n(N=XX)\nn (%)", "XXX Group 2\n(N=XX)\nn (%)",
+            "Group 1\n(N=XX)\nn (%)", "Group 2\n(N=XX)\nn (%)",
             "...", "Overall\n(N=XX)\nn (%)"]
 H2_SOCPT = ["System Organ Class\nPreferred Term",
-             "XXX Group 1\n(N=XX)\nn (%)", "XXX Group 2\n(N=XX)\nn (%)",
+             "Group 1\n(N=XX)\nn (%)", "Group 2\n(N=XX)\nn (%)",
              "...", "Overall\n(N=XX)\nn (%)"]
 H2_EVENTS = ["Parameter\nCategory",
-              "XXX Group 1\n(N=XX)\nn (%) [E]", "XXX Group 2\n(N=XX)\nn (%) [E]",
+              "Group 1\n(N=XX)\nn (%) [E]", "Group 2\n(N=XX)\nn (%) [E]",
               "...", "Overall\n(N=XX)\nn (%) [E]"]
 H2_EFF = ["Endpoint\nStatistic",
-           "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+           "Group 1\n(N=XX)", "Group 2\n(N=XX)",
            "...", "Overall\n(N=XX)"]
 H2_LAB = ["Parameter\nVisit", "Statistic",
-           "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+           "Group 1\n(N=XX)", "Group 2\n(N=XX)",
            "...", "Overall\n(N=XX)"]
 
-# Shared ellipsis rows (v2.2: 5-column standard)
-EROW = ["[...]", "...", "...", "...", "..."]
-EROW5 = ["[...]", "...", "...", "...", "..."]
-EROW6 = ["[...]", "...", "...", "...", "...", "..."]
+# Shared continuation rows
+EROW = ["[Additional rows omitted in master shell]", "", "", ""]
+EROW5 = ["[Additional rows omitted in master shell]", "", "", "", ""]
+EROW6 = ["[Additional rows omitted in master shell]", "", "", "", "", ""]
+
+
+def _default_shell_family(item: TFLItem) -> str:
+    title = item.title.lower()
+    if item.section == S141:
+        return "Demographics and Baseline"
+    if item.section == S142:
+        if item.non_oncology_only:
+            return "Non-Oncology Efficacy"
+        if item.oncology_only:
+            return "Oncology Efficacy"
+        return "General Efficacy"
+    if item.section == S143:
+        if any(keyword in title for keyword in ("dose-limiting", "mtd", "rp2d", "holter")):
+            return "Phase I Safety and Dose Escalation"
+        return "Safety"
+    if item.section == S144:
+        if any(keyword in title for keyword in ("food effect", "crossover", "relative bioavailability")):
+            return "Phase I Clinical Pharmacology"
+        return "Special Assessments"
+    if item.section == S162:
+        if any(keyword in title for keyword in ("dose-limiting", "food-effect", "clinical events")):
+            return "Specialized Patient Listings"
+        if item.non_oncology_only:
+            return "Non-Oncology Listings"
+        if item.oncology_only:
+            return "Oncology Listings"
+        return "Patient Listings"
+    return item.section.title
+
+
+def _default_study_phase_scope(item: TFLItem) -> str:
+    title = item.title.lower()
+    if any(keyword in title for keyword in ("dose-limiting", "mtd", "rp2d", "food effect", "crossover", "relative bioavailability")):
+        return "Phase I"
+    if item.non_oncology_only and item.section == S142:
+        return "Phase II-III"
+    if item.oncology_only and item.section in (S142, S162):
+        return "Phase I-III (oncology-focused)"
+    if item.section in (S141, S143, S162):
+        return "Phase I-III"
+    if item.section == S142:
+        return "Phase I-III (conditional for Phase I)"
+    if item.section == S144:
+        return "Phase I-III (core in Phase I; conditional in Phase II-III)"
+    return "Phase I-III"
+
+
+def _default_coverage_summary(item: TFLItem) -> str:
+    title = item.title.lower()
+    if any(keyword in title for keyword in ("dose-limiting", "mtd", "rp2d")):
+        return "Core (Phase I)"
+    if any(keyword in title for keyword in ("food effect", "crossover", "relative bioavailability")):
+        return "Conditional (Phase I)"
+    if item.non_oncology_only and item.section == S142:
+        return "Core (Phase II-III, Non-Oncology)"
+    if item.non_oncology_only and item.section == S162:
+        return "Conditional (Phase II-III, Non-Oncology)"
+    if item.oncology_only and item.section in (S142, S162):
+        return "Core (Oncology)"
+    if item.section in (S141, S143, S162):
+        return "Core"
+    if item.section == S142:
+        return "Core (Phase II-III); Conditional (Phase I)"
+    if item.section == S144:
+        return "Core (Phase I); Conditional (Phase II-III)"
+    return "Core"
+
+
+def _apply_governance_metadata(items: list[TFLItem]) -> None:
+    for item in items:
+        if item.placeholder_columns:
+            _normalize_shell_rows(item)
+        if not item.shell_family:
+            item.shell_family = _default_shell_family(item)
+        if not item.study_phase_scope:
+            item.study_phase_scope = _default_study_phase_scope(item)
+        if not item.coverage_summary:
+            item.coverage_summary = _default_coverage_summary(item)
+
+
+def _normalize_controlled_text(text: str) -> str:
+    replacements = {
+        "XXX Group 1": "Group 1",
+        "XXX Group 2": "Group 2",
+        "Treatment A": "Group 1",
+        "Treatment B": "Group 2",
+        "Group1": "Group 1",
+        "Group2": "Group 2",
+        "G1": "Group 1",
+        "G2": "Group 2",
+        "Gx": "Group",
+        "Control": "Group 2",
+    }
+    for old, new in replacements.items():
+        text = text.replace(old, new)
+    return text
+
+
+def _normalize_placeholder_columns(columns: list[str]) -> list[str]:
+    normalized: list[str] = []
+    for col in columns:
+        text = _normalize_controlled_text(col)
+        if text.startswith("...\n...\n"):
+            normalized.append("...")
+            normalized.append(text.replace("...\n...\n", "", 1))
+        else:
+            normalized.append(text)
+    return normalized
+
+
+def _normalize_shell_rows(item: TFLItem) -> None:
+    normalized_rows = []
+    data_col_count = max(len(item.placeholder_columns) - 1, 0)
+    for row in item.shell_rows:
+        rich = item._normalize_row(row)
+        rich["label"] = _normalize_controlled_text(rich["label"])
+        rich["values"] = [_normalize_controlled_text(str(value)) for value in rich["values"]]
+        if data_col_count:
+            if not rich["values"]:
+                rich["values"] = [""] * data_col_count
+            elif len(rich["values"]) > data_col_count:
+                rich["values"] = rich["values"][:data_col_count]
+            elif len(rich["values"]) < data_col_count:
+                rich["values"].extend([""] * (data_col_count - len(rich["values"])))
+        normalized_rows.append(rich)
+    item.shell_rows = normalized_rows
+
+
+def _assign_controlled_source_listing(item: TFLItem) -> None:
+    if item.tfl_type == L:
+        item.source_listing = item.id
+        return
+
+    title = item.title.lower()
+    program_ref = item.program_ref.lower() if item.program_ref else ""
+
+    if any(token in title for token in ("tumor response", "best overall response", "objective response", "disease control", "target lesion", "waterfall", "spider", "swimmer")):
+        item.source_listing = "L16.2.10"
+        return
+    if any(token in title for token in ("progression-free survival", "overall survival", "duration of response", "time to response", "time to first subsequent therapy", "landmark os", "landmark analysis", "forest plot", "pfs status")):
+        item.source_listing = "L16.2.11"
+        if "subsequent therapy" in title:
+            item.source_listing = "L16.2.19"
+        return
+    if any(token in title for token in ("subsequent anti-cancer", "tfst")):
+        item.source_listing = "L16.2.19"
+        return
+    if any(token in title for token in ("primary efficacy", "secondary efficacy", "sensitivity analysis", "non-inferiority", "tipping point")):
+        item.source_listing = "L16.2.3"
+        return
+    if any(token in title for token in ("respiratory exacerbation",)):
+        item.source_listing = "L16.2.35"
+        return
+    if any(token in title for token in ("cardiovascular", "mace", "heart failure hospitalization")):
+        item.source_listing = "L16.2.36"
+        return
+    if any(token in title for token in ("autoimmune flare", "responder")) and item.non_oncology_only:
+        item.source_listing = "L16.2.37"
+        return
+    if any(token in title for token in ("clinical event", "exacerbation")) and item.non_oncology_only:
+        item.source_listing = "L16.2.34"
+        return
+    if any(token in title for token in ("dose-limiting", "mtd", "rp2d")):
+        item.source_listing = "L16.2.32"
+        return
+    if any(token in title for token in ("food effect", "crossover", "relative bioavailability")):
+        item.source_listing = "L16.2.33"
+        return
+    if any(token in title for token in ("pk concentration", "pk concentrations", "concentration-time")):
+        item.source_listing = "L16.2.14"
+        return
+    if any(token in title for token in ("pk parameter", "pk parameters", "ctrough", "steady-state", "urine pk", "pharmacokinetic (pk) plot", "pk plot")):
+        item.source_listing = "L16.2.15"
+        return
+    if any(token in title for token in ("ada", "neutralizing antibody", "nab")):
+        item.source_listing = "L16.2.16"
+        return
+    if any(token in title for token in ("biomarker", "gene aberration", "pd ")) or program_ref in {"t_pd_summary.sas", "t_pd_bio_chg.sas", "f_pd_time.sas", "f_biomarker_box.sas"}:
+        item.source_listing = "L16.2.17"
+        return
+    if any(token in title for token in ("quality of life", "pro ")) or program_ref == "t_pro_summary.sas":
+        item.source_listing = "L16.2.18"
+        return
+    if any(token in title for token in ("adverse event", "teae", "aesi", "infusion-related", "serious adverse", "deaths", "hy's law", "hys law")):
+        if "hys" in title:
+            item.source_listing = "L16.2.23"
+        elif "aesi" in title:
+            item.source_listing = "L16.2.22"
+        elif "death" in title:
+            item.source_listing = "L16.2.20"
+        elif "serious" in title:
+            item.source_listing = "L16.2.5"
+        elif "infusion-related" in title:
+            item.source_listing = "L16.2.29"
+        else:
+            item.source_listing = "L16.2.4"
+        return
+    if any(token in title for token in ("concomitant medication", "medication")):
+        item.source_listing = "L16.2.6"
+        return
+    if any(token in title for token in ("analysis populations", "study drug exposure", "exposure by duration", "dose intensity", "dose modifications")):
+        item.source_listing = "L16.2.12"
+        return
+    if any(token in title for token in ("surgical and procedure history", "anti-cancer surgery", "radiotherapy")):
+        item.source_listing = "L16.2.21"
+        return
+    if any(token in title for token in ("laboratory", "hematology", "chemistry")):
+        item.source_listing = "L16.2.7"
+        return
+    if any(token in title for token in ("vital sign", "weight", "spo2", "respiratory rate", "temperature")):
+        item.source_listing = "L16.2.8"
+        return
+    if any(token in title for token in ("ecg", "qtcf", "holter")):
+        item.source_listing = "L16.2.9"
+        return
+    if any(token in title for token in ("ecog performance status",)):
+        item.source_listing = "L16.2.13"
+        return
+    if any(token in title for token in ("physical examination",)):
+        item.source_listing = "L16.2.24"
+        return
+    if any(token in title for token in ("urinalysis", "urine chemistry")):
+        item.source_listing = "L16.2.25"
+        return
+    if any(token in title for token in ("coagulation",)):
+        item.source_listing = "L16.2.26"
+        return
+    if any(token in title for token in ("cardiac biomarkers", "immunoglobulin")):
+        item.source_listing = "L16.2.27"
+        return
+    if any(token in title for token in ("lymphocyte", "cytokine")):
+        item.source_listing = "L16.2.28"
+        return
+    if any(token in title for token in ("demographic", "baseline")):
+        item.source_listing = "L16.2.2"
+        return
+    if any(token in title for token in ("disposition", "screen failure")):
+        item.source_listing = "L16.2.1"
+        return
+    if any(token in title for token in ("protocol deviation", "estimand strategy")):
+        item.source_listing = "L16.2.3"
+        return
+    if item.source_listing == "L16.2.1 / L16.2.2":
+        item.source_listing = ""
+
+
+def _normalize_controlled_shells(items: list[TFLItem]) -> list[TFLItem]:
+    removed_ids = {"T14.2.3", "T14.2.17", "T14.2.18", "T14.3.1.11", "T14.3.1.12"}
+    retained: list[TFLItem] = []
+
+    for item in items:
+        if item.id in removed_ids:
+            continue
+
+        item.placeholder_columns = _normalize_placeholder_columns(item.placeholder_columns)
+        _normalize_shell_rows(item)
+        item.population = _normalize_controlled_text(item.population)
+        item.figure_description = _normalize_controlled_text(item.figure_description)
+        item.footnotes = [_normalize_controlled_text(note) for note in item.footnotes]
+        item.dataset_source = _normalize_controlled_text(item.dataset_source)
+        _assign_controlled_source_listing(item)
+        retained.append(item)
+
+    return retained
 
 
 def build_catalog() -> TFLCatalog:
@@ -1015,6 +1280,256 @@ def build_catalog() -> TFLCatalog:
         ],
         dataset_source="ADSL, ADPK, ADEFF",
         source_listing="L16.2.1 / L16.2.2", program_ref="t_pkpd_corr.sas",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.23", title="Responder Analysis of Primary Clinical Endpoint",
+        tfl_type=T, section=S142, sort_key=23, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Responder Analysis",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Difference / Effect", "95% CI / p-value"],
+        shell_rows=[
+            ["Responders, n (%)", "xx (xx.x)", "xx (xx.x)", "xx.x", "[xx.x, xx.x]"],
+            ["Non-Responders, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Risk Difference (%)", "", "", "xx.x", "[xx.x, xx.x]"],
+            ["Odds Ratio", "", "", "x.xx", "[x.xx, x.xx]"],
+            ["p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Responder definition per protocol and SAP. Stratified CMH / logistic model as applicable."],
+        dataset_source="ADSL, ADEFF",
+        source_listing="L16.2.34", program_ref="t_responder_primary.sas",
+        shell_family="Non-Oncology Efficacy",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.24", title="Annualized Clinically Significant Event / Exacerbation Rate Analysis",
+        tfl_type=T, section=S142, sort_key=24, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Event Rate Analysis",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Rate Ratio", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with >=1 Event, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Total Number of Events", "xx", "xx", "", ""],
+            ["Exposure Time (Patient-Years)", "xx.x", "xx.x", "", ""],
+            ["Annualized Event Rate", "x.xx", "x.xx", "x.xx", "[x.xx, x.xx]"],
+            ["Negative Binomial Model p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Event/exacerbation definitions and over-dispersion model settings per SAP."],
+        dataset_source="ADSL, ADEFF, ADTTE",
+        source_listing="L16.2.34", program_ref="t_event_rate.sas",
+        shell_family="Non-Oncology Efficacy",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.25", title="Time to First Clinically Significant Event",
+        tfl_type=T, section=S142, sort_key=25, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Time-to-Event Statistic",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Hazard Ratio", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with Event, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Median Time to First Event (days)", "xx.x", "xx.x", "", ""],
+            ["25th, 75th Percentile", "xx.x, xx.x", "xx.x, xx.x", "", ""],
+            ["Stratified Cox Model", "", "", "x.xx", "[x.xx, x.xx]"],
+            ["Stratified Log-Rank p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Clinically significant event defined per adjudication or protocol rules. KM estimates and Cox model per SAP."],
+        dataset_source="ADSL, ADTTE",
+        source_listing="L16.2.34", program_ref="t_time_to_event_nononc.sas",
+        shell_family="Non-Oncology Efficacy",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="F14.2.11", title="Kaplan-Meier Plot — Time to First Clinically Significant Event",
+        tfl_type=F, section=S142, sort_key=33, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        figure_description="KM curve for time to first protocol-defined clinically significant event with censoring marks and number-at-risk table.",
+        dataset_source="ADSL, ADTTE",
+        source_listing="L16.2.34", program_ref="f_km_event_nononc.sas",
+        figure_type="km_curve", figure_width_inches=6, figure_height_inches=3.5,
+        shell_family="Non-Oncology Efficacy",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.26", title="Annualized Moderate or Severe Respiratory Exacerbation Rate",
+        tfl_type=T, section=S142, sort_key=26, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Respiratory Exacerbation Analysis",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Rate Ratio", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with >=1 Moderate or Severe Exacerbation, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Total Moderate or Severe Exacerbations", "xx", "xx", "", ""],
+            ["Exposure Time (Patient-Years)", "xx.x", "xx.x", "", ""],
+            ["Annualized Exacerbation Rate", "x.xx", "x.xx", "x.xx", "[x.xx, x.xx]"],
+            ["Negative Binomial Model p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Moderate and severe exacerbations defined per protocol, including systemic corticosteroid, antibiotic, emergency visit, or hospitalization criteria as applicable."],
+        dataset_source="ADSL, ADEFF, ADTTE",
+        source_listing="L16.2.35", program_ref="t_resp_exac_rate.sas",
+        shell_family="Respiratory Exacerbation",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.27", title="Time to First Moderate or Severe Respiratory Exacerbation",
+        tfl_type=T, section=S142, sort_key=27, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Time-to-First Exacerbation Statistic",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Hazard Ratio", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with Event, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Median Time to First Exacerbation (days)", "xx.x", "xx.x", "", ""],
+            ["Event-Free Rate at Week 24, %", "xx.x", "xx.x", "", ""],
+            ["Stratified Cox Model", "", "", "x.xx", "[x.xx, x.xx]"],
+            ["Stratified Log-Rank p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Event timing is based on protocol-defined onset date of the first moderate or severe respiratory exacerbation."],
+        dataset_source="ADSL, ADTTE",
+        source_listing="L16.2.35", program_ref="t_resp_exac_tte.sas",
+        shell_family="Respiratory Exacerbation",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="F14.2.12", title="Kaplan-Meier Plot — Time to First Moderate or Severe Respiratory Exacerbation",
+        tfl_type=F, section=S142, sort_key=34, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        figure_description="KM curve for time to first moderate or severe respiratory exacerbation with censoring marks and number-at-risk table.",
+        dataset_source="ADSL, ADTTE",
+        source_listing="L16.2.35", program_ref="f_resp_exac_km.sas",
+        figure_type="km_curve", figure_width_inches=6, figure_height_inches=3.5,
+        shell_family="Respiratory Exacerbation",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.28", title="Adjudicated Major Adverse Cardiovascular Events (MACE) Summary",
+        tfl_type=T, section=S142, sort_key=28, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Cardiovascular Event Summary",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Hazard Ratio / Risk Difference", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with >=1 Adjudicated MACE, n (%)", "xx (xx.x)", "xx (xx.x)", "x.xx", "[x.xx, x.xx]"],
+            ["Cardiovascular Death, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Non-fatal Myocardial Infarction, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Non-fatal Stroke, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Urgent Coronary Revascularization, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+        ],
+        footnotes=["MACE components are adjudicated per charter. Composite definition and censoring rules per SAP."],
+        dataset_source="ADSL, ADEFF, ADTTE",
+        source_listing="L16.2.36", program_ref="t_mace_summary.sas",
+        shell_family="Cardiovascular MACE and HF Hospitalization",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.29", title="Time to First MACE or Heart Failure Hospitalization",
+        tfl_type=T, section=S142, sort_key=29, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Time-to-Cardiovascular Event Statistic",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Hazard Ratio", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with Event, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Median Time to First Event (days)", "xx.x", "xx.x", "", ""],
+            ["Event-Free Rate at Month 12, %", "xx.x", "xx.x", "", ""],
+            ["Stratified Cox Model", "", "", "x.xx", "[x.xx, x.xx]"],
+            ["Stratified Log-Rank p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Event includes first adjudicated MACE component or first hospitalization for worsening heart failure, whichever occurs first."],
+        dataset_source="ADSL, ADTTE",
+        source_listing="L16.2.36", program_ref="t_mace_hf_tte.sas",
+        shell_family="Cardiovascular MACE and HF Hospitalization",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="F14.2.13", title="Kaplan-Meier Plot — Time to First MACE or Heart Failure Hospitalization",
+        tfl_type=F, section=S142, sort_key=35, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        figure_description="KM curve for time to first adjudicated MACE or worsening-heart-failure hospitalization with censoring marks and number-at-risk table.",
+        dataset_source="ADSL, ADTTE",
+        source_listing="L16.2.36", program_ref="f_mace_hf_km.sas",
+        figure_type="km_curve", figure_width_inches=6, figure_height_inches=3.5,
+        shell_family="Cardiovascular MACE and HF Hospitalization",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.30", title="Autoimmune Disease Flare and Clinical Responder Analysis",
+        tfl_type=T, section=S142, sort_key=30, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Autoimmune Disease Activity Analysis",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Difference / Effect", "95% CI / p-value"],
+        shell_rows=[
+            ["Clinical Responders at Week 24, n (%)", "xx (xx.x)", "xx (xx.x)", "xx.x", "[xx.x, xx.x]"],
+            ["Subjects with >=1 Disease Flare, n (%)", "xx (xx.x)", "xx (xx.x)", "xx.x", "[xx.x, xx.x]"],
+            ["Mean Change in Disease Activity Score", "xx.x", "xx.x", "xx.x", "[xx.x, xx.x]"],
+            ["Odds Ratio for Response", "", "", "x.xx", "[x.xx, x.xx]"],
+            ["p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Responder and flare definitions are protocol-specific and may be based on composite disease activity criteria, rescue medication, or physician global assessment."],
+        dataset_source="ADSL, ADEFF",
+        source_listing="L16.2.37", program_ref="t_autoimmune_resp_flare.sas",
+        shell_family="Autoimmune Flare and Responder",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.2.31", title="Time to First Autoimmune Flare or Rescue Therapy",
+        tfl_type=T, section=S142, sort_key=31, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Time-to-Flare Statistic",
+                             "XXX Group 1\n(N=XX)", "XXX Group 2\n(N=XX)",
+                             "Hazard Ratio", "95% CI / p-value"],
+        shell_rows=[
+            ["Subjects with Event, n (%)", "xx (xx.x)", "xx (xx.x)", "", ""],
+            ["Median Time to First Flare / Rescue Therapy (days)", "xx.x", "xx.x", "", ""],
+            ["Flare-Free Rate at Week 52, %", "xx.x", "xx.x", "", ""],
+            ["Stratified Cox Model", "", "", "x.xx", "[x.xx, x.xx]"],
+            ["Stratified Log-Rank p-value", "", "", "", "x.xxx"],
+        ],
+        footnotes=["Event is the earliest protocol-defined flare or initiation/escalation of rescue therapy."],
+        dataset_source="ADSL, ADTTE, ADCM",
+        source_listing="L16.2.37", program_ref="t_autoimmune_ttf.sas",
+        shell_family="Autoimmune Flare and Responder",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="F14.2.14", title="Kaplan-Meier Plot — Time to First Autoimmune Flare or Rescue Therapy",
+        tfl_type=F, section=S142, sort_key=36, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        figure_description="KM curve for time to first autoimmune flare or rescue therapy with censoring marks and number-at-risk table.",
+        dataset_source="ADSL, ADTTE, ADCM",
+        source_listing="L16.2.37", program_ref="f_autoimmune_flare_km.sas",
+        figure_type="km_curve", figure_width_inches=6, figure_height_inches=3.5,
+        shell_family="Autoimmune Flare and Responder",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
     ))
 
     # =====================================================================
@@ -2875,6 +3390,49 @@ def build_catalog() -> TFLCatalog:
         figure_type="longitudinal", figure_width_inches=5.5, figure_height_inches=3.5,
     ))
 
+    items.append(TFLItem(
+        id="T14.3.4.17", title="Dose-Limiting Toxicities by Dose Level and Cycle 1 Evaluation Window",
+        tfl_type=T, section=S143, sort_key=32,
+        population="DLT-Evaluable Population",
+        placeholder_columns=["Dose Level / Cohort",
+                             "Subjects Treated\n(N)", "Subjects DLT-Evaluable\n(n)",
+                             "Subjects with DLT\nn (%)", "DLT Terms / Maximum Grade"],
+        shell_rows=[
+            ["Dose Level 1", "xx", "xx", "xx (xx.x)", "DLT term x / Gr x"],
+            ["Dose Level 2", "xx", "xx", "xx (xx.x)", "DLT term x / Gr x"],
+            ["Dose Level 3", "xx", "xx", "xx (xx.x)", "DLT term x / Gr x"],
+            ["Expansion Cohort", "xx", "xx", "xx (xx.x)", "DLT term x / Gr x"],
+            ["[...]", "...", "...", "...", "..."],
+        ],
+        footnotes=["DLT window and evaluability criteria per dose-escalation section of protocol/SAP. Multiple DLT terms may be summarized per subject."],
+        dataset_source="ADSL, ADAE, ADEX",
+        source_listing="L16.2.32", program_ref="t_dlt_by_dose.sas",
+        shell_family="Phase I Safety and Dose Escalation",
+        study_phase_scope="Phase I",
+        coverage_summary="Core (Phase I)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.3.4.18", title="Maximum Tolerated Dose / RP2D Determination Summary by Dose Level and Cohort",
+        tfl_type=T, section=S143, sort_key=33,
+        population="All Treated Subjects in Dose Escalation",
+        placeholder_columns=["Dose Level Decision Summary",
+                             "Subjects Treated", "Observed DLT Rate",
+                             "Review Committee Decision", "Rationale"],
+        shell_rows=[
+            ["Dose Level 1", "xx", "xx.x%", "Escalate / Expand / Stop", "No protocol-defined DLT threshold met"],
+            ["Dose Level 2", "xx", "xx.x%", "Escalate / Expand / Stop", "Observed DLTs within acceptable boundary"],
+            ["Dose Level 3", "xx", "xx.x%", "MTD Exceeded / RP2D Selected", "DLT frequency exceeded decision rule"],
+            ["Recommended Phase II Dose", "xx", "N/A", "RP2D", "Integrated safety, PK, and target-exposure review"],
+        ],
+        footnotes=["Review decision rules per protocol-defined escalation algorithm or SRC charter. RP2D may differ from formal MTD."],
+        dataset_source="ADSL, ADAE, ADEX, ADPC",
+        source_listing="L16.2.32", program_ref="t_mtd_rp2d.sas",
+        shell_family="Phase I Safety and Dose Escalation",
+        study_phase_scope="Phase I",
+        coverage_summary="Core (Phase I)",
+    ))
+
     # 14.4 SPECIAL ASSESSMENTS — Tables + Figures ONLY (no listings)
     # =====================================================================
 
@@ -3195,7 +3753,63 @@ def build_catalog() -> TFLCatalog:
         source_listing="L16.2.1 / L16.2.2", program_ref="t_urine_pk.sas",
     ))
 
-    # 16.2 PATIENT DATA LISTINGS (21 items — including PK/ADA/Biomarker from 14.4)
+    items.append(TFLItem(
+        id="T14.4.15", title="Food Effect on Pharmacokinetic Parameters — Fed vs Fasted Comparison",
+        tfl_type=T, section=S144, sort_key=15, non_oncology_only=True,
+        population="PK Population in Food-Effect Cohorts",
+        placeholder_columns=["PK Parameter",
+                             "Fasted\nGeo Mean", "Fed\nGeo Mean",
+                             "Fed/Fasted GMR", "90% CI"],
+        shell_rows=[
+            ["Cmax", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+            ["AUC0-t", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+            ["AUC0-inf", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+            ["Tmax", "x.x", "x.x", "", ""],
+        ],
+        footnotes=["Food-effect comparison based on log-transformed PK parameters in protocol-defined fed and fasted periods."],
+        dataset_source="ADSL, ADPP",
+        source_listing="L16.2.33", program_ref="t_food_effect_pk.sas",
+        shell_family="Phase I Clinical Pharmacology",
+        study_phase_scope="Phase I",
+        coverage_summary="Conditional (Phase I)",
+    ))
+
+    items.append(TFLItem(
+        id="T14.4.16", title="Relative Bioavailability / Crossover PK Comparison by Treatment Period",
+        tfl_type=T, section=S144, sort_key=16, non_oncology_only=True,
+        population="PK Population in Crossover / Relative Bioavailability Cohorts",
+        placeholder_columns=["PK Parameter",
+                             "Reference Treatment", "Test Treatment",
+                             "Test/Reference GMR", "90% CI"],
+        shell_rows=[
+            ["Cmax", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+            ["AUC0-t", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+            ["AUC0-inf", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+            ["t1/2", "xx.x", "xx.x", "x.xx", "[x.xx, x.xx]"],
+        ],
+        footnotes=["Relative bioavailability or crossover comparison per protocol-defined mixed-effects model with sequence, period, and treatment effects where applicable."],
+        dataset_source="ADSL, ADPP",
+        source_listing="L16.2.33", program_ref="t_crossover_pk.sas",
+        shell_family="Phase I Clinical Pharmacology",
+        study_phase_scope="Phase I",
+        coverage_summary="Conditional (Phase I)",
+    ))
+
+    items.append(TFLItem(
+        id="F14.4.5", title="Mean Concentration-Time Profiles — Fed vs Fasted",
+        tfl_type=F, section=S144, sort_key=19, non_oncology_only=True,
+        population="PK Population in Food-Effect Cohorts",
+        figure_description="Mean concentration-time profiles under fed and fasted conditions with linear and semilog interpretation support.",
+        dataset_source="ADSL, ADPC",
+        source_listing="L16.2.33", program_ref="f_food_effect_pk.sas",
+        figure_type="longitudinal", figure_width_inches=6, figure_height_inches=4,
+        shell_family="Phase I Clinical Pharmacology",
+        study_phase_scope="Phase I",
+        coverage_summary="Conditional (Phase I)",
+    ))
+
+    # 16.2 PATIENT DATA LISTINGS (expanded master set including PK/ADA/Biomarker,
+    # Phase I dose-escalation review, and non-oncology event review)
     # =====================================================================
 
     items.append(TFLItem(
@@ -3719,4 +4333,120 @@ def build_catalog() -> TFLCatalog:
         source_listing="L16.2.1 / L16.2.2", program_ref="l_hormone.sas",
     ))
 
+    items.append(TFLItem(
+        id="L16.2.32", title="Listing of Dose-Limiting Toxicities and Dose Escalation Review Window",
+        tfl_type=L, section=S162, sort_key=32,
+        population="DLT-Evaluable Population",
+        placeholder_columns=["Site", "Subject", "Cohort / Dose Level", "DLT Window",
+                             "DLT Term", "Maximum Grade", "DLT?", "Replacement Subject?"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Dose Level 1", "Cycle 1 Day 1-28", "ALT Increased", "3", "Y", "N"],
+            ["xxx", "xxxx/xxx", "Dose Level 2", "Cycle 1 Day 1-28", "Mucositis", "2", "N", "Y"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Includes DLT-evaluable and replacement-subject status per protocol-defined dose-escalation rules."],
+        dataset_source="ADSL, ADAE, ADEX",
+        source_listing="L16.2.32", program_ref="l_dlt_review.sas",
+        shell_family="Specialized Patient Listings",
+        study_phase_scope="Phase I",
+        coverage_summary="Core (Phase I)",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.33", title="Listing of Food-Effect / Crossover PK Samples by Subject, Period, and Timepoint",
+        tfl_type=L, section=S162, sort_key=33, non_oncology_only=True,
+        population="PK Population in Food-Effect or Crossover Cohorts",
+        placeholder_columns=["Site", "Subject", "Treatment Sequence", "Period", "Condition",
+                             "Nominal Time (h)", "Actual Time (h)", "Concentration (ng/mL)"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "TR/RT", "1", "Fasted", "0.0", "0.00", "xx.x"],
+            ["xxx", "xxxx/xxx", "TR/RT", "1", "Fed", "2.0", "2.05", "xx.x"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Supports food-effect and crossover PK review by period, condition, and actual sampling time."],
+        dataset_source="ADSL, ADPC",
+        source_listing="L16.2.33", program_ref="l_food_effect_pk.sas",
+        shell_family="Non-Oncology Listings",
+        study_phase_scope="Phase I",
+        coverage_summary="Conditional (Phase I)",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.34", title="Listing of Protocol-Defined Clinical Events / Exacerbations",
+        tfl_type=L, section=S162, sort_key=34, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Site", "Subject", "Group", "Event Category", "Event Term",
+                             "Start Date", "End Date", "Hospitalization?", "Adjudicated?"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Exacerbation", "Moderate exacerbation", "DDMMMYYYY", "DDMMMYYYY", "N", "Y"],
+            ["xxx", "xxxx/xxx", "Gx", "Clinical Event", "Composite endpoint component", "DDMMMYYYY", "DDMMMYYYY", "Y", "Y"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Event definitions, adjudication rules, and hospitalization criteria per protocol and SAP."],
+        dataset_source="ADSL, ADEFF, ADTTE",
+        source_listing="L16.2.34", program_ref="l_clinical_events.sas",
+        shell_family="Non-Oncology Listings",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Conditional (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.35", title="Listing of Respiratory Exacerbations and Acute Management",
+        tfl_type=L, section=S162, sort_key=35, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Site", "Subject", "Group", "Exacerbation Severity", "Onset Date",
+                             "Resolution Date", "Systemic Corticosteroids / Antibiotics?", "Hospitalization?"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Moderate", "DDMMMYYYY", "DDMMMYYYY", "Y", "N"],
+            ["xxx", "xxxx/xxx", "Gx", "Severe", "DDMMMYYYY", "DDMMMYYYY", "Y", "Y"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Moderate and severe respiratory exacerbations are listed with protocol-defined acute management details."],
+        dataset_source="ADSL, ADEFF, ADAE",
+        source_listing="L16.2.35", program_ref="l_resp_exac.sas",
+        shell_family="Respiratory Exacerbation",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.36", title="Listing of Adjudicated Cardiovascular Events and Heart Failure Hospitalizations",
+        tfl_type=L, section=S162, sort_key=36, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Site", "Subject", "Group", "Adjudicated Event", "Event Date",
+                             "Hospitalization Start", "Hospitalization End", "Outcome"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Non-fatal Myocardial Infarction", "DDMMMYYYY", "DDMMMYYYY", "DDMMMYYYY", "Recovered"],
+            ["xxx", "xxxx/xxx", "Gx", "Heart Failure Hospitalization", "DDMMMYYYY", "DDMMMYYYY", "DDMMMYYYY", "Ongoing / Recovered"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Events are adjudicated per cardiovascular endpoint charter where applicable."],
+        dataset_source="ADSL, ADTTE, ADAE",
+        source_listing="L16.2.36", program_ref="l_cv_events.sas",
+        shell_family="Cardiovascular MACE and HF Hospitalization",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items.append(TFLItem(
+        id="L16.2.37", title="Listing of Autoimmune Flares, Rescue Therapy, and Corticosteroid Escalation",
+        tfl_type=L, section=S162, sort_key=37, non_oncology_only=True,
+        population="Intent-to-Treat (ITT) Population",
+        placeholder_columns=["Site", "Subject", "Group", "Flare Category", "Flare Date",
+                             "Rescue Therapy", "Steroid Escalation?", "Responder Status"],
+        shell_rows=[
+            ["xxx", "xxxx/xxx", "Gx", "Joint Flare", "DDMMMYYYY", "Methotrexate", "Y", "Non-Responder"],
+            ["xxx", "xxxx/xxx", "Gx", "Skin Flare", "DDMMMYYYY", "Topical / Systemic therapy", "N", "Responder"],
+            {"label": "[...]", "values": ["...", "...", "...", "...", "...", "...", "...", "..."]},
+        ],
+        footnotes=["Flare and rescue-therapy events reflect protocol-defined autoimmune disease activity rules."],
+        dataset_source="ADSL, ADCM, ADEFF",
+        source_listing="L16.2.37", program_ref="l_autoimmune_flare.sas",
+        shell_family="Autoimmune Flare and Responder",
+        study_phase_scope="Phase II-III",
+        coverage_summary="Core (Phase II-III, Non-Oncology)",
+    ))
+
+    items = _normalize_controlled_shells(items)
+    _apply_governance_metadata(items)
     return TFLCatalog(items)

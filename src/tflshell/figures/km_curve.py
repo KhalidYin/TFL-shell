@@ -89,8 +89,8 @@ class KMCurveFigure(ClinicalFigure):
         {
             "time_a": np.array, "event_a": np.array (bool),
             "time_b": np.array, "event_b": np.array (bool),
-            "arm_a_label": str (default "Treatment A"),
-            "arm_b_label": str (default "Treatment B"),
+            "arm_a_label": str (default "Group 1"),
+            "arm_b_label": str (default "Group 2"),
             "xlabel": str, "ylabel": str,
             "hr": float, "hr_ci_low": float, "hr_ci_high": float,
             "p_value": float or str,
@@ -107,8 +107,8 @@ class KMCurveFigure(ClinicalFigure):
         time_b = np.asarray(data.get("time_b", []))
         event_b = np.asarray(data.get("event_b", []), dtype=bool)
 
-        label_a = data.get("arm_a_label", "Treatment A")
-        label_b = data.get("arm_b_label", "Treatment B")
+        label_a = data.get("arm_a_label", "Group 1")
+        label_b = data.get("arm_b_label", "Group 2")
         xlabel = data.get("xlabel", "Time from Randomization (Months)")
         ylabel = data.get("ylabel", "Survival Probability")
 
@@ -190,8 +190,7 @@ class KMCurveFigure(ClinicalFigure):
             (label_a, time_a, color_a), (label_b, time_b, color_b)
         ]):
             y_pos = 0.55 - i * 0.25
-            short_label = label.split(" ")[0] if " " in label else label
-            ax_risk.text(-0.02, y_pos, short_label, ha='right', va='center',
+            ax_risk.text(-0.02, y_pos, label, ha='right', va='center',
                          fontsize=8, fontweight='bold', color=color,
                          transform=ax_risk.transAxes)
 

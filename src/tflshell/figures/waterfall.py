@@ -79,7 +79,7 @@ class WaterfallFigure(ClinicalFigure):
         # Legend
         if color_by == "group" and groups:
             from matplotlib.patches import Patch
-            arm_names = data.get("arm_labels", ["Treatment A", "Treatment B", "Treatment C"])
+            arm_names = data.get("arm_labels", ["Group 1", "Group 2", "Group 3"])
             legend_patches = [
                 Patch(facecolor=TRT_COLORS_LIST[i], label=arm_names[i])
                 for i in sorted(set(groups))

@@ -1,4 +1,4 @@
-"""DOCX Shell Template Generator v2.0.
+"""DOCX Shell Template Generator.
 
 Produces the TFL Shell Template with:
 - Three-line table format (三线表)
@@ -157,9 +157,10 @@ class DocxShellGenerator:
             "the example row labels, categories, or subject-structure identifiers needed to "
             "show the intended layout. Non-structural cells use style-appropriate shell "
             "placeholders such as XX, xx (xx.x), x.xxx, or CI-style formats rather than "
-            "mock numeric or subject-level results. Expandable treatment/group columns may "
-            "be shown with ellipsis (...) and a Total column. Tables use the standard "
-            "three-line table format (三线表)."
+            "mock numeric or subject-level results. Controlled tables use `Group 1`, `Group 2`, "
+            "and an optional separate ellipsis (`...`) expansion column; that expansion column "
+            "must never be merged with Overall, HR, Total, or other analytic columns. Tables "
+            "use the standard three-line table format (三线表) and should auto-fit within the page."
         )
 
         doc.add_paragraph("1.2  How to Use This Template", style=doc.styles["Heading 2"])
@@ -425,7 +426,9 @@ class DocxShellGenerator:
 
     def _set_document_properties(self):
         doc = self.doc
-        doc.core_properties.title = "Clinical Study Report — TFL Shell Template v2.0"
+        doc.core_properties.title = (
+            f"Clinical Study Report — TFL Shell Template v{config.VERSION}"
+        )
         doc.core_properties.subject = "Tables, Figures, and Listings (Three-Line Format)"
         doc.core_properties.version = config.VERSION
         doc.core_properties.category = "Clinical Statistics"

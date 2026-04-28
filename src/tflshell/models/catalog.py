@@ -1,4 +1,4 @@
-"""TFLCatalog — container and query interface for TFL definitions v2.0."""
+"""TFLCatalog — container and query interface for TFL definitions."""
 
 from collections import defaultdict
 from tflshell.models.tfl_item import TFLItem
@@ -116,7 +116,7 @@ class TFLCatalog:
                 warnings.append(
                     f"Missing placeholder example for {item.tfl_type.value} {item.id}"
                 )
-            # v2.0: Figures with figure_type must be valid FigureType values
+            # Figures with figure_type must be valid FigureType values
             if item.tfl_type == TFLType.FIGURE and item.figure_type:
                 valid_types = {ft.value for ft in FigureType}
                 if item.figure_type not in valid_types:
@@ -124,7 +124,7 @@ class TFLCatalog:
                         f"Unknown figure_type '{item.figure_type}' for {item.id}. "
                         f"Valid types: {valid_types}"
                     )
-            # v2.0: Check dataset_source populated
+            # Every governed shell should retain dataset traceability metadata.
             if not item.dataset_source:
                 warnings.append(
                     f"Missing dataset_source for {item.id}"

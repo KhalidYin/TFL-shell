@@ -36,7 +36,7 @@ class TFLItem:
     footnotes: list[str] = field(default_factory=list)
     figure_description: str = ""
 
-    # v2.0 header / traceability fields
+    # Header / traceability fields
     sponsor_placeholder: str = config.SPONSOR_PLACEHOLDER
     protocol_placeholder: str = config.PROTOCOL_PLACEHOLDER
     dataset_source: str = ""
@@ -45,7 +45,7 @@ class TFLItem:
     dictionary_versions: dict = field(default_factory=dict)
     table_notes: str = ""
 
-    # v2.0 figure metadata
+    # Figure metadata
     figure_type: str = ""
     figure_width_inches: float = config.FIGURE_DEFAULT_WIDTH
     figure_height_inches: float = config.FIGURE_DEFAULT_HEIGHT
@@ -55,6 +55,8 @@ class TFLItem:
     result_placeholder: str = "XX"
     placeholder_style: str = "text"
     shell_family: str = ""
+    study_phase_scope: str = ""
+    coverage_summary: str = ""
 
     @property
     def therapeutic_areas(self) -> list[str]:
@@ -71,6 +73,43 @@ class TFLItem:
         if self.non_oncology_only:
             return "Non-Oncology only"
         return "General"
+
+    @property
+    def shell_family_label(self) -> str:
+        if self.shell_family:
+            return self.shell_family
+        family_map = {
+            Section.SEC_14_1: "Demographics and Baseline",
+            Section.SEC_14_2: "Efficacy",
+            Section.SEC_14_3: "Safety",
+            Section.SEC_14_4: "Special Assessments",
+            Section.SEC_16_2: "Patient Listings",
+        }
+        return family_map.get(self.section, self.section.title)
+
+    @property
+    def study_phase_scope_label(self) -> str:
+        if self.study_phase_scope:
+            return self.study_phase_scope
+        if self.section in (Section.SEC_14_1, Section.SEC_14_3, Section.SEC_16_2):
+            return "Phase I-III"
+        if self.section == Section.SEC_14_2:
+            return "Phase I-III (conditional for Phase I)"
+        if self.section == Section.SEC_14_4:
+            return "Phase I-III (core in Phase I; conditional in Phase II-III)"
+        return "Phase I-III"
+
+    @property
+    def coverage_summary_label(self) -> str:
+        if self.coverage_summary:
+            return self.coverage_summary
+        if self.section in (Section.SEC_14_1, Section.SEC_14_3, Section.SEC_16_2):
+            return "Core"
+        if self.section == Section.SEC_14_2:
+            return "Core (Phase II-III); Conditional (Phase I)"
+        if self.section == Section.SEC_14_4:
+            return "Core (Phase I); Conditional (Phase II-III)"
+        return "Core"
 
     @property
     def is_oncology(self) -> bool:

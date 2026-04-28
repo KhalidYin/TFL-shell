@@ -123,6 +123,33 @@ def set_table_borders(table, top_sz=12, bottom_sz=12, thin_sz=4,
     return borders
 
 
+def set_table_autofit_to_page(table, width_pct: int = 100):
+    """Configure a Word table to auto-fit within the available page width."""
+    from docx.oxml.ns import qn
+    from docx.oxml import OxmlElement
+
+    tbl = table._tbl
+    tblPr = tbl.tblPr
+    if tblPr is None:
+        tblPr = OxmlElement("w:tblPr")
+        tbl.insert(0, tblPr)
+
+    existing_w = tblPr.find(qn("w:tblW"))
+    if existing_w is not None:
+        tblPr.remove(existing_w)
+    tbl_w = OxmlElement("w:tblW")
+    tbl_w.set(qn("w:type"), "pct")
+    tbl_w.set(qn("w:w"), str(width_pct * 50))
+    tblPr.append(tbl_w)
+
+    existing_layout = tblPr.find(qn("w:tblLayout"))
+    if existing_layout is not None:
+        tblPr.remove(existing_layout)
+    tbl_layout = OxmlElement("w:tblLayout")
+    tbl_layout.set(qn("w:type"), "autofit")
+    tblPr.append(tbl_layout)
+
+
 def set_cell_bottom_border(cell, sz=4, color="000000"):
     """Apply a thin bottom border to an individual table cell (used for header row)."""
     from docx.oxml.ns import qn

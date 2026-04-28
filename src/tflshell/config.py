@@ -1,4 +1,4 @@
-"""Configuration constants for TFLshell v2.0."""
+"""Configuration constants for TFLshell."""
 
 import os
 
@@ -8,13 +8,13 @@ PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.dirname(os.path.dirname(PACKAGE_ROOT))
 DEFAULT_OUTPUT_DIR = os.path.join(PROJECT_ROOT, "output")
 
-DOCX_FILENAME = "TFL_Shell_Template_v2.0.docx"
-XLSX_FILENAME = "TFL_TOC_v2.0.xlsx"
-SOP_FILENAME = "TFL_Shell_SOP_v2.0.docx"
-TOC_FILENAME = "TFL_Table_of_Contents_v2.0.docx"
+DOCX_FILENAME = f"TFL_Shell_Template_v{VERSION}.docx"
+XLSX_FILENAME = f"TFL_TOC_v{VERSION}.xlsx"
+SOP_FILENAME = f"TFL_Shell_SOP_v{VERSION}.docx"
+TOC_FILENAME = f"TFL_Table_of_Contents_v{VERSION}.docx"
 
 SOP_DOC_NUMBER = "SOP-TFL-001"
-SOP_VERSION = "2.0"
+SOP_VERSION = VERSION
 
 # Page setup
 PAGE_WIDTH_INCHES = 11.0  # Landscape letter

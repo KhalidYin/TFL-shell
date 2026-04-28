@@ -78,7 +78,7 @@ def _auto_generate_mock_data(figure_type: str) -> dict:
         return {
             "time_a": time_a, "event_a": event_a,
             "time_b": time_b, "event_b": event_b,
-            "arm_a_label": "Treatment A", "arm_b_label": "Treatment B",
+            "arm_a_label": "Group 1", "arm_b_label": "Group 2",
             "hr": 0.72, "hr_ci_low": 0.58, "hr_ci_high": 0.89, "p_value": 0.004,
         }
 

@@ -13,7 +13,7 @@ def mock_demographics(n=300, seed=DEFAULT_SEED):
     """Generate mock demographics data."""
     rng = np.random.default_rng(seed)
     half = n // 2
-    arms = ["Treatment A"] * half + ["Treatment B"] * (n - half)
+    arms = ["Group 1"] * half + ["Group 2"] * (n - half)
     ages = rng.normal(58, 12, n).clip(18, 90)
     sex = rng.choice(["Male", "Female"], n, p=[0.55, 0.45])
     race = rng.choice(["White", "Black", "Asian", "Other"], n, p=[0.7, 0.1, 0.15, 0.05])
@@ -38,7 +38,7 @@ def mock_survival_data(n=300, seed=DEFAULT_SEED):
     return {
         "time_a": arm_a_time, "event_a": arm_a_event,
         "time_b": arm_b_time, "event_b": arm_b_event,
-        "arm_a_label": "Treatment A", "arm_b_label": "Treatment B",
+        "arm_a_label": "Group 1", "arm_b_label": "Group 2",
         "ylabel": "Survival Probability",
         "hr": 0.72, "hr_ci_low": 0.58, "hr_ci_high": 0.89,
         "p_value": 0.004,
@@ -75,7 +75,7 @@ def mock_lab_data(n=200, seed=DEFAULT_SEED):
     """Generate mock lab data for box/longitudinal plots."""
     rng = np.random.default_rng(seed)
     visits = ["Baseline", "Week 4", "Week 8", "Week 12", "Week 16"]
-    arms = ["Treatment A", "Treatment B"]
+    arms = ["Group 1", "Group 2"]
     data = {"visits": visits}
     for arm_prefix, mean_shift in [("arm_a", 0.0), ("arm_b", -0.15)]:
         for param in ["ALT (U/L)", "AST (U/L)", "ALP (U/L)"]:
