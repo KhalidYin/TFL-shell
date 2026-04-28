@@ -167,7 +167,7 @@ def set_cell_bottom_border(cell, sz=4, color="000000"):
 
 def set_cell_text(cell, text: str, bold=False, font_size=9,
                   font_name="Times New Roman", alignment=None,
-                  space_before=1, space_after=1):
+                  space_before=1, space_after=1, line_spacing=12):
     """Clear and set text in a table cell with consistent formatting.
 
     Args:
@@ -186,7 +186,7 @@ def set_cell_text(cell, text: str, bold=False, font_size=9,
         p.alignment = alignment
     p.paragraph_format.space_before = Pt(space_before)
     p.paragraph_format.space_after = Pt(space_after)
-    p.paragraph_format.line_spacing = Pt(12)
+    p.paragraph_format.line_spacing = Pt(line_spacing)
 
     run = p.add_run(str(text))
     run.font.name = font_name

@@ -1,8 +1,10 @@
 """CLI entry point for TFLshell."""
 
 import argparse
+import json
 import os
 import sys
+from pathlib import Path
 
 from tflshell import __version__
 from tflshell.config import DEFAULT_OUTPUT_DIR
@@ -11,6 +13,12 @@ from tflshell.generators.docx_shell import DocxShellGenerator
 from tflshell.generators.xlsx_toc import XlsxTocGenerator
 from tflshell.generators.docx_sop import DocxSopGenerator
 from tflshell.models.enums import TFLType, Section
+from tflshell.recommend import (
+    InputSource,
+    RecommendRequest,
+    format_recommendation,
+    recommend_shells,
+)
 from tflshell.utils.naming import make_filename
 
 
@@ -43,6 +51,7 @@ def cmd_generate(args):
                 therapeutic_area=args.area,
                 generate_figures=not args.no_figures,
                 sponsor=args.sponsor, protocol=args.protocol,
+                presentation_profile=args.presentation_profile,
             )
             path = gen.generate()
             results.append(("DOCX Shell Template", path))
@@ -128,6 +137,50 @@ def cmd_validate(args):
     return 0
 
 
+def _infer_source_type(file_path: str) -> str:
+    name = Path(file_path).name.lower()
+    if "sap" in name:
+        return "sap"
+    if "protocol" in name or "prot" in name:
+        return "protocol"
+    if "article" in name or "paper" in name:
+        return "article"
+    return "study_note"
+
+
+def cmd_recommend(args):
+    sources: list[InputSource] = []
+    for text in args.text or []:
+        sources.append(InputSource(source_type="user_prompt", content_text=text))
+    for file_path in args.input_file or []:
+        sources.append(
+            InputSource(
+                source_type=_infer_source_type(file_path),
+                file_path=file_path,
+            )
+        )
+
+    if not sources:
+        print("At least one --text or --input-file source is required for recommend.")
+        return 1
+
+    request = RecommendRequest(
+        sources=sources,
+        section_scope=args.section or [],
+        therapeutic_area_hint=args.area,
+        study_phase_hint=args.phase,
+        include_figures=not args.no_figures,
+        include_listings=not args.no_listings,
+    )
+    result = recommend_shells(request)
+
+    if args.json:
+        print(json.dumps(result.to_dict(), indent=2, ensure_ascii=False))
+    else:
+        print(format_recommendation(result))
+    return 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(
         prog="tflshell",
@@ -147,6 +200,9 @@ def main(argv=None):
     gen.add_argument("--output-dir", "-o", default=DEFAULT_OUTPUT_DIR)
     gen.add_argument("--sponsor", default=None, help="Sponsor name override")
     gen.add_argument("--protocol", default=None, help="Protocol number override")
+    gen.add_argument("--presentation-profile", default="csr_standard",
+                     choices=["csr_standard", "compact_review", "authoring_shell"],
+                     help="Presentation profile for DOCX shell rendering.")
     gen.add_argument("--no-figures", action="store_true",
                      help="Disable figure generation")
     gen.set_defaults(func=cmd_generate)
@@ -160,6 +216,25 @@ def main(argv=None):
 
     val = subparsers.add_parser("validate", help="Validate TFL catalog")
     val.set_defaults(func=cmd_validate)
+
+    rec = subparsers.add_parser("recommend", help="Recommend governed TFL shell packages")
+    rec.add_argument("--text", action="append",
+                     help="Inline text input such as prompt, SAP excerpt, or protocol excerpt.")
+    rec.add_argument("--input-file", action="append",
+                     help="Path to an input text file; source type is inferred from the filename.")
+    rec.add_argument("--section", action="append",
+                     choices=["14.1", "14.2", "14.3", "14.4", "16.2"])
+    rec.add_argument("--area", default="unknown",
+                     choices=["oncology", "non-oncology", "all", "unknown"])
+    rec.add_argument("--phase", default="unknown",
+                     choices=["phase-i", "phase-ii", "phase-iii", "mixed", "unknown"])
+    rec.add_argument("--no-figures", action="store_true",
+                     help="Exclude figure shells from the recommendation.")
+    rec.add_argument("--no-listings", action="store_true",
+                     help="Exclude listing shells from the recommendation.")
+    rec.add_argument("--json", action="store_true",
+                     help="Print the structured recommendation result as JSON.")
+    rec.set_defaults(func=cmd_recommend)
 
     args = parser.parse_args(argv)
 

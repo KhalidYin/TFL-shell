@@ -147,6 +147,10 @@ Add or update tests when:
 - version-governance logic is refactored
 - shell header structure rules are tightened
 - source-listing mapping rules are corrected
+- recommendation heuristics, interpreted context fields, or recommend CLI output
+  contracts are changed
+- presentation profile defaults, spacing policies, or generate CLI rendering
+  options are changed
 
 ## 8. What Not to Test Excessively
 
@@ -191,6 +195,8 @@ true:
 
 - keep this guide aligned with `PROJECT_SPEC.md`
 - prioritize tests that verify governed invariants
+- keep recommend-prototype tests focused on governed defaults, ambiguity
+  handling, and stable recommendation outputs rather than on prompt wording
 
 ### 12.2 Mid-term
 

@@ -146,7 +146,7 @@ class XlsxTocGenerator:
             ["Scope", "The workbook covers CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2 only; Section 16.1 is out of scope for this generator."],
             ["Coverage metadata", "Use Shell Family, Study Phase Scope, and Coverage Summary as governance metadata to interpret where a shell sits in the approved coverage matrix."],
             ["Applicability", "Use the Applicability column to identify shells relevant to oncology, non-oncology, or both. These labels guide study-specific shell selection rather than serving as workflow status flags."],
-            ["Placeholder convention", "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Expandable treatment/group patterns may include ellipsis (...) and a Total column, without concrete sample sizes in headers."],
+            ["Placeholder convention", "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Controlled treatment/group patterns use Group 1, Group 2, and may retain a separate ellipsis (...) expansion column; that expansion column must remain distinct and must not be merged with Overall, Total, HR, or other analytic columns. Header sample sizes remain generic rather than concrete."],
             ["Figures", "Figure entries correspond to simulated shell illustrations that should be replaced with study-specific outputs in production."],
             ["Ordering", "Row order matches the catalog ordering and should stay aligned with the generated DOCX template."],
             ["Word TOC", "After opening the DOCX outputs in Word, update fields so the automatic Table of Contents populates."],

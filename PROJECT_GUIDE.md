@@ -53,6 +53,14 @@ The repository currently centers on three coordinated outputs:
 - XLSX TFL catalog and usage guide
 - SOP DOCX for shell usage and governance
 
+The repository now also includes an early governed `recommend` prototype that
+interprets prompt / protocol / SAP-like text and suggests a shell package before
+formal output generation.
+
+The DOCX shell generator now also supports governed presentation profiles for
+spacing, grouping, indentation, and page-fit behavior, with `csr_standard` as
+the default baseline.
+
 The implementation target remains limited to the following CSR sections:
 
 - `14.1` Demographics and Baseline Characteristics
@@ -130,10 +138,12 @@ Recommended usage order:
 1. Review project scope and coverage assumptions in this guide.
 2. Use `PROJECT_SPEC.md` to determine whether a shell family is `Core`,
    `Conditional`, or a `Gap`.
-3. Select applicable shells in the workbook.
-4. Tailor titles, populations, footnotes, and study-specific terminology against
+3. Use the `recommend` prototype when the study context is still being translated
+   from prompt, protocol, or SAP language into a governed shell package.
+4. Select applicable shells in the workbook.
+5. Tailor titles, populations, footnotes, and study-specific terminology against
    protocol and SAP.
-5. Preserve the governed structure while creating study-specific derivatives.
+6. Preserve the governed structure while creating study-specific derivatives.
 
 ## 9. Risk Reminder
 

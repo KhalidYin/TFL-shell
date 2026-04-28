@@ -81,6 +81,9 @@ def test_sop_and_workbook_share_governance_language(tmp_path):
     assert "14.1, 14.2, 14.3, 14.4, and 16.2" in sop_text
     assert "Coverage metadata" in usage_rows
     assert {"Shell Family", "Study Phase Scope", "Coverage Summary"} <= field_names
+    assert "Group 1, Group 2" in usage_rows["Placeholder convention"]
+    assert "ellipsis (...)" in usage_rows["Placeholder convention"]
+    assert "must not be merged with Overall, Total, HR" in usage_rows["Placeholder convention"]
     assert "shell family, study phase scope, coverage summary" in sop_text
     assert "Automated quality gates should verify generation, catalog validation, and regression tests" in sop_text
     assert "ellipsis (`...`) expansion column" in sop_text
