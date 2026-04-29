@@ -9,8 +9,23 @@ REQUIRED_FILES = ("SKILL.md", "PACKAGE_GUIDE.md", "DEVELOPMENT_RULES.md")
 REQUIRED_SELF_CONTAINED_ASSETS = (
     "package_assets/contract_registry.json",
     "package_assets/catalog_subset.json",
+    "package_assets/output_manifest.json",
     "package_assets/minimal_runtime_requirements.txt",
     "examples/recommend_then_generate_non_oncology.json",
+)
+REQUIRED_CONTRACT_DOCS = (
+    "docs/product_alignment_contract.md",
+    "docs/catalog_schema_contract.md",
+    "docs/docx_shell_contract.md",
+    "docs/xlsx_workbook_contract.md",
+    "docs/sop_contract.md",
+    "docs/table_layout_contract.md",
+)
+REQUIRED_RUNTIME_SCRIPTS = (
+    "scripts/alignment_contracts.py",
+    "scripts/export_catalog_subset.py",
+    "scripts/export_product_contracts.py",
+    "scripts/validate_outputs.py",
 )
 FORBIDDEN_SKILL_PATTERNS = (
     "调用方 -> TFLs-Shell SKILL -> 参考 TFLs-Shell Product ->",
@@ -61,6 +76,14 @@ def validate_skill_package(package_dir: Path) -> list[str]:
     missing_assets = [name for name in REQUIRED_SELF_CONTAINED_ASSETS if not (package_dir / Path(name)).exists()]
     if missing_assets:
         errors.append(f"缺少自包含资产：{', '.join(missing_assets)}")
+
+    missing_contract_docs = [name for name in REQUIRED_CONTRACT_DOCS if not (package_dir / Path(name)).exists()]
+    if missing_contract_docs:
+        errors.append(f"缺少契约文档：{', '.join(missing_contract_docs)}")
+
+    missing_runtime_scripts = [name for name in REQUIRED_RUNTIME_SCRIPTS if not (package_dir / Path(name)).exists()]
+    if missing_runtime_scripts:
+        errors.append(f"缺少契约脚本：{', '.join(missing_runtime_scripts)}")
 
     skill_md_path = package_dir / "SKILL.md"
     try:

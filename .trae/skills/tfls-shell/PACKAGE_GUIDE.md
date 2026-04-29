@@ -31,13 +31,22 @@
 - `scripts/generate_project_aligned_outputs.py`：生成与当前项目一致命名和结构的正式输出
 - `scripts/recommend_then_generate.py`：从输入文本直接完成推荐并生成项目一致输出
 - `scripts/export_catalog_subset.py`：从 Product 受控导出 Skill 包使用的 catalog 子集
+- `scripts/export_product_contracts.py`：从 Product 当前实现导出 Skill 包使用的输出契约资产
+- `scripts/validate_outputs.py`：验证 DOCX / XLSX / SOP 是否符合包内 Product 对齐契约
 - `package_assets/contract_registry.json`：受控细节 contract 注册表
 - `package_assets/catalog_subset.json`：为跨项目复用准备的最小 catalog 子集
+- `package_assets/output_manifest.json`：当前 Product 输出结构的机器可读 manifest
 - `package_assets/minimal_runtime_requirements.txt`：最小运行依赖清单
 - `examples/recommend_then_generate_non_oncology.json`：可执行样例请求
 - `runtime/catalog_loader.py`：读取 Skill 包内 catalog 子集
 - `runtime/registry_loader.py`：读取 Skill 包内 contract registry
 - `runtime/wrappers/`：统一封装 `docx / xlsx / sop` 输出调用接口
+- `docs/product_alignment_contract.md`：Product 对齐总契约
+- `docs/catalog_schema_contract.md`：catalog schema 契约
+- `docs/docx_shell_contract.md`：DOCX shell 契约
+- `docs/xlsx_workbook_contract.md`：XLSX workbook 契约
+- `docs/sop_contract.md`：SOP 契约
+- `docs/table_layout_contract.md`：table layout 契约
 
 当前仓库已提供基础校验脚本：
 
@@ -101,6 +110,8 @@ Skill 包不应被某个项目实现替代，也不应被业务输出覆盖。
 - `package_bundle.py` 偏向暴露 Skill 包当前是否已具备跨项目复用所需的最小资产
 - `runtime/` 偏向提供包内最小运行层，让入口脚本优先走 Skill 自身携带的 loader 与 wrapper
 - `export_catalog_subset.py` 偏向建立 Product -> Skill 的受控同步入口
+- `export_product_contracts.py` 偏向建立 Product 输出结构 -> Skill contract 的受控同步入口
+- `validate_outputs.py` 偏向作为 Skill 包迁移到其他项目后的输出防漂移检查入口
 
 当前支持：
 
@@ -125,6 +136,9 @@ Skill 包不应被某个项目实现替代，也不应被业务输出覆盖。
 
 `runtime_summary` 用于声明本次执行优先走的是哪一层运行路径，以及当前引用的
 catalog / registry / wrapper 来源。
+
+`output_manifest.json` 用于声明当前 Product 版本下 DOCX / XLSX / SOP 的可观察输出结构，
+包括 workbook sheet、catalog 字段、DOCX heading/layout、SOP 头表和 appendix 结构。
 
 ## 6. 维护原则
 

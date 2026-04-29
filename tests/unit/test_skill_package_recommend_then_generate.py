@@ -91,6 +91,7 @@ def test_recommend_then_generate_includes_validation_results(tmp_path):
     assert payload["package_bundle"]["self_contained_ready"] is True
     assert payload["package_bundle"]["contract_registry"]["present"] is True
     assert payload["package_bundle"]["catalog_subset"]["present"] is True
+    assert payload["package_bundle"]["output_manifest"]["present"] is True
     assert payload["package_bundle"]["minimal_runtime_requirements"]["present"] is True
     assert payload["package_bundle"]["example_requests"]["present"] is True
 
@@ -127,6 +128,13 @@ def test_recommend_then_generate_validates_xlsx_master_sheet_against_recommendat
     assert "Type" in workbook_refs["detail_keys"]
     assert "Study Phase Scope" in workbook_refs["detail_keys"]
     assert "Population" in workbook_refs["detail_keys"]
+    full_workbook_checks = payload["validation_results"]["cross_output_checks"]["xlsx_workbook"]
+    full_workbook_refs = payload["validation_results"]["declared_references"]["xlsx_workbook"]
+    assert full_workbook_checks["sheet_names_match_contract"] is True
+    assert full_workbook_checks["catalog_sheet_headers_match_contract"] is True
+    assert full_workbook_checks["section_sheet_row_counts_match_catalog"] is True
+    assert full_workbook_checks["usage_placeholder_contract_present"] is True
+    assert "Workbook Sheets" in full_workbook_refs["detail_keys"]
 
 
 def test_recommend_then_generate_validates_docx_headings_against_recommendation(tmp_path):
@@ -160,6 +168,13 @@ def test_recommend_then_generate_validates_docx_headings_against_recommendation(
     assert "Analysis Set" in docx_refs["detail_keys"]
     assert "Protocol" in docx_refs["detail_keys"]
     assert "Sponsor" in docx_refs["detail_keys"]
+    layout_checks = payload["validation_results"]["cross_output_checks"]["docx_layout"]
+    layout_refs = payload["validation_results"]["declared_references"]["docx_layout"]
+    assert layout_checks["section_count_matches_contract"] is True
+    assert layout_checks["page_size_matches_landscape_letter"] is True
+    assert layout_checks["margins_match_contract"] is True
+    assert layout_checks["body_table_count_matches_table_and_listing_shells"] is True
+    assert "Body Table Count" in layout_refs["detail_keys"]
 
 
 def test_recommend_then_generate_validates_sop_governance_language(tmp_path):

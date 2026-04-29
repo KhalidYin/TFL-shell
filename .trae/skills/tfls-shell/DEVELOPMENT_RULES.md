@@ -45,11 +45,16 @@
 - 可执行样例请求
 - 受控 catalog 子集
 - contract registry
+- output manifest
+- Product 对齐契约文档
+- 输出结构验证脚本
 
 如果某类细节已经在上游项目中反复稳定出现，例如：
 
 - workbook 字段 contract
+- workbook sheet 数量、名称与顺序
 - docx header block 规则
+- docx 页面设置、heading 层级与 table layout
 - sop 关键 heading 与治理文案
 - placeholder / quality gate / 命名规则
 
@@ -63,7 +68,9 @@
 - catalog loader
 - registry loader
 - `docx / xlsx / sop` wrapper
-- Product -> Skill 的受控导出脚本
+- Product -> Skill 的 catalog 受控导出脚本
+- Product -> Skill 的输出契约受控导出脚本
+- Skill 包内输出契约验证脚本
 
 当前优先级最高的脚本类型是：
 
@@ -95,6 +102,8 @@
 - 如目标是跨项目复用，最小自包含资产是否齐备并可被脚本发现
 - 如已引入 runtime 层，入口脚本是否优先走包内 loader / wrapper
 - 如已引入导出脚本，`catalog_subset.json` 是否仍由受控同步入口生成
+- 如已引入输出契约，`output_manifest.json` 与 `contract_registry.json` 是否仍由受控同步入口生成
+- 如已生成正式输出，是否可通过 `scripts/validate_outputs.py` 校验
 
 ## 7. 推荐扩展方向
 

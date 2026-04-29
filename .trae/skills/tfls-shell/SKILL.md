@@ -79,6 +79,9 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 - 字段说明
 - 辅助脚本
 - 模板片段
+- Product 对齐输出契约
+- DOCX / XLSX / SOP 结构约束
+- table layout 与 placeholder 规则
 
 这些资产应是可复用子集，而不是整个上游项目的直接镜像。
 
@@ -86,6 +89,8 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 
 - contract registry
 - catalog 子集
+- output manifest
+- Product 对齐契约文档
 - 最小运行依赖清单
 - 可执行样例输入
 - 包内 runtime loader / wrapper
@@ -311,8 +316,18 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 
 - `package_assets/contract_registry.json`
 - `package_assets/catalog_subset.json`
+- `package_assets/output_manifest.json`
 - `package_assets/minimal_runtime_requirements.txt`
 - `examples/recommend_then_generate_non_oncology.json`
+
+当前包内已提供 Product 对齐契约文档：
+
+- `docs/product_alignment_contract.md`
+- `docs/catalog_schema_contract.md`
+- `docs/docx_shell_contract.md`
+- `docs/xlsx_workbook_contract.md`
+- `docs/sop_contract.md`
+- `docs/table_layout_contract.md`
 
 当前包内还应提供最小运行层：
 
@@ -322,12 +337,15 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 - `runtime/wrappers/xlsx_wrapper.py`
 - `runtime/wrappers/sop_wrapper.py`
 - `scripts/export_catalog_subset.py`
+- `scripts/export_product_contracts.py`
+- `scripts/validate_outputs.py`
 
 其中：
 
 - runtime loader 用于优先读取 Skill 包自身携带的受控资产
 - runtime wrapper 用于统一生成接口，逐步替代入口脚本直接依赖底层生成器
-- 导出脚本用于把 Product 的当前 catalog 子集受控同步到 Skill 包
+- 导出脚本用于把 Product 的当前 catalog 子集与输出契约受控同步到 Skill 包
+- 输出验证脚本用于检查 DOCX / XLSX / SOP 是否符合包内 Product 对齐契约
 
 这些脚本的目标只有一个：生成与当前项目保持一致命名和结构的正式输出。
 

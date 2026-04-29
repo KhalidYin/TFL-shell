@@ -86,5 +86,10 @@ def test_validator_fails_when_self_contained_assets_are_missing(tmp_path):
     assert "缺少自包含资产" in result.stdout
     assert "package_assets/contract_registry.json" in result.stdout
     assert "package_assets/catalog_subset.json" in result.stdout
+    assert "package_assets/output_manifest.json" in result.stdout
     assert "package_assets/minimal_runtime_requirements.txt" in result.stdout
     assert "examples/recommend_then_generate_non_oncology.json" in result.stdout
+    assert "缺少契约文档" in result.stdout
+    assert "docs/product_alignment_contract.md" in result.stdout
+    assert "缺少契约脚本" in result.stdout
+    assert "scripts/export_product_contracts.py" in result.stdout

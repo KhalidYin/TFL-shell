@@ -146,6 +146,7 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - 上述细节 contract 已开始从入口脚本中抽离到独立 helper，并可通过结构化字段声明本次实际引用内容
 - `TFLs-Shell SKILL` 包内已开始补齐最小自包含资产，包括 contract registry、catalog 子集、最小依赖清单与样例请求
 - `TFLs-Shell SKILL` 包内已新增最小 runtime 层，包括 catalog loader、registry loader、三类输出 wrapper 与受控导出脚本
+- `TFLs-Shell SKILL` 包内已开始收纳 Product 产生细节 contract，包括 DOCX / XLSX / SOP 契约文档、`output_manifest.json`、`export_product_contracts.py` 与 `validate_outputs.py`
 - 上述检查已同步进入测试契约，作为当前 Skill 输出对齐的最小基线
 
 ## 11. 风险提示
@@ -167,9 +168,11 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - 优先把稳定细节做成可声明引用的 helper/注册表，而不是散落在单个脚本中
 - 优先把跨项目复用必需的最小资产封进 Skill 包，而不是默认依赖当前仓库环境补齐
 - 优先让入口脚本走包内 runtime 层，再逐步减少对 `src/tflshell` 的直接暴露
+- 优先把 Product 已稳定实现的输出细节沉淀进 Skill 包内 contract 文档与验证 helper，避免跨项目调用时发生格式漂移
 
 ### 12.2 中长期
 
 - 为 SKILL 增加样例、术语映射与引用资产
 - 为 Product 增加更稳定的格式回归与输出基线
 - 逐步建立 SKILL 与 Product 的更明确接口关系
+- 继续把 `output_manifest.json`、`contract_registry.json` 与生成器实现纳入同一维护闭环

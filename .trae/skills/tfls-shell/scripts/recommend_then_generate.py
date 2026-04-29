@@ -24,9 +24,11 @@ from tflshell.models.catalog import TFLCatalog  # noqa: E402
 from tflshell.recommend import InputSource, RecommendRequest, recommend_shells  # noqa: E402
 from tflshell.utils.naming import make_filename  # noqa: E402
 from alignment_contracts import (  # noqa: E402
+    build_docx_layout_contract,
     build_docx_shell_contract,
     build_sop_contract,
     build_xlsx_master_sheet_contract,
+    build_xlsx_workbook_contract,
 )
 from package_bundle import describe_package_bundle  # noqa: E402
 from runtime.wrappers.docx_wrapper import generate as generate_docx  # noqa: E402
@@ -155,6 +157,12 @@ def _build_validation_results(scoped_catalog: TFLCatalog, generation_results: di
         )
         cross_output_checks["xlsx_master_sheet"] = checks
         declared_references["xlsx_master_sheet"] = references
+        checks, references = build_xlsx_workbook_contract(
+            scoped_catalog,
+            xlsx_artifact["path"],
+        )
+        cross_output_checks["xlsx_workbook"] = checks
+        declared_references["xlsx_workbook"] = references
 
     docx_artifact = next(
         (artifact for artifact in generation_results["artifacts"] if artifact["kind"] == "docx"),
@@ -167,6 +175,12 @@ def _build_validation_results(scoped_catalog: TFLCatalog, generation_results: di
         )
         cross_output_checks["docx_shell_template"] = checks
         declared_references["docx_shell_template"] = references
+        checks, references = build_docx_layout_contract(
+            scoped_catalog,
+            docx_artifact["path"],
+        )
+        cross_output_checks["docx_layout"] = checks
+        declared_references["docx_layout"] = references
 
     sop_artifact = next(
         (artifact for artifact in generation_results["artifacts"] if artifact["kind"] == "sop"),

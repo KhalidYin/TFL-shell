@@ -31,8 +31,16 @@ def test_registry_loader_reads_package_contract_registry():
     registry = registry_loader.load_contract_registry()
 
     assert "xlsx_master_sheet" in registry["contracts"]
+    assert "xlsx_workbook" in registry["contracts"]
+    assert "docx_layout" in registry["contracts"]
     assert registry_loader.get_contract("docx_shell_template")["helper_module"] == "scripts/alignment_contracts.py"
-    assert set(registry_loader.list_contracts()) >= {"xlsx_master_sheet", "docx_shell_template", "sop_governance_doc"}
+    assert set(registry_loader.list_contracts()) >= {
+        "xlsx_master_sheet",
+        "xlsx_workbook",
+        "docx_shell_template",
+        "docx_layout",
+        "sop_governance_doc",
+    }
 
 
 def test_wrappers_expose_unified_generate_entrypoint():
@@ -50,3 +58,22 @@ def test_package_catalog_subset_matches_json_asset():
 
     assert payload["catalog_version"] == "product-aligned-subset-v1"
     assert payload["item_count"] == len(payload["items"])
+
+
+def test_output_manifest_captures_product_output_contract():
+    payload = json.loads((SKILL_DIR / "package_assets" / "output_manifest.json").read_text(encoding="utf-8"))
+
+    assert payload["manifest_version"] == "product-aligned-output-contract-v1"
+    assert payload["formal_outputs"]["xlsx_toc_workbook"]["sheet_names"] == [
+        "TOC_Master",
+        "14.1_Demographics",
+        "14.2_Efficacy",
+        "14.3_Safety",
+        "14.4_Special",
+        "16.2_Listings",
+        "Field_Definitions",
+        "Usage_Guide",
+        "Change_Log",
+    ]
+    assert payload["formal_outputs"]["docx_shell_template"]["heading_contract"]["tfl_shell_heading_style"] == "Heading 4"
+    assert payload["formal_outputs"]["sop_governance_doc"]["scope_text"] == "14.1, 14.2, 14.3, 14.4, and 16.2"

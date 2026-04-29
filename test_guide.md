@@ -135,6 +135,10 @@ tests/
 - `validation_results.declared_references` 已声明当前脚本实际引用的细节 helper 与字段集合
 - 顶层 `package_bundle` 已声明当前 Skill 包是否具备 contract registry、catalog 子集、最小运行依赖与样例请求
 - 顶层 `runtime_summary` 已声明当前是否优先走 Skill 包内 runtime，以及 catalog / registry / wrapper 来源
+- `package_assets/output_manifest.json` 已声明当前 Product 版本下 DOCX / XLSX / SOP 的可观察输出结构
+- `xlsx_workbook` contract 已覆盖 workbook sheet 名、catalog sheet 字段、section sheet 行数、Field_Definitions、Usage_Guide 与 Change_Log
+- `docx_layout` contract 已覆盖主模板页面设置、Introduction 文案、Heading 层级、table/listing body table 数量与受控组别表头
+- `scripts/validate_outputs.py` 可用于验证生成物是否符合包内 Product 对齐契约
 
 不要把某个仓库内临时 CLI 原型误当成 Skill 官方测试面。
 
