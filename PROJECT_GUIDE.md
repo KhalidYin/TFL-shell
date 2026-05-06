@@ -155,9 +155,46 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - `维护风险`：如果项目文档与实现不同步，后续会形成双重真值
 - `项目风险`：如果没有明确 Product 是主 source，SKILL 的可靠性会下降
 
-## 12. 优化建议
+## 12. 边界守卫：SKILL 不是软件包
 
-### 12.1 立即可做
+`TFLs-Shell SKILL` 的定位是 **AI 调用的规范文档 + 参考资产**，不是需要独立运行的程序包。
+此边界是整个项目架构的基石，混淆此边界属于根本性错误。
+
+### 12.1 SKILL 是什么
+
+| 层级 | 形式 | 作用 |
+|------|------|------|
+| `SKILL.md` | Markdown 规范 | AI 读取的工作流和规则说明 |
+| `docs/` | 契约文档 | AI 参考的格式规则和输出约束 |
+| `package_assets/` | JSON / TXT | AI 做推荐时的元数据参考 |
+| `examples/` | JSON 请求 | AI 学习的输入输出样例 |
+| `scripts/` | Python 辅助工具 | AI 调用的自动化入口（依赖 Product） |
+| `runtime/` | 薄 Python 封装 | 统一 Product 生成器的调用接口 |
+
+### 12.2 绝对禁止
+
+- 在 SKILL 包内创建独立于 Product 的工具模块（如独立的命名、版本、模式检测）
+- 以"让 SKILL 脱离仓库也能运行"为目的复制 Product 代码到 SKILL 包内
+- 在 `catalog_subset.json` 中膨胀全量 shell 结构数据（`shell_rows` 等属于 Product `definitions.py`）
+- 在 SKILL 包内建立独立的依赖管理（`setup.py`、`pyproject.toml`）
+- 让 SKILL 脚本尝试在没有 `tflshell` 的环境下"降级运行"
+
+### 12.3 SKILL 对 Product 的依赖是设计如此
+
+脚本中的 `from tflshell import ...` 和 `_bootstrap_repo_imports()` 是**正确的架构模式**，
+不是待解决的耦合。SKILL 跨项目复用 = 复制 `.trae/skills/tfls-shell/` + AI 读取规范。
+如果新环境需要实际生成文件，正确做法是 `pip install tflshell`。
+
+### 12.4 自包含的正确含义
+
+- ✅ 参考资产随包携带：catalog 子集、contract 文档、示例请求
+- ✅ AI 拿到 SKILL 包就能做推荐和判断
+- ❌ 脚本脱离 Product 仍能独立运行
+- ❌ 在 SKILL 包内复制一份 Product 代码
+
+## 13. 优化建议
+
+### 13.1 立即可做
 
 - 继续统一术语为 `TFLs-Shell SKILL / TFLs-Shell Product`
 - 保持文档、实现、测试同步更新
@@ -166,11 +203,10 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - 继续把 `validation_results` 向更细粒度的跨输出 contract 扩展，而不只停留在最小内容级校验
 - 优先抽离可复用的 contract helper，避免 Skill 入口脚本持续堆积格式感知逻辑
 - 优先把稳定细节做成可声明引用的 helper/注册表，而不是散落在单个脚本中
-- 优先把跨项目复用必需的最小资产封进 Skill 包，而不是默认依赖当前仓库环境补齐
-- 优先让入口脚本走包内 runtime 层，再逐步减少对 `src/tflshell` 的直接暴露
-- 优先把 Product 已稳定实现的输出细节沉淀进 Skill 包内 contract 文档与验证 helper，避免跨项目调用时发生格式漂移
+- 优先把跨项目复用所需的参考资产（contract 文档、catalog 子集、示例）封进 Skill 包
+- 优先把 Product 已稳定实现的输出细节沉淀进 Skill 包内 contract 文档与验证 helper
 
-### 12.2 中长期
+### 13.2 中长期
 
 - 为 SKILL 增加样例、术语映射与引用资产
 - 为 Product 增加更稳定的格式回归与输出基线

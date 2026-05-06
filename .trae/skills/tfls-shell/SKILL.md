@@ -395,3 +395,51 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 - 面向大众
 - 边界清晰
 - 输出可靠
+
+## 15. 禁止模式（防守卫）
+
+以下行为属于对本 Skill 的**根本性误解**，一旦出现应视为错误：
+
+### 15.1 禁止把 SKILL 当成独立软件包
+
+SKILL 是一套 AI 调用的规范文档，不是需要"独立运行"的程序包。
+
+**错误做法：**
+- 在 SKILL 包内新增 `runtime/naming.py`、`runtime/version_loader.py` 等独立工具模块，
+  试图让 SKILL 脱离 Product 自行生成文件名、版本号
+- 在 SKILL 包内新增 `runtime_mode()`、`has_full_repo_backend()` 等"运行模式检测"，
+  试图让 SKILL 在没有 Product 的环境下"降级运行"
+- 为 SKILL 包添加独立的 `setup.py`、`pyproject.toml` 或独立依赖声明
+
+**正确做法：**
+- SKILL 脚本依赖 `tflshell` Product 提供版本、命名、catalog、生成器等能力
+- 脚本通过 `_bootstrap_repo_imports()` 引用 Product，这是**设计如此**，不是待解决的耦合
+- `runtime/` 层的 loader 和 wrapper 是 Product 能力的**薄封装**，不是独立替代品
+
+### 15.2 禁止把脚本当成 SKILL 本体
+
+- SKILL.md 是主入口，脚本是辅助工具
+- 不要因为脚本能独立运行就把脚本设计成"不需要 AI 也能用"的 CLI
+- 不要让脚本承担 SKILL.md 中定义的推理、判断、语境归一职责
+
+### 15.3 禁止让 catalog_subset.json 承载完整表结构
+
+- `catalog_subset.json` 是给 AI 做推荐时参考的**元数据摘要**
+- 不要把 `shell_rows`、`placeholder_columns`、`footnotes` 等完整结构信息塞入 subset
+- 完整结构信息属于 Product `definitions.py`，不应在 SKILL 包内重复维护
+
+### 15.4 禁止以"跨项目复用"为由复制 Product 代码
+
+- SKILL 跨项目复用 = 复制 `.trae/skills/tfls-shell/` 文件夹 + AI 读取 SKILL.md
+- 不是 = 复制 Product 代码让 SKILL 在新环境独立生成文件
+- 如果新环境需要生成文件，正确做法是 `pip install tflshell`，而非复制 Product 代码到 SKILL 包内
+
+### 15.5 每轮审阅检查清单
+
+每次修改 SKILL 包时，必须确认：
+
+- [ ] 没有新增独立于 Product 的工具模块（命名、版本、模式检测等）
+- [ ] `runtime/` 层仍然是 Product 的薄封装，不是独立替代品
+- [ ] `catalog_subset.json` 仍然是元数据摘要，未膨胀为全量结构数据
+- [ ] 新增脚本遵循 `_bootstrap_repo_imports()` + 引用 Product 的模式
+- [ ] SKILL.md 仍然是纯规范文档，不含实现细节

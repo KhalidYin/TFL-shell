@@ -149,3 +149,29 @@ catalog / registry / wrapper 来源。
 
 如果某个需求只影响上游项目实现，不一定改 Skill 包。
 如果某个需求改变了应用层触发条件、边界或输出契约，必须同步更新 Skill 包。
+
+## 7. 边界守卫：SKILL 不是软件包
+
+本 SKILL 的定位是 **AI 调用的规范文档 + 参考资产**，不是需要独立运行的程序包。
+
+### 7.1 SKILL 是什么
+- `SKILL.md` — AI 读取的工作流规范
+- `docs/` — AI 参考的契约文档和格式规则
+- `package_assets/` — AI 做推荐和验证时的元数据参考
+- `examples/` — AI 学习的输入输出样例
+- `scripts/` — AI 调用的辅助工具（依赖 Product）
+- `runtime/` — Product 生成器的薄封装层（不是独立替代品）
+
+### 7.2 SKILL 不是什么
+- ❌ 不是独立可运行的软件包
+- ❌ 不是 Product 的替代品或竞争对手
+- ❌ 不需要自己的命名工具、版本读取器、运行模式检测
+- ❌ 不需要 `setup.py`、`pyproject.toml` 或独立依赖管理
+
+### 7.3 脚本依赖 Product 是设计如此
+脚本中 `from tflshell import ...` 的模式是**正确的**，不是待解决的耦合问题。
+如果要跨项目生成文件，正确做法是 `pip install tflshell`，而不是把 Product 代码复制进 SKILL 包。
+
+### 7.4 自包含 ≠ 代码独立
+SKILL 的"自包含"指**参考资产**随包携带（catalog 子集、contract 文档、示例），
+不是为了"让脚本在没有 Product 的环境下也能跑"。这两个概念不可混淆。

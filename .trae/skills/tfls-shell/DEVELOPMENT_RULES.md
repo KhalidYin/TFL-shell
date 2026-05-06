@@ -86,7 +86,26 @@
 - 把整个上游项目当成 Skill 运行时依赖
 - 只写一份 `SKILL.md`，却不给必要的可靠性支撑文档
 - 先写实现，再让定义被实现绑架
-- 不区分“可复用子集”和“完整项目资产”
+- 不区分”可复用子集”和”完整项目资产”
+
+### 5.1 根本性错误：把 SKILL 当成独立软件包
+
+SKILL 的定位是 AI 调用的规范文档 + 参考资产，**不是**一个需要”独立运行”的软件包。
+以下行为属于对这一基本定位的误解，一旦出现应视为原则性错误：
+
+**绝对禁止：**
+- 在 SKILL 包内新增独立于 Product 的工具模块（如 `runtime/naming.py`、`runtime/version_loader.py`）
+- 在 SKILL 包内实现”运行模式检测”（如 `runtime_mode()`、`has_full_repo_backend()`）
+- 让 SKILL 包内的脚本尝试”在没有 Product 的环境下降级运行”
+- 以”让 SKILL 独立可运行”为由复制 Product 的 models / recommend / generators 代码
+- 在 SKILL 包内添加独立的 `setup.py`、`pyproject.toml` 或独立依赖声明
+
+**正确理解：**
+- SKILL 脚本对 Product 的依赖（`_bootstrap_repo_imports()` → `from tflshell import ...`）是**设计如此**，不是待解决的耦合
+- `runtime/` 层是 Product 生成器的**薄封装**，目的是统一调用接口，不是独立替代品
+- `catalog_subset.json` 是给 AI 做推荐的**元数据摘要**，不应膨胀为全量结构数据
+- SKILL 跨项目复用 = 复制 `.trae/skills/tfls-shell/` 文件夹 + AI 读取 SKILL.md
+- 如果新环境需要实际生成文件，正确做法是 `pip install tflshell`，而非复制 Product 代码到 SKILL 包内
 
 ## 6. 变更要求
 
