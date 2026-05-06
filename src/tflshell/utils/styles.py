@@ -1,8 +1,7 @@
 """python-docx style utilities for TFL shell documents."""
 
-from docx.shared import Pt, Inches, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml.ns import qn
+from docx.shared import Pt, RGBColor
+
 from tflshell import config
 
 
@@ -31,6 +30,7 @@ def _setup_heading_style(doc, style_name, size, color_hex):
         style = doc.styles[style_name]
     except KeyError:
         import docx.enum.style
+
         style = doc.styles.add_style(style_name, docx.enum.style.WD_STYLE_TYPE.PARAGRAPH)
     style.font.name = config.FONT_NAME
     style.font.size = Pt(size)
@@ -41,8 +41,9 @@ def _setup_heading_style(doc, style_name, size, color_hex):
     style.paragraph_format.keep_with_next = True
 
 
-def add_style_run(paragraph, text, font_name=None, font_size=None,
-                  bold=False, italic=False, color_hex=None):
+def add_style_run(
+    paragraph, text, font_name=None, font_size=None, bold=False, italic=False, color_hex=None
+):
     """Add a formatted run to a paragraph."""
     run = paragraph.add_run(text)
     run.font.name = font_name or config.FONT_NAME

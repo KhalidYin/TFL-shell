@@ -7,7 +7,7 @@
     "14.4",
     "16.2"
   ],
-  "item_count": 202,
+  "item_count": 206,
   "items": [
     {
       "id": "T14.1.1",
@@ -725,6 +725,19 @@
       "source_listing": "L16.2.11"
     },
     {
+      "id": "T14.2.32",
+      "display_label": "Table 14.2.32",
+      "title": "Change from Baseline in Glycemic and Metabolic Parameters",
+      "type": "Table",
+      "section": "14.2",
+      "shell_family": "Metabolic Endpoint",
+      "study_phase_scope": "Phase II-III",
+      "coverage_summary": "Core (Phase II-III, Non-Oncology)",
+      "population": "Full Analysis Set (FAS)",
+      "applicability": "Non-Oncology only",
+      "source_listing": "L16.2.2"
+    },
+    {
       "id": "F14.2.11",
       "display_label": "Figure 14.2.11",
       "title": "Kaplan-Meier Plot — Time to First Clinically Significant Event",
@@ -736,6 +749,19 @@
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
       "source_listing": "L16.2.34"
+    },
+    {
+      "id": "T14.2.33",
+      "display_label": "Table 14.2.33",
+      "title": "Responder Analysis for Clinically Meaningful Glycemic and Weight Targets",
+      "type": "Table",
+      "section": "14.2",
+      "shell_family": "Metabolic Endpoint",
+      "study_phase_scope": "Phase II-III",
+      "coverage_summary": "Core (Phase II-III, Non-Oncology)",
+      "population": "Full Analysis Set (FAS)",
+      "applicability": "Non-Oncology only",
+      "source_listing": "L16.2.37"
     },
     {
       "id": "F14.2.12",
@@ -775,6 +801,19 @@
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
       "source_listing": "L16.2.37"
+    },
+    {
+      "id": "F14.2.15",
+      "display_label": "Figure 14.2.15",
+      "title": "Mean Change from Baseline in HbA1c Over Time by Treatment Group",
+      "type": "Figure",
+      "section": "14.2",
+      "shell_family": "Metabolic Endpoint",
+      "study_phase_scope": "Phase II-III",
+      "coverage_summary": "Core (Phase II-III, Non-Oncology)",
+      "population": "Full Analysis Set (FAS)",
+      "applicability": "Non-Oncology only",
+      "source_listing": "L16.2.2"
     },
     {
       "id": "T14.3.1.1",
@@ -2634,6 +2673,19 @@
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
       "source_listing": "L16.2.37"
+    },
+    {
+      "id": "L16.2.38",
+      "display_label": "Listing 16.2.38",
+      "title": "Listing of Metabolic, Glycemic, and Body Weight Assessments by Subject and Visit",
+      "type": "Listing",
+      "section": "16.2",
+      "shell_family": "Metabolic Endpoint",
+      "study_phase_scope": "Phase II-III",
+      "coverage_summary": "Core (Phase II-III, Non-Oncology)",
+      "population": "Full Analysis Set (FAS)",
+      "applicability": "Non-Oncology only",
+      "source_listing": "L16.2.38"
     }
   ]
 }

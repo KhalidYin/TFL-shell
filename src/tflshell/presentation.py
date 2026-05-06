@@ -178,4 +178,6 @@ def get_presentation_profile(name: str | None) -> PresentationProfile:
         return _PROFILES[cleaned]
     except KeyError as exc:
         supported = ", ".join(sorted(_PROFILES))
-        raise ValueError(f"Unsupported presentation profile '{name}'. Supported profiles: {supported}.") from exc
+        raise ValueError(
+            f"Unsupported presentation profile '{name}'. Supported profiles: {supported}."
+        ) from exc

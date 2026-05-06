@@ -1,0 +1,28 @@
+{
+  "description": "Phase II oncology study with primary endpoint PFS and ORR, evaluating tumor response and survival in NSCLC patients, including safety review of adverse events and laboratory assessments.",
+  "study_context": {
+    "study_phase": "Phase II",
+    "therapeutic_area": "Oncology",
+    "indication": "Non-Small Cell Lung Cancer",
+    "development_intent": "efficacy-signal"
+  },
+  "analysis_context": {
+    "primary_endpoints": ["Progression-Free Survival (PFS)", "Overall Response Rate (ORR)"],
+    "secondary_endpoints": ["Overall Survival (OS)", "Duration of Response (DOR)", "Disease Control Rate (DCR)"],
+    "analysis_populations": ["Intent-to-Treat (ITT)", "Safety Population"],
+    "key_time_to_event": true,
+    "key_responder": true,
+    "key_safety_focus": ["Adverse Events", "Laboratory", "ECG / QTc", "Vital Signs"]
+  },
+  "expected_sections": ["14.1", "14.2", "14.3", "16.2"],
+  "expected_families": [
+    "Demographics and Baseline",
+    "General Efficacy",
+    "Oncology Efficacy",
+    "Safety",
+    "Patient Listings",
+    "Oncology Listings"
+  ],
+  "min_expected_shells": 40,
+  "therapeutic_area_focus": "Oncology only"
+}

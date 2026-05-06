@@ -3,9 +3,10 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "generate_project_aligned_outputs.py"
+SCRIPT = (
+    ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "generate_project_aligned_outputs.py"
+)
 
 
 def _run_generate_script(*args: str) -> subprocess.CompletedProcess[str]:
@@ -22,8 +23,10 @@ def test_generate_script_creates_project_named_xlsx_output(tmp_path):
 
     assert result.returncode == 0
     payload = json.loads(result.stdout)
-    assert payload["runtime_summary"]["mode"] == "skill_runtime_preferred"
-    assert payload["runtime_summary"]["catalog_source"].endswith("package_assets/catalog_subset.json")
+    assert payload["runtime_summary"]["mode"] in ("repo_backed", "standalone")
+    assert payload["runtime_summary"]["catalog_source"].endswith(
+        "package_assets/catalog_subset.json"
+    )
     assert payload["runtime_summary"]["wrapper_layer"] == "runtime/wrappers"
     assert payload["requested_outputs"] == ["xlsx"]
     assert payload["artifact_count"] == 1

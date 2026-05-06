@@ -1,6 +1,7 @@
 """Word PAGE and NUMPAGES field insertion utilities."""
 
 from docx.shared import Pt
+
 from tflshell import config
 from tflshell.docx_utils.xml_helpers import insert_field
 

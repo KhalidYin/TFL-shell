@@ -1,10 +1,10 @@
 """Box plot — Laboratory parameters by visit with side-by-side treatment arms."""
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
-from tflshell.figures.base import ClinicalFigure, _generate_mock_lab_data
-from tflshell.figures.color_schemes import TRT_COLORS, TRT_COLORS_LIST
+from tflshell.figures.base import ClinicalFigure
+from tflshell.figures.color_schemes import TRT_COLORS
 
 
 class BoxPlotFigure(ClinicalFigure):
@@ -35,10 +35,15 @@ class BoxPlotFigure(ClinicalFigure):
         width = 0.35
         x = np.arange(n_visits)
 
-        box_config = dict(widths=width, patch_artist=True,
-                          flierprops=dict(marker="o", markersize=3, alpha=0.5),
-                          boxprops=dict(linewidth=1), whiskerprops=dict(linewidth=1),
-                          capprops=dict(linewidth=1), medianprops=dict(linewidth=1.5, color="#333333"))
+        box_config = dict(
+            widths=width,
+            patch_artist=True,
+            flierprops=dict(marker="o", markersize=3, alpha=0.5),
+            boxprops=dict(linewidth=1),
+            whiskerprops=dict(linewidth=1),
+            capprops=dict(linewidth=1),
+            medianprops=dict(linewidth=1.5, color="#333333"),
+        )
 
         for i, v in enumerate(visits):
             if v in arm_a:
@@ -63,6 +68,7 @@ class BoxPlotFigure(ClinicalFigure):
 
         # Legend
         from matplotlib.patches import Patch
+
         legend_items = [
             Patch(facecolor=TRT_COLORS["A"], alpha=0.6, label="Group 1"),
             Patch(facecolor=TRT_COLORS["B"], alpha=0.6, label="Group 2"),

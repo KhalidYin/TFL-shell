@@ -16,7 +16,17 @@ def test_generated_filename_uses_version_prefix():
 
 def test_governed_arm_labels_use_normalized_terms():
     catalog = build_catalog()
-    forbidden_tokens = ("XXX Group 1", "XXX Group 2", "Treatment A", "Treatment B", "Group1", "Group2", "G1", "G2", "Gx")
+    forbidden_tokens = (
+        "XXX Group 1",
+        "XXX Group 2",
+        "Treatment A",
+        "Treatment B",
+        "Group1",
+        "Group2",
+        "G1",
+        "G2",
+        "Gx",
+    )
 
     for item in catalog.all():
         for header in item.placeholder_columns:

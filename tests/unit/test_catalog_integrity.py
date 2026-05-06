@@ -1,3 +1,6 @@
+import json
+from pathlib import Path
+
 from tflshell.data.definitions import build_catalog
 
 
@@ -109,3 +112,76 @@ def test_representative_source_listing_mappings_are_specific():
     assert catalog.get("T14.2.21").source_listing == "L16.2.19"
     assert catalog.get("T14.3.4.17").source_listing == "L16.2.32"
     assert catalog.get("T14.4.15").source_listing == "L16.2.33"
+
+
+def test_catalog_consistency_with_output_manifest():
+    catalog = build_catalog()
+    stats = catalog.summary_stats()
+    section_summary = catalog.section_summary()
+
+    manifest_path = (
+        Path(__file__).parent.parent.parent
+        / ".trae"
+        / "skills"
+        / "tfls-shell"
+        / "package_assets"
+        / "output_manifest.json"
+    )
+    assert manifest_path.exists(), f"Manifest not found at {manifest_path}"
+
+    manifest = json.loads(manifest_path.read_text(encoding="utf-8"))
+    catalog_entry = manifest["catalog_summary"]
+
+    assert catalog_entry["total"] == stats["total"], (
+        f"Manifest total ({catalog_entry['total']}) != catalog total ({stats['total']})"
+    )
+
+    assert catalog_entry["tables"] == stats["tables"], (
+        f"Manifest tables ({catalog_entry['tables']}) != catalog tables ({stats['tables']})"
+    )
+
+    assert catalog_entry["figures"] == stats["figures"], (
+        f"Manifest figures ({catalog_entry['figures']}) != catalog figures ({stats['figures']})"
+    )
+
+    assert catalog_entry["listings"] == stats["listings"], (
+        f"Manifest listings ({catalog_entry['listings']}) != catalog listings ({stats['listings']})"
+    )
+
+    assert catalog_entry["oncology_only"] == stats["oncology_only"], (
+        f"Manifest oncology_only ({catalog_entry['oncology_only']}) "
+        f"!= catalog ({stats['oncology_only']})"
+    )
+
+    assert catalog_entry["non_oncology_only"] == stats["non_oncology_only"], (
+        f"Manifest non_oncology_only ({catalog_entry['non_oncology_only']}) "
+        f"!= catalog ({stats['non_oncology_only']})"
+    )
+
+    assert catalog_entry["general"] == stats["general"], (
+        f"Manifest general ({catalog_entry['general']}) != catalog general ({stats['general']})"
+    )
+
+    manifest_sections = manifest["section_summary"]
+    for sec_num, counts in section_summary.items():
+        manifest_sec = manifest_sections.get(sec_num)
+        assert manifest_sec is not None, f"Section {sec_num} missing from manifest"
+        assert manifest_sec["total"] == counts["total"], (
+            f"Section {sec_num}: manifest total {manifest_sec['total']} != catalog {counts['total']}"
+        )
+        assert manifest_sec["tables"] == counts["tables"], (
+            f"Section {sec_num}: manifest tables {manifest_sec['tables']} != catalog {counts['tables']}"
+        )
+
+    governed_sections = manifest.get("governed_sections", [])
+    expected_sections = ["14.1", "14.2", "14.3", "14.4", "16.2"]
+    assert governed_sections == expected_sections, (
+        f"Manifest governed_sections ({governed_sections}) != expected ({expected_sections})"
+    )
+
+    docx_heading_count = manifest["formal_outputs"]["docx_shell_template"]["heading_contract"][
+        "tfl_shell_heading_count"
+    ]
+    assert docx_heading_count == stats["total"], (
+        f"DOCX heading count ({docx_heading_count}) != catalog total ({stats['total']})"
+    )

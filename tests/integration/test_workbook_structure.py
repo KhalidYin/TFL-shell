@@ -11,7 +11,13 @@ def test_workbook_contains_expected_sheets_and_headers(tmp_path):
     generated = generator.generate()
     workbook = load_workbook(generated, read_only=True, data_only=True)
 
-    expected_sheets = ["TOC_Master", *[name for name, _ in SECTION_SHEETS], "Field_Definitions", "Usage_Guide", "Change_Log"]
+    expected_sheets = [
+        "TOC_Master",
+        *[name for name, _ in SECTION_SHEETS],
+        "Field_Definitions",
+        "Usage_Guide",
+        "Change_Log",
+    ]
     assert workbook.sheetnames == expected_sheets
 
     master_sheet = workbook["TOC_Master"]

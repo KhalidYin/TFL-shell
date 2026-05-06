@@ -41,8 +41,9 @@ def make_instr_text(text: str) -> OxmlElement:
     return el
 
 
-def make_border(edge: str, val: str = "single", sz: str = "4",
-                space: str = "0", color: str = "000000") -> OxmlElement:
+def make_border(
+    edge: str, val: str = "single", sz: str = "4", space: str = "0", color: str = "000000"
+) -> OxmlElement:
     """Create a w:border element for a specific edge.
 
     Args:
@@ -52,12 +53,15 @@ def make_border(edge: str, val: str = "single", sz: str = "4",
         space: Spacing offset.
         color: Hex color without '#'.
     """
-    return make_element(f"w:{edge}", {
-        "w:val": val,
-        "w:sz": sz,
-        "w:space": space,
-        "w:color": color,
-    })
+    return make_element(
+        f"w:{edge}",
+        {
+            "w:val": val,
+            "w:sz": sz,
+            "w:space": space,
+            "w:color": color,
+        },
+    )
 
 
 def insert_field(paragraph, field_code: str):
@@ -90,15 +94,14 @@ def insert_bookmark(paragraph, bookmark_name: str, bookmark_id: str = "0"):
     run._r.append(end)
 
 
-def set_table_borders(table, top_sz=12, bottom_sz=12, thin_sz=4,
-                      color="000000"):
+def set_table_borders(table, top_sz=12, bottom_sz=12, thin_sz=4, color="000000"):
     """Apply three-line table borders at the table level.
 
     Sets: thick top, thick bottom, none for left/right/insideH/insideV.
     Returns the w:tblBorders element.
     """
-    from docx.oxml.ns import qn
     from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
 
     tbl = table._tbl
     tblPr = tbl.tblPr
@@ -125,8 +128,8 @@ def set_table_borders(table, top_sz=12, bottom_sz=12, thin_sz=4,
 
 def set_table_autofit_to_page(table, width_pct: int = 100):
     """Configure a Word table to auto-fit within the available page width."""
-    from docx.oxml.ns import qn
     from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
 
     tbl = table._tbl
     tblPr = tbl.tblPr
@@ -152,8 +155,8 @@ def set_table_autofit_to_page(table, width_pct: int = 100):
 
 def set_cell_bottom_border(cell, sz=4, color="000000"):
     """Apply a thin bottom border to an individual table cell (used for header row)."""
-    from docx.oxml.ns import qn
     from docx.oxml import OxmlElement
+    from docx.oxml.ns import qn
 
     tcPr = cell._tc.get_or_add_tcPr()
     existing = tcPr.find(qn("w:tcBorders"))
@@ -165,9 +168,17 @@ def set_cell_bottom_border(cell, sz=4, color="000000"):
     tcPr.append(borders)
 
 
-def set_cell_text(cell, text: str, bold=False, font_size=9,
-                  font_name="Times New Roman", alignment=None,
-                  space_before=1, space_after=1, line_spacing=12):
+def set_cell_text(
+    cell,
+    text: str,
+    bold=False,
+    font_size=9,
+    font_name="Times New Roman",
+    alignment=None,
+    space_before=1,
+    space_after=1,
+    line_spacing=12,
+):
     """Clear and set text in a table cell with consistent formatting.
 
     Args:
@@ -175,7 +186,6 @@ def set_cell_text(cell, text: str, bold=False, font_size=9,
         space_after: Paragraph space after in points.
     """
     from docx.shared import Pt
-    from docx.enum.text import WD_ALIGN_PARAGRAPH
 
     # Clear existing paragraphs
     for p in cell.paragraphs:
@@ -202,11 +212,10 @@ def set_cell_shading(cell, color_hex: str):
         cell: python-docx cell object.
         color_hex: Background color in hex format (e.g. 'F2F2F2') without '#'.
     """
-    from docx.oxml.ns import qn, nsdecls
     from docx.oxml import parse_xml
-    shading = parse_xml(
-        f'<w:shd {nsdecls("w")} w:fill="{color_hex}" w:val="clear"/>'
-    )
+    from docx.oxml.ns import nsdecls
+
+    shading = parse_xml(f'<w:shd {nsdecls("w")} w:fill="{color_hex}" w:val="clear"/>')
     cell._tc.get_or_add_tcPr().append(shading)
 
 
@@ -218,4 +227,5 @@ def set_cell_width(cell, width_cm: float):
         width_cm: Width in centimeters.
     """
     from docx.shared import Cm
+
     cell.width = Cm(width_cm)

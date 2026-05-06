@@ -7,11 +7,11 @@ Supports two coloring modes:
 Reference lines at +20% (PD threshold) and -30% (PR threshold).
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from tflshell.figures.base import ClinicalFigure, _generate_mock_tumor_data
-from tflshell.figures.color_schemes import BOR_COLORS, BOR_ORDER, TRT_COLORS
+from tflshell.figures.color_schemes import BOR_COLORS, BOR_ORDER
 
 
 class WaterfallFigure(ClinicalFigure):
@@ -52,12 +52,12 @@ class WaterfallFigure(ClinicalFigure):
 
         if color_by == "group" and groups:
             group_colors_list = [TRT_COLORS_LIST[g % len(TRT_COLORS_LIST)] for g in groups]
-            bars = ax.bar(x, best_pct, color=group_colors_list, width=0.9,
-                          edgecolor="none", linewidth=0)
+            bars = ax.bar(
+                x, best_pct, color=group_colors_list, width=0.9, edgecolor="none", linewidth=0
+            )
         else:
             bor_colors = [BOR_COLORS.get(b, BOR_COLORS["NE"]) for b in bor]
-            bars = ax.bar(x, best_pct, color=bor_colors, width=0.9,
-                          edgecolor="none", linewidth=0)
+            bars = ax.bar(x, best_pct, color=bor_colors, width=0.9, edgecolor="none", linewidth=0)
 
         # Reference lines
         ax.axhline(y=20, color="red", linestyle="--", linewidth=1.0, alpha=0.7)
@@ -79,20 +79,36 @@ class WaterfallFigure(ClinicalFigure):
         # Legend
         if color_by == "group" and groups:
             from matplotlib.patches import Patch
+
             arm_names = data.get("arm_labels", ["Group 1", "Group 2", "Group 3"])
             legend_patches = [
-                Patch(facecolor=TRT_COLORS_LIST[i], label=arm_names[i])
-                for i in sorted(set(groups))
+                Patch(facecolor=TRT_COLORS_LIST[i], label=arm_names[i]) for i in sorted(set(groups))
             ]
-            ax.legend(handles=legend_patches, loc="upper right",
-                      frameon=True, facecolor="white", edgecolor="#DDDDDD",
-                      fontsize=8)
+            ax.legend(
+                handles=legend_patches,
+                loc="upper right",
+                frameon=True,
+                facecolor="white",
+                edgecolor="#DDDDDD",
+                fontsize=8,
+            )
         else:
             from matplotlib.patches import Patch
-            legend_patches = [Patch(facecolor=BOR_COLORS[b], label=b, edgecolor="none")
-                              for b in BOR_ORDER if b in set(bor)]
-            ax.legend(handles=legend_patches, loc="upper right",
-                      frameon=True, facecolor="white", edgecolor="#DDDDDD",
-                      fontsize=8, title="BOR", title_fontsize=8)
+
+            legend_patches = [
+                Patch(facecolor=BOR_COLORS[b], label=b, edgecolor="none")
+                for b in BOR_ORDER
+                if b in set(bor)
+            ]
+            ax.legend(
+                handles=legend_patches,
+                loc="upper right",
+                frameon=True,
+                facecolor="white",
+                edgecolor="#DDDDDD",
+                fontsize=8,
+                title="BOR",
+                title_fontsize=8,
+            )
 
         return fig

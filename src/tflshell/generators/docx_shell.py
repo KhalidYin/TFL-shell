@@ -12,31 +12,34 @@ import os
 from datetime import datetime
 
 from docx import Document
-from docx.shared import Pt, Inches, RGBColor
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.enum.table import WD_TABLE_ALIGNMENT
 from docx.enum.section import WD_ORIENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Inches, Pt, RGBColor
 
 from tflshell import config
-from tflshell.models.enums import TFLType, Section
-from tflshell.models.catalog import TFLCatalog
-from tflshell.presentation import get_presentation_profile
-from tflshell.utils import styles as sty
-from tflshell.utils.naming import make_filename
-
 from tflshell.docx_utils.header_block import add_tfl_page_header
 from tflshell.docx_utils.three_line_table import create_three_line_table
 from tflshell.docx_utils.toc_builder import add_styles_for_toc, insert_toc_field
+from tflshell.models.catalog import TFLCatalog
+from tflshell.models.enums import Section, TFLType
+from tflshell.presentation import get_presentation_profile
+from tflshell.utils import styles as sty
+from tflshell.utils.naming import make_filename
 
 
 class DocxShellGenerator:
     """Generate the TFL Shell Template DOCX document."""
 
-    def __init__(self, catalog: TFLCatalog, output_path: str | None = None,
-                 therapeutic_area: str = "all",
-                 generate_figures: bool = True,
-                 sponsor: str = None, protocol: str = None,
-                 presentation_profile: str = "csr_standard"):
+    def __init__(
+        self,
+        catalog: TFLCatalog,
+        output_path: str | None = None,
+        therapeutic_area: str = "all",
+        generate_figures: bool = True,
+        sponsor: str = None,
+        protocol: str = None,
+        presentation_profile: str = "csr_standard",
+    ):
         self.catalog = catalog
         self.output_path = output_path or os.path.join(
             config.DEFAULT_OUTPUT_DIR,
@@ -258,8 +261,12 @@ class DocxShellGenerator:
     def _add_sub_heading(self, text):
         """Add a sub-heading for 'Tables' / 'Figures' / 'Listings' groups."""
         p = self.doc.add_paragraph(style=self.doc.styles["Heading 3"])
-        p.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.subheading_space_before)
-        p.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.subheading_space_after)
+        p.paragraph_format.space_before = Pt(
+            self.presentation_profile.paragraphs.subheading_space_before
+        )
+        p.paragraph_format.space_after = Pt(
+            self.presentation_profile.paragraphs.subheading_space_after
+        )
         run = p.add_run(text)
         run.font.name = config.FONT_NAME
         run.font.size = Pt(config.FONT_SIZE_H3)
@@ -269,8 +276,12 @@ class DocxShellGenerator:
     def _add_tfl_shell_heading(self, tfl):
         """TFL title as Heading 4 — appears in TOC under sub-group."""
         p = self.doc.add_paragraph(style=self.doc.styles["Heading 4"])
-        p.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.shell_heading_space_before)
-        p.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.shell_heading_space_after)
+        p.paragraph_format.space_before = Pt(
+            self.presentation_profile.paragraphs.shell_heading_space_before
+        )
+        p.paragraph_format.space_after = Pt(
+            self.presentation_profile.paragraphs.shell_heading_space_after
+        )
         p.paragraph_format.keep_with_next = True
         run = p.add_run(f"{tfl.display_label}  {tfl.title}")
         run.font.name = config.FONT_NAME
@@ -303,8 +314,12 @@ class DocxShellGenerator:
         all_notes = tfl.footnote_text()
         if all_notes:
             p = self.doc.add_paragraph()
-            p.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.footnote_label_space_before)
-            p.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.footnote_label_space_after)
+            p.paragraph_format.space_before = Pt(
+                self.presentation_profile.paragraphs.footnote_label_space_before
+            )
+            p.paragraph_format.space_after = Pt(
+                self.presentation_profile.paragraphs.footnote_label_space_after
+            )
             run = p.add_run("Footnotes:")
             run.font.size = Pt(config.FONT_SIZE_FOOTNOTE)
             run.font.bold = True
@@ -314,8 +329,12 @@ class DocxShellGenerator:
 
             for i, note in enumerate(all_notes, 1):
                 p = self.doc.add_paragraph()
-                p.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.footnote_item_space_before)
-                p.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.footnote_item_space_after)
+                p.paragraph_format.space_before = Pt(
+                    self.presentation_profile.paragraphs.footnote_item_space_before
+                )
+                p.paragraph_format.space_after = Pt(
+                    self.presentation_profile.paragraphs.footnote_item_space_after
+                )
                 run = p.add_run(f"[{i}] {note}")
                 run.font.size = Pt(config.FONT_SIZE_FOOTNOTE)
                 run.font.italic = True
@@ -344,20 +363,29 @@ class DocxShellGenerator:
         if self.generate_figures and tfl.is_figure_generated:
             try:
                 from tflshell.generators.figure_engine import generate_figure_buffer
+
                 buf = generate_figure_buffer(tfl)
                 # Insert image directly
                 p_img = doc.add_paragraph()
                 p_img.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                p_img.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.figure_space_before)
-                p_img.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.figure_space_after)
+                p_img.paragraph_format.space_before = Pt(
+                    self.presentation_profile.paragraphs.figure_space_before
+                )
+                p_img.paragraph_format.space_after = Pt(
+                    self.presentation_profile.paragraphs.figure_space_after
+                )
                 run_img = p_img.add_run()
                 run_img.add_picture(buf, width=Inches(min(tfl.figure_width_inches, 6.0)))
                 # Figure description as italic caption
                 if tfl.figure_description:
                     p_desc = doc.add_paragraph()
                     p_desc.alignment = WD_ALIGN_PARAGRAPH.CENTER
-                    p_desc.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.caption_space_before)
-                    p_desc.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.caption_space_after)
+                    p_desc.paragraph_format.space_before = Pt(
+                        self.presentation_profile.paragraphs.caption_space_before
+                    )
+                    p_desc.paragraph_format.space_after = Pt(
+                        self.presentation_profile.paragraphs.caption_space_after
+                    )
                     run_d = p_desc.add_run(f"[{tfl.display_label}: {tfl.figure_description}]")
                     run_d.font.size = Pt(8)
                     run_d.font.italic = True
@@ -391,9 +419,15 @@ class DocxShellGenerator:
     def _add_figure_shell_note(self):
         """Add gray italic shell template note below figure."""
         p_shell = self.doc.add_paragraph()
-        p_shell.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.figure_note_space_before)
-        p_shell.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.figure_note_space_after)
-        run = p_shell.add_run("[Figure shell template. Actual figure generated by clinical statistical software (e.g., SAS, R).]")
+        p_shell.paragraph_format.space_before = Pt(
+            self.presentation_profile.paragraphs.figure_note_space_before
+        )
+        p_shell.paragraph_format.space_after = Pt(
+            self.presentation_profile.paragraphs.figure_note_space_after
+        )
+        run = p_shell.add_run(
+            "[Figure shell template. Actual figure generated by clinical statistical software (e.g., SAS, R).]"
+        )
         run.font.size = Pt(config.FONT_SIZE_FOOTNOTE)
         run.font.color.rgb = RGBColor(*config.FIGURE_SHELL_NOTE_COLOR)
         run.font.italic = True
@@ -402,8 +436,12 @@ class DocxShellGenerator:
     def _add_listing_body(self, tfl):
         doc = self.doc
         p = doc.add_paragraph()
-        p.paragraph_format.space_before = Pt(self.presentation_profile.paragraphs.listing_note_space_before)
-        p.paragraph_format.space_after = Pt(self.presentation_profile.paragraphs.listing_note_space_after)
+        p.paragraph_format.space_before = Pt(
+            self.presentation_profile.paragraphs.listing_note_space_before
+        )
+        p.paragraph_format.space_after = Pt(
+            self.presentation_profile.paragraphs.listing_note_space_after
+        )
         p.paragraph_format.keep_with_next = True
         run = p.add_run("Note: Sorted by site/subject ID.")
         run.font.size = Pt(config.FONT_SIZE_FOOTNOTE)
@@ -431,9 +469,7 @@ class DocxShellGenerator:
 
     def _set_document_properties(self):
         doc = self.doc
-        doc.core_properties.title = (
-            f"Clinical Study Report — TFL Shell Template v{config.VERSION}"
-        )
+        doc.core_properties.title = f"Clinical Study Report — TFL Shell Template v{config.VERSION}"
         doc.core_properties.subject = "Tables, Figures, and Listings (Three-Line Format)"
         doc.core_properties.version = config.VERSION
         doc.core_properties.category = "Clinical Statistics"

@@ -6,7 +6,6 @@ from tflshell.generators.docx_shell import DocxShellGenerator
 from tflshell.generators.docx_sop import DocxSopGenerator
 from tflshell.generators.xlsx_toc import XlsxTocGenerator
 
-
 REPRESENTATIVE_IDS = [
     "T14.2.26",
     "T14.2.28",
@@ -71,7 +70,9 @@ def test_sop_and_workbook_share_governance_language(tmp_path):
     workbook = load_workbook(xlsx_path, read_only=True, data_only=True)
     usage_sheet = workbook["Usage_Guide"]
     field_sheet = workbook["Field_Definitions"]
-    usage_rows = {row[0]: row[1] for row in usage_sheet.iter_rows(min_row=2, values_only=True) if row[0]}
+    usage_rows = {
+        row[0]: row[1] for row in usage_sheet.iter_rows(min_row=2, values_only=True) if row[0]
+    }
     field_names = {row[0] for row in field_sheet.iter_rows(min_row=2, values_only=True) if row[0]}
 
     sop_doc = Document(sop_path)
@@ -85,7 +86,10 @@ def test_sop_and_workbook_share_governance_language(tmp_path):
     assert "ellipsis (...)" in usage_rows["Placeholder convention"]
     assert "must not be merged with Overall, Total, HR" in usage_rows["Placeholder convention"]
     assert "shell family, study phase scope, coverage summary" in sop_text
-    assert "Automated quality gates should verify generation, catalog validation, and regression tests" in sop_text
+    assert (
+        "Automated quality gates should verify generation, catalog validation, and regression tests"
+        in sop_text
+    )
     assert "ellipsis (`...`) expansion column" in sop_text
 
 

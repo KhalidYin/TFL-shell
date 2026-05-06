@@ -3,7 +3,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "recommend_then_generate.py"
 
@@ -55,9 +54,13 @@ def test_recommend_then_generate_returns_schema_first_payload(tmp_path):
     assert result.returncode == 0
     payload = json.loads(result.stdout)
 
-    assert payload["runtime_summary"]["mode"] == "skill_runtime_preferred"
-    assert payload["runtime_summary"]["catalog_source"].endswith("package_assets/catalog_subset.json")
-    assert payload["runtime_summary"]["registry_source"].endswith("package_assets/contract_registry.json")
+    assert payload["runtime_summary"]["mode"] in ("repo_backed", "standalone")
+    assert payload["runtime_summary"]["catalog_source"].endswith(
+        "package_assets/catalog_subset.json"
+    )
+    assert payload["runtime_summary"]["registry_source"].endswith(
+        "package_assets/contract_registry.json"
+    )
     assert payload["runtime_summary"]["wrapper_layer"] == "runtime/wrappers"
     assert payload["request_summary"]["task_mode"] == "recommend_then_generate"
     assert payload["request_summary"]["source_count"] == 1
@@ -123,7 +126,9 @@ def test_recommend_then_generate_validates_xlsx_master_sheet_against_recommendat
     assert workbook_checks["study_phase_scope_match_catalog"] is True
     assert workbook_checks["coverage_summary_match_catalog"] is True
     assert workbook_checks["populations_match_catalog"] is True
-    assert workbook_checks["master_row_count"] == len(payload["recommendation_state"]["base_package"]["shell_ids"])
+    assert workbook_checks["master_row_count"] == len(
+        payload["recommendation_state"]["base_package"]["shell_ids"]
+    )
     assert workbook_refs["helper_module"].endswith("alignment_contracts.py")
     assert "Type" in workbook_refs["detail_keys"]
     assert "Study Phase Scope" in workbook_refs["detail_keys"]
@@ -163,7 +168,9 @@ def test_recommend_then_generate_validates_docx_headings_against_recommendation(
     assert docx_checks["analysis_set_lines_match_catalog"] is True
     assert docx_checks["protocol_lines_present"] is True
     assert docx_checks["sponsor_lines_present"] is True
-    assert docx_checks["heading_count"] == len(payload["recommendation_state"]["base_package"]["shell_ids"])
+    assert docx_checks["heading_count"] == len(
+        payload["recommendation_state"]["base_package"]["shell_ids"]
+    )
     assert docx_refs["helper_module"].endswith("alignment_contracts.py")
     assert "Analysis Set" in docx_refs["detail_keys"]
     assert "Protocol" in docx_refs["detail_keys"]

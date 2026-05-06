@@ -40,7 +40,9 @@ def _build_recommend_request(args, sources) -> RecommendRequest:
     )
 
 
-def _recommend_payload(result: RecommendResult, mode: str, requested_outputs: list[str] | None = None) -> dict:
+def _recommend_payload(
+    result: RecommendResult, mode: str, requested_outputs: list[str] | None = None
+) -> dict:
     payload = result.to_dict()
     payload["task_mode"] = mode
     payload["request_summary"]["mode"] = mode
@@ -124,7 +126,9 @@ def _generate_outputs(args, catalog: TFLCatalog, payload: dict) -> dict:
             "therapeutic_area": payload["interpreted_context"]["therapeutic_area"],
         },
         "stats": {
-            "recommended_shell_count": payload["recommendation_state"]["base_package"]["total_items"],
+            "recommended_shell_count": payload["recommendation_state"]["base_package"][
+                "total_items"
+            ],
         },
     }
     return payload
@@ -161,7 +165,9 @@ def run_skill(args, sources) -> dict:
         mode="generate",
         requested_outputs=_resolve_requested_outputs(args.type),
     )
-    scoped_catalog = _filtered_catalog(catalog, payload["recommendation_state"]["base_package"]["shell_ids"])
+    scoped_catalog = _filtered_catalog(
+        catalog, payload["recommendation_state"]["base_package"]["shell_ids"]
+    )
     payload = _generate_outputs(args, scoped_catalog, payload)
     return _attach_validation_results(payload, scoped_catalog)
 

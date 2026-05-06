@@ -1,8 +1,6 @@
 """Word Table of Contents field and bookmark utilities."""
 
 from docx.shared import Pt
-from docx.oxml import OxmlElement
-from docx.oxml.ns import qn
 
 from tflshell import config
 from tflshell.docx_utils.xml_helpers import insert_field
@@ -31,8 +29,10 @@ def insert_toc_field(doc, heading_depth=3):
     p2 = doc.add_paragraph()
     p2.paragraph_format.space_before = Pt(0)
     p2.paragraph_format.space_after = Pt(12)
-    run = p2.add_run("[To update: right-click the Table of Contents above "
-                      "and select 'Update Field', then 'Update entire table']")
+    run = p2.add_run(
+        "[To update: right-click the Table of Contents above "
+        "and select 'Update Field', then 'Update entire table']"
+    )
     run.font.size = Pt(8)
     run.font.name = config.FONT_NAME
     run.font.italic = True
@@ -46,6 +46,7 @@ def add_styles_for_toc(doc):
     This function sets up python-docx's built-in heading styles.
     """
     from docx.shared import Pt, RGBColor
+
     from tflshell import config
 
     F = config.FONT_NAME

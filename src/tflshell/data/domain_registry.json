@@ -1,0 +1,153 @@
+{
+  "registry_version": "1.0.0",
+  "description": "Structured keywords and rules for phase/domain detection in TFL recommend engine.",
+
+  "phase_keywords": {
+    "phase_i": [
+      "phase i", "phase 1", "dose escalation",
+      "dlt", "mtd", "rp2d",
+      "3+3", "boin", "crm"
+    ],
+    "phase_ii": [
+      "phase ii", "phase 2"
+    ],
+    "phase_iii": [
+      "phase iii", "phase 3"
+    ]
+  },
+
+  "therapeutic_area_keywords": {
+    "oncology": [
+      "tumor", "recist", "bor", "orr", "dcr", "dor", "ttr",
+      "target lesion", "waterfall", "spider", "swimmer",
+      "pfs", "os"
+    ],
+    "non_oncology": [
+      "exacerbation", "mace", "cardiovascular",
+      "heart failure hospitalization", "autoimmune", "flare",
+      "copd", "pulmonary", "hba1c", "glycemic", "diabetes",
+      "metabolic", "weight loss", "glucose"
+    ]
+  },
+
+  "efficacy_keywords": [
+    "primary endpoint", "efficacy", "response", "survival",
+    "time-to-event", "time to event", "responder",
+    "exacerbation", "mace", "cardiovascular event",
+    "heart failure hospitalization"
+  ],
+
+  "special_assessment_keywords": [
+    "pk", "ada", "biomarker", "pd", "pro",
+    "food effect", "crossover"
+  ],
+
+  "section_trigger_keywords": {
+    "14.2_efficacy": [
+      "primary endpoint", "efficacy", "response", "survival",
+      "time-to-event", "time to event", "responder",
+      "exacerbation", "mace", "cardiovascular event",
+      "heart failure hospitalization", "pfs", "os",
+      "orr", "dcr", "bor"
+    ],
+    "14.4_special": [
+      "pk", "ada", "biomarker", "pd", "pro",
+      "food effect", "crossover"
+    ]
+  },
+
+  "safety_focus_keywords": {
+    "adverse_events": ["ae", "adverse event"],
+    "laboratory": ["lab", "laboratory"],
+    "ecg_qtc": ["ecg", "qtc"],
+    "vital_signs": ["vital sign"]
+  },
+
+  "population_keywords": {
+    "safety_population": ["safety population"],
+    "full_analysis_set": ["fas", "full analysis set"],
+    "intent_to_treat": ["itt", "intent to treat"]
+  },
+
+  "shell_family_rules": {
+    "description": "Rules for deriving shell family candidates from extracted context.",
+    "section_14.1": {
+      "families": ["Demographics and Baseline"],
+      "always_add": true
+    },
+    "section_14.2": {
+      "families": ["General Efficacy"],
+      "always_add": true
+    },
+    "section_14.3": {
+      "families": ["Safety"],
+      "always_add": true
+    },
+    "section_14.4": {
+      "families": ["Special Assessments"],
+      "always_add": true
+    },
+    "section_16.2": {
+      "families": ["Patient Listings"],
+      "always_add": true
+    },
+    "conditional_families": [
+      {
+        "family": "Oncology Efficacy",
+        "condition": {"therapeutic_area": "Oncology", "sections": ["14.2"]}
+      },
+      {
+        "family": "Non-Oncology Efficacy",
+        "condition": {"therapeutic_area": "Non-Oncology", "sections": ["14.2"]}
+      },
+      {
+        "family": "Respiratory Exacerbation",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword": "exacerbation"}
+      },
+      {
+        "family": "Cardiovascular MACE and HF Hospitalization",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword": "mace"}
+      },
+      {
+        "family": "Cardiovascular MACE and HF Hospitalization",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword": "cardiovascular"}
+      },
+      {
+        "family": "Cardiovascular MACE and HF Hospitalization",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword": "heart failure hospitalization"}
+      },
+      {
+        "family": "Autoimmune Flare and Responder",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword": "autoimmune"}
+      },
+      {
+        "family": "Autoimmune Flare and Responder",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword": "flare"}
+      },
+      {
+        "family": "Metabolic Endpoint",
+        "condition": {"therapeutic_area": "Non-Oncology", "keyword_any": ["hba1c", "glycemic", "diabetes", "metabolic", "weight loss", "glucose", "body weight"]}
+      },
+      {
+        "family": "Phase I Safety and Dose Escalation",
+        "condition": {"study_phase": "Phase I", "section": "14.3", "keyword_any": ["dlt", "mtd", "rp2d", "3+3", "boin", "crm", "dose escalation"]}
+      },
+      {
+        "family": "Phase I Clinical Pharmacology",
+        "condition": {"study_phase": "Phase I", "section": "14.4", "keyword_any": ["pk", "food effect", "crossover"]}
+      },
+      {
+        "family": "Oncology Listings",
+        "condition": {"therapeutic_area": "Oncology", "sections": ["16.2"]}
+      },
+      {
+        "family": "Non-Oncology Listings",
+        "condition": {"therapeutic_area": "Non-Oncology", "sections": ["16.2"]}
+      },
+      {
+        "family": "Specialized Patient Listings",
+        "condition": {"study_phase": "Phase I", "sections": ["16.2"], "keyword_any": ["dlt", "mtd", "rp2d", "3+3", "boin", "crm", "dose escalation"]}
+      }
+    ]
+  }
+}

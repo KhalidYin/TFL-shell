@@ -36,11 +36,16 @@ def mock_survival_data(n=300, seed=DEFAULT_SEED):
     arm_a_time = np.minimum(arm_a_time, 36)
     arm_b_time = np.minimum(arm_b_time, 36)
     return {
-        "time_a": arm_a_time, "event_a": arm_a_event,
-        "time_b": arm_b_time, "event_b": arm_b_event,
-        "arm_a_label": "Group 1", "arm_b_label": "Group 2",
+        "time_a": arm_a_time,
+        "event_a": arm_a_event,
+        "time_b": arm_b_time,
+        "event_b": arm_b_event,
+        "arm_a_label": "Group 1",
+        "arm_b_label": "Group 2",
         "ylabel": "Survival Probability",
-        "hr": 0.72, "hr_ci_low": 0.58, "hr_ci_high": 0.89,
+        "hr": 0.72,
+        "hr_ci_low": 0.58,
+        "hr_ci_high": 0.89,
         "p_value": 0.004,
     }
 
@@ -62,10 +67,14 @@ def mock_tumor_data(n=200, seed=DEFAULT_SEED):
     best_pct = rng.normal(-25, 32, n).clip(-100, 200)
     bor = []
     for pct in best_pct:
-        if pct < -100: bor.append("CR")
-        elif pct < -30: bor.append("PR")
-        elif pct < 20: bor.append("SD")
-        else: bor.append("PD")
+        if pct < -100:
+            bor.append("CR")
+        elif pct < -30:
+            bor.append("PR")
+        elif pct < 20:
+            bor.append("SD")
+        else:
+            bor.append("PD")
     duration = rng.exponential(12, n) + 2
     ttr = rng.exponential(3.5, n) + 1
     return {"best_pct": best_pct, "bor": bor, "duration": duration, "ttr": ttr}
@@ -104,6 +113,7 @@ def mock_vital_signs_data(n=200, seed=DEFAULT_SEED):
 def mock_ae_data(seed=DEFAULT_SEED):
     """Generate mock AE frequencies by SOC/PT."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     return {
         "Gastrointestinal disorders": [
@@ -132,23 +142,33 @@ def mock_subgroup_data(seed=DEFAULT_SEED):
     """Generate mock forest plot subgroup data."""
     rng = np.random.default_rng(seed)
     subgroups = [
-        "Overall", "Age <65", "Age >=65", "Male", "Female",
-        "ECOG 0", "ECOG 1", "Prior Therapy 0-1", "Prior Therapy >=2",
-        "Non-Smoker", "Smoker",
+        "Overall",
+        "Age <65",
+        "Age >=65",
+        "Male",
+        "Female",
+        "ECOG 0",
+        "ECOG 1",
+        "Prior Therapy 0-1",
+        "Prior Therapy >=2",
+        "Non-Smoker",
+        "Smoker",
     ]
     result = []
     for name in subgroups:
         hr = rng.normal(0.75, 0.12)
         hr = max(0.3, min(1.5, hr))
         ci_ratio = rng.uniform(0.12, 0.22)
-        result.append({
-            "subgroup": name,
-            "hr": hr,
-            "ci_low": max(0.15, hr - ci_ratio),
-            "ci_high": min(3.0, hr + ci_ratio),
-            "n_trt_a": rng.integers(80, 150),
-            "n_trt_b": rng.integers(80, 150),
-            "events_a": rng.integers(25, 75),
-            "events_b": rng.integers(25, 75),
-        })
+        result.append(
+            {
+                "subgroup": name,
+                "hr": hr,
+                "ci_low": max(0.15, hr - ci_ratio),
+                "ci_high": min(3.0, hr + ci_ratio),
+                "n_trt_a": rng.integers(80, 150),
+                "n_trt_b": rng.integers(80, 150),
+                "events_a": rng.integers(25, 75),
+                "events_b": rng.integers(25, 75),
+            }
+        )
     return {"rows": result}

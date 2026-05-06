@@ -18,11 +18,9 @@ def _bootstrap_repo_imports() -> None:
 
 _bootstrap_repo_imports()
 
-from tflshell import __version__  # noqa: E402
 from tflshell.data.definitions import build_catalog  # noqa: E402
 from tflshell.models.catalog import TFLCatalog  # noqa: E402
 from tflshell.recommend import InputSource, RecommendRequest, recommend_shells  # noqa: E402
-from tflshell.utils.naming import make_filename  # noqa: E402
 from alignment_contracts import (  # noqa: E402
     build_docx_layout_contract,
     build_docx_shell_contract,
@@ -31,6 +29,9 @@ from alignment_contracts import (  # noqa: E402
     build_xlsx_workbook_contract,
 )
 from package_bundle import describe_package_bundle  # noqa: E402
+from runtime import runtime_mode  # noqa: E402
+from runtime.naming import make_filename  # noqa: E402
+from runtime.version_loader import get_version  # noqa: E402
 from runtime.wrappers.docx_wrapper import generate as generate_docx  # noqa: E402
 from runtime.wrappers.sop_wrapper import generate as generate_sop  # noqa: E402
 from runtime.wrappers.xlsx_wrapper import generate as generate_xlsx  # noqa: E402
@@ -73,12 +74,16 @@ def _build_request(args) -> RecommendRequest:
 
 
 def _runtime_summary() -> dict:
+    mode_info = runtime_mode()
     package_root = Path(__file__).resolve().parents[1]
     return {
-        "mode": "skill_runtime_preferred",
+        "mode": "standalone" if not mode_info["has_repo_backend"] else "repo_backed",
+        "runtime_details": mode_info,
         "catalog_source": str(package_root / "package_assets" / "catalog_subset.json").replace("\\", "/"),
         "registry_source": str(package_root / "package_assets" / "contract_registry.json").replace("\\", "/"),
         "wrapper_layer": "runtime/wrappers",
+        "version_source": "runtime/version_loader (from output_manifest.json)",
+        "naming_source": "runtime/naming",
     }
 
 
@@ -96,7 +101,7 @@ def _generate_from_recommendation(args, recommendation) -> dict:
 
     for output_kind in requested_outputs:
         if output_kind == "docx":
-            output_path = output_dir / make_filename("TFL_Shell_Template", __version__, ".docx")
+            output_path = output_dir / make_filename("TFL_Shell_Template", get_version(), ".docx")
             generated_path = Path(
                 generate_docx(
                     scoped_catalog,
@@ -109,10 +114,10 @@ def _generate_from_recommendation(args, recommendation) -> dict:
                 )
             )
         elif output_kind == "xlsx":
-            output_path = output_dir / make_filename("TFL_TOC", __version__, ".xlsx")
+            output_path = output_dir / make_filename("TFL_TOC", get_version(), ".xlsx")
             generated_path = Path(generate_xlsx(scoped_catalog, str(output_path)))
         elif output_kind == "sop":
-            output_path = output_dir / make_filename("TFL_Shell_SOP", __version__, ".docx")
+            output_path = output_dir / make_filename("TFL_Shell_SOP", get_version(), ".docx")
             generated_path = Path(generate_sop(scoped_catalog, str(output_path)))
         else:
             raise ValueError(f"不支持的输出类型：{output_kind}")
@@ -126,7 +131,7 @@ def _generate_from_recommendation(args, recommendation) -> dict:
 
     return {
         "generated": True,
-        "version": __version__,
+        "version": get_version(),
         "runtime_summary": _runtime_summary(),
         "requested_outputs": requested_outputs,
         "artifact_count": len(artifacts),
@@ -223,7 +228,7 @@ def run(args) -> dict:
 
     return {
         "task_mode": "recommend_then_generate",
-        "version": __version__,
+        "version": get_version(),
         "package_bundle": describe_package_bundle(),
         "runtime_summary": generation_results["runtime_summary"],
         "request_summary": request_summary,

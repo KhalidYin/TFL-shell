@@ -7,8 +7,8 @@ Generates step-function survival curves with:
 - Hazard Ratio and p-value annotation box
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 from matplotlib.ticker import MultipleLocator
 
 from tflshell.figures.base import ClinicalFigure, _generate_mock_survival_data
@@ -62,7 +62,7 @@ def _km_estimate(times, events):
             if denominator > 0:
                 current_var += n_events_at_t / denominator
 
-        n_at_risk -= (n_events_at_t + n_censored_at_t)
+        n_at_risk -= n_events_at_t + n_censored_at_t
 
         se_factor = np.sqrt(current_var) if current_var > 0 else 0
         std_err = se_factor * max(current_survival, 1e-10)
@@ -78,8 +78,13 @@ def _km_estimate(times, events):
         ci_upper.append(upper)
         censor_flags.append(n_censored_at_t > 0 and n_events_at_t == 0)
 
-    return (np.array(unique_times), np.array(survival),
-            np.array(ci_lower), np.array(ci_upper), np.array(censor_flags))
+    return (
+        np.array(unique_times),
+        np.array(survival),
+        np.array(ci_lower),
+        np.array(ci_upper),
+        np.array(censor_flags),
+    )
 
 
 class KMCurveFigure(ClinicalFigure):
@@ -119,8 +124,11 @@ class KMCurveFigure(ClinicalFigure):
 
         # Two-subplot layout: KM curves (3 parts) + risk table (1 part)
         fig, (ax_km, ax_risk) = plt.subplots(
-            2, 1, figsize=(self.figsize[0], self.figsize[1] * 1.3),
-            gridspec_kw={'height_ratios': [3, 1]}, sharex=True
+            2,
+            1,
+            figsize=(self.figsize[0], self.figsize[1] * 1.3),
+            gridspec_kw={"height_ratios": [3, 1]},
+            sharex=True,
         )
 
         # ---- KM estimates with CI ----
@@ -135,17 +143,28 @@ class KMCurveFigure(ClinicalFigure):
         ax_km.fill_between(t_b, ci_lo_b, ci_hi_b, alpha=0.08, color=color_b, step="post")
 
         # Step function survival curves
-        ax_km.step(t_a, s_a, where="post", color=color_a,
-                   linewidth=1.8, label=f"{label_a} (N={len(time_a)})")
-        ax_km.step(t_b, s_b, where="post", color=color_b,
-                   linewidth=1.8, label=f"{label_b} (N={len(time_b)})")
+        ax_km.step(
+            t_a,
+            s_a,
+            where="post",
+            color=color_a,
+            linewidth=1.8,
+            label=f"{label_a} (N={len(time_a)})",
+        )
+        ax_km.step(
+            t_b,
+            s_b,
+            where="post",
+            color=color_b,
+            linewidth=1.8,
+            label=f"{label_b} (N={len(time_b)})",
+        )
 
         # Censoring marks
         for t, s, c, color in [(t_a, s_a, c_a, color_a), (t_b, s_b, c_b, color_b)]:
             for ti, si, ci in zip(t, s, c):
                 if ci:
-                    ax_km.plot(ti, si, marker="+", color=color,
-                               markersize=6, markeredgewidth=1.2)
+                    ax_km.plot(ti, si, marker="+", color=color, markersize=6, markeredgewidth=1.2)
 
         # Axes
         ax_km.set_ylabel(ylabel, fontsize=10, fontweight="bold")
@@ -156,24 +175,35 @@ class KMCurveFigure(ClinicalFigure):
         ax_km.grid(True, alpha=0.3, linestyle=":")
 
         # HR/p-value annotation box
-        ann_text = (f"HR = {hr:.2f} (95% CI: {hr_lo:.2f}–{hr_hi:.2f})\n"
-                    f"p = {p_val}")
-        ax_km.text(0.97, 0.15, ann_text, transform=ax_km.transAxes,
-                   fontsize=9, verticalalignment="bottom", horizontalalignment="right",
-                   bbox=dict(boxstyle="round,pad=0.4", facecolor="white",
-                             edgecolor="#CCCCCC", alpha=0.95))
+        ann_text = f"HR = {hr:.2f} (95% CI: {hr_lo:.2f}–{hr_hi:.2f})\np = {p_val}"
+        ax_km.text(
+            0.97,
+            0.15,
+            ann_text,
+            transform=ax_km.transAxes,
+            fontsize=9,
+            verticalalignment="bottom",
+            horizontalalignment="right",
+            bbox=dict(boxstyle="round,pad=0.4", facecolor="white", edgecolor="#CCCCCC", alpha=0.95),
+        )
 
         # Censoring annotation
-        ax_km.annotate('+ Censored', xy=(0.02, 0.12), xycoords='axes fraction',
-                       fontsize=7, fontstyle='italic', color='gray')
+        ax_km.annotate(
+            "+ Censored",
+            xy=(0.02, 0.12),
+            xycoords="axes fraction",
+            fontsize=7,
+            fontstyle="italic",
+            color="gray",
+        )
 
         # Legend
-        ax_km.legend(loc="upper right", frameon=True,
-                     facecolor="white", edgecolor="#DDDDDD", fontsize=8)
+        ax_km.legend(
+            loc="upper right", frameon=True, facecolor="white", edgecolor="#DDDDDD", fontsize=8
+        )
 
         # ---- Number at risk table ----
-        risk_times = data.get("risk_table_times",
-                              list(np.linspace(0, max_time, 6)))
+        risk_times = data.get("risk_table_times", list(np.linspace(0, max_time, 6)))
 
         ax_risk.set_xlim(0, max_time * 1.05)
         ax_risk.set_ylim(0, 1)
@@ -182,28 +212,65 @@ class KMCurveFigure(ClinicalFigure):
         # Risk table text annotations
         col_width = 1.0 / len(risk_times)
         for j, t_val in enumerate(risk_times):
-            ax_risk.text(j * col_width + col_width / 2, 0.85, f'{t_val:.0f}',
-                         ha='center', va='center', fontsize=8,
-                         fontweight='bold', transform=ax_risk.transAxes)
+            ax_risk.text(
+                j * col_width + col_width / 2,
+                0.85,
+                f"{t_val:.0f}",
+                ha="center",
+                va="center",
+                fontsize=8,
+                fontweight="bold",
+                transform=ax_risk.transAxes,
+            )
 
-        for i, (label, times_arr, color) in enumerate([
-            (label_a, time_a, color_a), (label_b, time_b, color_b)
-        ]):
+        for i, (label, times_arr, color) in enumerate(
+            [(label_a, time_a, color_a), (label_b, time_b, color_b)]
+        ):
             y_pos = 0.55 - i * 0.25
-            ax_risk.text(-0.02, y_pos, label, ha='right', va='center',
-                         fontsize=8, fontweight='bold', color=color,
-                         transform=ax_risk.transAxes)
+            ax_risk.text(
+                -0.02,
+                y_pos,
+                label,
+                ha="right",
+                va="center",
+                fontsize=8,
+                fontweight="bold",
+                color=color,
+                transform=ax_risk.transAxes,
+            )
 
             for j, t_val in enumerate(risk_times):
                 n_risk = np.sum(times_arr >= t_val)
-                ax_risk.text(j * col_width + col_width / 2, y_pos, f'{n_risk:d}',
-                             ha='center', va='center', fontsize=8,
-                             transform=ax_risk.transAxes)
+                ax_risk.text(
+                    j * col_width + col_width / 2,
+                    y_pos,
+                    f"{n_risk:d}",
+                    ha="center",
+                    va="center",
+                    fontsize=8,
+                    transform=ax_risk.transAxes,
+                )
 
-        ax_risk.text(0.5, -0.3, xlabel, ha='center', va='center',
-                     fontsize=10, fontweight='bold', transform=ax_risk.transAxes)
-        ax_risk.text(0, 1.15, 'Number at Risk', ha='left', va='center',
-                     fontsize=8, fontweight='bold', transform=ax_risk.transAxes)
+        ax_risk.text(
+            0.5,
+            -0.3,
+            xlabel,
+            ha="center",
+            va="center",
+            fontsize=10,
+            fontweight="bold",
+            transform=ax_risk.transAxes,
+        )
+        ax_risk.text(
+            0,
+            1.15,
+            "Number at Risk",
+            ha="left",
+            va="center",
+            fontsize=8,
+            fontweight="bold",
+            transform=ax_risk.transAxes,
+        )
 
         plt.tight_layout()
         return fig

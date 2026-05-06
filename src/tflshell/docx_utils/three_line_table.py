@@ -8,12 +8,16 @@ Supports:
   - Backward-compatible with flat list[str] data_rows
 """
 
-from docx.shared import Pt
 from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Pt
+
 from tflshell import config
 from tflshell.docx_utils.xml_helpers import (
-    set_table_borders, set_cell_bottom_border, set_cell_text,
-    set_cell_shading, set_table_autofit_to_page,
+    set_cell_bottom_border,
+    set_cell_shading,
+    set_cell_text,
+    set_table_autofit_to_page,
+    set_table_borders,
 )
 from tflshell.presentation import get_presentation_profile
 
@@ -22,8 +26,7 @@ def apply_three_line_format(table, thick_sz=None, thin_sz=None, color=None):
     thick_sz = thick_sz or config.THREE_LINE_THICK_SZ
     thin_sz = thin_sz or config.THREE_LINE_THIN_SZ
     color = color or config.THREE_LINE_BORDER_COLOR
-    set_table_borders(table, top_sz=thick_sz, bottom_sz=thick_sz,
-                      thin_sz=thin_sz, color=color)
+    set_table_borders(table, top_sz=thick_sz, bottom_sz=thick_sz, thin_sz=thin_sz, color=color)
     if table.rows:
         for cell in table.rows[0].cells:
             set_cell_bottom_border(cell, sz=thin_sz, color=color)
@@ -118,25 +121,44 @@ def _render_data_row(table, row_idx, row_data, col_count, font_size, font_name, 
 
     # Column 0: Parameter / Label — left-aligned, optional bold/indent
     display_label = (profile.table.indent_prefix if indent else "") + label
-    set_cell_text(table.cell(row_idx, 0), display_label,
-                  bold=bold, font_size=font_size, font_name=font_name,
-                  alignment=WD_ALIGN_PARAGRAPH.LEFT,
-                  space_before=space_before, space_after=space_after,
-                  line_spacing=profile.table.cell_line_spacing)
+    set_cell_text(
+        table.cell(row_idx, 0),
+        display_label,
+        bold=bold,
+        font_size=font_size,
+        font_name=font_name,
+        alignment=WD_ALIGN_PARAGRAPH.LEFT,
+        space_before=space_before,
+        space_after=space_after,
+        line_spacing=profile.table.cell_line_spacing,
+    )
 
     # Columns 1+: Numeric values — center-aligned, inherit bold from row
     for col_idx in range(1, col_count):
         val = values[col_idx - 1]
-        set_cell_text(table.cell(row_idx, col_idx), val,
-                      bold=bold, font_size=font_size, font_name=font_name,
-                      alignment=WD_ALIGN_PARAGRAPH.CENTER,
-                      space_before=space_before, space_after=space_after,
-                      line_spacing=profile.table.cell_line_spacing)
+        set_cell_text(
+            table.cell(row_idx, col_idx),
+            val,
+            bold=bold,
+            font_size=font_size,
+            font_name=font_name,
+            alignment=WD_ALIGN_PARAGRAPH.CENTER,
+            space_before=space_before,
+            space_after=space_after,
+            line_spacing=profile.table.cell_line_spacing,
+        )
 
 
-def create_three_line_table(doc, rows, cols, headers, data_rows=None,
-                            font_size=None, font_name=None,
-                            presentation_profile="csr_standard"):
+def create_three_line_table(
+    doc,
+    rows,
+    cols,
+    headers,
+    data_rows=None,
+    font_size=None,
+    font_name=None,
+    presentation_profile="csr_standard",
+):
     """Create a three-line table with rich formatting support.
 
     Args:
@@ -172,24 +194,33 @@ def create_three_line_table(doc, rows, cols, headers, data_rows=None,
         for row_idx in range(1, rows):
             data_idx = row_idx - 1
             if data_idx < len(data_rows):
-                _render_data_row(table, row_idx, data_rows[data_idx],
-                                 cols, font_size, font_name, profile)
+                _render_data_row(
+                    table, row_idx, data_rows[data_idx], cols, font_size, font_name, profile
+                )
             else:
                 # Fill extra rows with XX
                 for col_idx in range(cols):
-                    set_cell_text(table.cell(row_idx, col_idx), "XX",
-                                  font_size=font_size, font_name=font_name,
-                                  alignment=WD_ALIGN_PARAGRAPH.CENTER,
-                                  line_spacing=profile.table.cell_line_spacing)
+                    set_cell_text(
+                        table.cell(row_idx, col_idx),
+                        "XX",
+                        font_size=font_size,
+                        font_name=font_name,
+                        alignment=WD_ALIGN_PARAGRAPH.CENTER,
+                        line_spacing=profile.table.cell_line_spacing,
+                    )
     else:
         # No data rows provided: fill with XX placeholders
         for row_idx in range(1, rows):
             for col_idx in range(cols):
                 align = WD_ALIGN_PARAGRAPH.LEFT if col_idx == 0 else WD_ALIGN_PARAGRAPH.CENTER
-                set_cell_text(table.cell(row_idx, col_idx), "XX",
-                              font_size=font_size, font_name=font_name,
-                              alignment=align,
-                              line_spacing=profile.table.cell_line_spacing)
+                set_cell_text(
+                    table.cell(row_idx, col_idx),
+                    "XX",
+                    font_size=font_size,
+                    font_name=font_name,
+                    alignment=align,
+                    line_spacing=profile.table.cell_line_spacing,
+                )
 
     # ---- Apply three-line borders ----
     apply_three_line_format(table)

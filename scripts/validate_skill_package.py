@@ -4,7 +4,6 @@ import argparse
 import sys
 from pathlib import Path
 
-
 REQUIRED_FILES = ("SKILL.md", "PACKAGE_GUIDE.md", "DEVELOPMENT_RULES.md")
 REQUIRED_SELF_CONTAINED_ASSETS = (
     "package_assets/contract_registry.json",
@@ -73,15 +72,21 @@ def validate_skill_package(package_dir: Path) -> list[str]:
         errors.append(f"缺少必需文件：{', '.join(missing_files)}")
         return errors
 
-    missing_assets = [name for name in REQUIRED_SELF_CONTAINED_ASSETS if not (package_dir / Path(name)).exists()]
+    missing_assets = [
+        name for name in REQUIRED_SELF_CONTAINED_ASSETS if not (package_dir / Path(name)).exists()
+    ]
     if missing_assets:
         errors.append(f"缺少自包含资产：{', '.join(missing_assets)}")
 
-    missing_contract_docs = [name for name in REQUIRED_CONTRACT_DOCS if not (package_dir / Path(name)).exists()]
+    missing_contract_docs = [
+        name for name in REQUIRED_CONTRACT_DOCS if not (package_dir / Path(name)).exists()
+    ]
     if missing_contract_docs:
         errors.append(f"缺少契约文档：{', '.join(missing_contract_docs)}")
 
-    missing_runtime_scripts = [name for name in REQUIRED_RUNTIME_SCRIPTS if not (package_dir / Path(name)).exists()]
+    missing_runtime_scripts = [
+        name for name in REQUIRED_RUNTIME_SCRIPTS if not (package_dir / Path(name)).exists()
+    ]
     if missing_runtime_scripts:
         errors.append(f"缺少契约脚本：{', '.join(missing_runtime_scripts)}")
 

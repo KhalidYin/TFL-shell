@@ -1,4 +1,3 @@
-from pathlib import Path
 
 from tflshell.presentation import (
     AUTHORING_SHELL_PROFILE,
@@ -30,8 +29,14 @@ def test_authoring_shell_profile_preserves_more_editing_space():
     profile = get_presentation_profile("authoring-shell")
 
     assert profile == AUTHORING_SHELL_PROFILE
-    assert profile.paragraphs.shell_heading_space_before >= CSR_STANDARD_PROFILE.paragraphs.shell_heading_space_before
-    assert profile.paragraphs.figure_space_before >= CSR_STANDARD_PROFILE.paragraphs.figure_space_before
+    assert (
+        profile.paragraphs.shell_heading_space_before
+        >= CSR_STANDARD_PROFILE.paragraphs.shell_heading_space_before
+    )
+    assert (
+        profile.paragraphs.figure_space_before
+        >= CSR_STANDARD_PROFILE.paragraphs.figure_space_before
+    )
 
 
 def test_unknown_profile_raises_clear_error():

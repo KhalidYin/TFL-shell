@@ -1,17 +1,14 @@
 """TFLCatalog — container and query interface for TFL definitions."""
 
-from collections import defaultdict
+from tflshell.models.enums import FigureType, Section, TFLType
 from tflshell.models.tfl_item import TFLItem
-from tflshell.models.enums import TFLType, Section, FigureType
 
 
 class TFLCatalog:
     """Container for all TFL definitions with query methods."""
 
     def __init__(self, items: list[TFLItem]):
-        self._items: list[TFLItem] = sorted(
-            items, key=lambda x: (x.section.number, x.sort_key)
-        )
+        self._items: list[TFLItem] = sorted(items, key=lambda x: (x.section.number, x.sort_key))
         self._by_id: dict[str, TFLItem] = {item.id: item for item in self._items}
 
     def all(self) -> list[TFLItem]:
@@ -34,8 +31,7 @@ class TFLCatalog:
 
     def by_figure_type(self, figure_type: FigureType) -> list[TFLItem]:
         ft = figure_type.value
-        return [i for i in self._items
-                if i.tfl_type == TFLType.FIGURE and i.figure_type == ft]
+        return [i for i in self._items if i.tfl_type == TFLType.FIGURE and i.figure_type == ft]
 
     def generated_figures(self) -> list[TFLItem]:
         """Figures that have matplotlib generation capability."""
@@ -79,8 +75,9 @@ class TFLCatalog:
             "listings": len(self.listings()),
             "oncology_only": len([i for i in self._items if i.oncology_only]),
             "non_oncology_only": len([i for i in self._items if i.non_oncology_only]),
-            "general": len([i for i in self._items
-                            if not i.oncology_only and not i.non_oncology_only]),
+            "general": len(
+                [i for i in self._items if not i.oncology_only and not i.non_oncology_only]
+            ),
         }
 
     def validate(self) -> list[str]:
@@ -101,21 +98,13 @@ class TFLCatalog:
                     f"ID section mismatch: {item.id} does not contain {item.section.number}"
                 )
             if item.tfl_type != TFLType.FIGURE and not item.placeholder_columns:
-                warnings.append(
-                    f"Missing placeholder_columns for {item.tfl_type.value} {item.id}"
-                )
+                warnings.append(f"Missing placeholder_columns for {item.tfl_type.value} {item.id}")
             if item.tfl_type != TFLType.FIGURE and not item.has_shell_rows:
-                warnings.append(
-                    f"Missing shell_rows for {item.tfl_type.value} {item.id}"
-                )
+                warnings.append(f"Missing shell_rows for {item.tfl_type.value} {item.id}")
             if item.tfl_type != TFLType.FIGURE and not item.display_number:
-                warnings.append(
-                    f"Missing display_number for {item.tfl_type.value} {item.id}"
-                )
+                warnings.append(f"Missing display_number for {item.tfl_type.value} {item.id}")
             if item.tfl_type != TFLType.FIGURE and not item.placeholder_example:
-                warnings.append(
-                    f"Missing placeholder example for {item.tfl_type.value} {item.id}"
-                )
+                warnings.append(f"Missing placeholder example for {item.tfl_type.value} {item.id}")
             # Figures with figure_type must be valid FigureType values
             if item.tfl_type == TFLType.FIGURE and item.figure_type:
                 valid_types = {ft.value for ft in FigureType}
@@ -126,9 +115,7 @@ class TFLCatalog:
                     )
             # Every governed shell should retain dataset traceability metadata.
             if not item.dataset_source:
-                warnings.append(
-                    f"Missing dataset_source for {item.id}"
-                )
+                warnings.append(f"Missing dataset_source for {item.id}")
 
         return warnings
 

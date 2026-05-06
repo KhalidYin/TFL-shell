@@ -4,22 +4,24 @@ import os
 from datetime import datetime
 
 from openpyxl import Workbook
-from openpyxl.styles import Font, PatternFill, Alignment, Border, Side
+from openpyxl.styles import Alignment, Border, Font, PatternFill, Side
 from openpyxl.utils import get_column_letter
 
 from tflshell import config
-from tflshell.models.enums import TFLType, Section
 from tflshell.models.catalog import TFLCatalog
+from tflshell.models.enums import Section
 from tflshell.utils.naming import make_filename
 
-
-HEADER_FILL = PatternFill(start_color=config.HEADER_BG_HEX,
-                          end_color=config.HEADER_BG_HEX, fill_type="solid")
+HEADER_FILL = PatternFill(
+    start_color=config.HEADER_BG_HEX, end_color=config.HEADER_BG_HEX, fill_type="solid"
+)
 HEADER_FONT = Font(name=config.FONT_NAME, size=9, bold=True, color=config.HEADER_FG_HEX)
 DATA_FONT = Font(name=config.FONT_NAME, size=9)
 THIN_BORDER = Border(
-    left=Side(style="thin"), right=Side(style="thin"),
-    top=Side(style="thin"), bottom=Side(style="thin"),
+    left=Side(style="thin"),
+    right=Side(style="thin"),
+    top=Side(style="thin"),
+    bottom=Side(style="thin"),
 )
 TOP_ALIGN = Alignment(vertical="top", wrap_text=True)
 HEADER_ALIGN = Alignment(vertical="center", horizontal="center", wrap_text=True)
@@ -116,22 +118,66 @@ class XlsxTocGenerator:
         self._write_headers(ws, columns, widths)
 
         rows = [
-            ["TFL ID", "Unique controlled identifier using type + CSR section + sequence.", "T14.3.1"],
-            ["Display Label", "Reviewer-facing shell label used in generated outputs.", "Table 14.3.1"],
-            ["Title", "Governance-approved descriptive shell title.", "Summary of Treatment-Emergent Adverse Events"],
+            [
+                "TFL ID",
+                "Unique controlled identifier using type + CSR section + sequence.",
+                "T14.3.1",
+            ],
+            [
+                "Display Label",
+                "Reviewer-facing shell label used in generated outputs.",
+                "Table 14.3.1",
+            ],
+            [
+                "Title",
+                "Governance-approved descriptive shell title.",
+                "Summary of Treatment-Emergent Adverse Events",
+            ],
             ["Type", "Output class.", "Table / Figure / Listing"],
             ["Section", "CSR section aligned to ICH E3 scope.", "14.3"],
-            ["Shell Family", "Governed shell-family grouping used for coverage and maintenance planning.", "Safety"],
-            ["Study Phase Scope", "High-level phase scope supported by the shell family or item.", "Phase I-III"],
-            ["Coverage Summary", "Governance summary derived from the approved coverage matrix.", "Core"],
+            [
+                "Shell Family",
+                "Governed shell-family grouping used for coverage and maintenance planning.",
+                "Safety",
+            ],
+            [
+                "Study Phase Scope",
+                "High-level phase scope supported by the shell family or item.",
+                "Phase I-III",
+            ],
+            [
+                "Coverage Summary",
+                "Governance summary derived from the approved coverage matrix.",
+                "Core",
+            ],
             ["Population", "Analysis set named in the shell header.", "Safety Population"],
-            ["Applicability", "Whether the shell is general, oncology only, or non-oncology only.", "Oncology only"],
+            [
+                "Applicability",
+                "Whether the shell is general, oncology only, or non-oncology only.",
+                "Oncology only",
+            ],
             ["Dataset Source", "Primary ADaM/SDTM source or derived dataset lineage.", "ADAE"],
-            ["Program Reference", "Planned derivation or output program reference.", "t_ae_summary.sas"],
-            ["Dictionary / Standard", "Coding dictionary or standard version documented for the shell.", "MedDRA 27.0; CTCAE 5.0"],
-            ["Placeholder Style", "Shell convention for non-first-column content.", "First column preserved; non-structural cells use style-appropriate shell placeholders such as XX or xx (xx.x)"],
+            [
+                "Program Reference",
+                "Planned derivation or output program reference.",
+                "t_ae_summary.sas",
+            ],
+            [
+                "Dictionary / Standard",
+                "Coding dictionary or standard version documented for the shell.",
+                "MedDRA 27.0; CTCAE 5.0",
+            ],
+            [
+                "Placeholder Style",
+                "Shell convention for non-first-column content.",
+                "First column preserved; non-structural cells use style-appropriate shell placeholders such as XX or xx (xx.x)",
+            ],
             ["Footnotes", "Whether shell-specific footnotes are present.", "Yes"],
-            ["Remarks", "Additional implementation or governance notes.", "Simulated figure retained; shell family or study-specific notes if needed"],
+            [
+                "Remarks",
+                "Additional implementation or governance notes.",
+                "Simulated figure retained; shell family or study-specific notes if needed",
+            ],
         ]
         self._write_rows(ws, rows)
         self._finalize_sheet(ws, len(rows) + 1, len(columns))
@@ -142,15 +188,42 @@ class XlsxTocGenerator:
         self._write_headers(ws, columns, widths)
 
         rows = [
-            ["Workbook purpose", "This workbook is a synchronized catalog and usage guide for the DOCX TFL shell template. It is not a workflow tracker."],
-            ["Scope", "The workbook covers CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2 only; Section 16.1 is out of scope for this generator."],
-            ["Coverage metadata", "Use Shell Family, Study Phase Scope, and Coverage Summary as governance metadata to interpret where a shell sits in the approved coverage matrix."],
-            ["Applicability", "Use the Applicability column to identify shells relevant to oncology, non-oncology, or both. These labels guide study-specific shell selection rather than serving as workflow status flags."],
-            ["Placeholder convention", "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Controlled treatment/group patterns use Group 1, Group 2, and may retain a separate ellipsis (...) expansion column; that expansion column must remain distinct and must not be merged with Overall, Total, HR, or other analytic columns. Header sample sizes remain generic rather than concrete."],
-            ["Figures", "Figure entries correspond to simulated shell illustrations that should be replaced with study-specific outputs in production."],
-            ["Ordering", "Row order matches the catalog ordering and should stay aligned with the generated DOCX template."],
-            ["Word TOC", "After opening the DOCX outputs in Word, update fields so the automatic Table of Contents populates."],
-            ["Change management", "Record template-level changes on the Change_Log sheet using one row per release decision or content update."],
+            [
+                "Workbook purpose",
+                "This workbook is a synchronized catalog and usage guide for the DOCX TFL shell template. It is not a workflow tracker.",
+            ],
+            [
+                "Scope",
+                "The workbook covers CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2 only; Section 16.1 is out of scope for this generator.",
+            ],
+            [
+                "Coverage metadata",
+                "Use Shell Family, Study Phase Scope, and Coverage Summary as governance metadata to interpret where a shell sits in the approved coverage matrix.",
+            ],
+            [
+                "Applicability",
+                "Use the Applicability column to identify shells relevant to oncology, non-oncology, or both. These labels guide study-specific shell selection rather than serving as workflow status flags.",
+            ],
+            [
+                "Placeholder convention",
+                "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Controlled treatment/group patterns use Group 1, Group 2, and may retain a separate ellipsis (...) expansion column; that expansion column must remain distinct and must not be merged with Overall, Total, HR, or other analytic columns. Header sample sizes remain generic rather than concrete.",
+            ],
+            [
+                "Figures",
+                "Figure entries correspond to simulated shell illustrations that should be replaced with study-specific outputs in production.",
+            ],
+            [
+                "Ordering",
+                "Row order matches the catalog ordering and should stay aligned with the generated DOCX template.",
+            ],
+            [
+                "Word TOC",
+                "After opening the DOCX outputs in Word, update fields so the automatic Table of Contents populates.",
+            ],
+            [
+                "Change management",
+                "Record template-level changes on the Change_Log sheet using one row per release decision or content update.",
+            ],
         ]
         self._write_rows(ws, rows)
         self._finalize_sheet(ws, len(rows) + 1, len(columns))
@@ -161,20 +234,24 @@ class XlsxTocGenerator:
         self._write_headers(ws, columns, widths)
 
         today = datetime.now().strftime("%d %B %Y")
-        rows = [[
-            today,
-            config.VERSION,
-            "Master shell outputs",
-            "Initial governance-aligned release covering Sections 14.1, 14.2, 14.3, 14.4, and 16.2 with shell-first adaptive placeholder semantics.",
-            "TFLshell Generator",
-        ]]
+        rows = [
+            [
+                today,
+                config.VERSION,
+                "Master shell outputs",
+                "Initial governance-aligned release covering Sections 14.1, 14.2, 14.3, 14.4, and 16.2 with shell-first adaptive placeholder semantics.",
+                "TFLshell Generator",
+            ]
+        ]
         self._write_rows(ws, rows)
         self._finalize_sheet(ws, len(rows) + 1, len(columns))
 
     def _catalog_row(self, item):
-        dict_str = "; ".join(
-            f"{k} {v}" for k, v in item.dictionary_versions.items()
-        ) if item.dictionary_versions else ""
+        dict_str = (
+            "; ".join(f"{k} {v}" for k, v in item.dictionary_versions.items())
+            if item.dictionary_versions
+            else ""
+        )
         remarks = []
         if item.is_figure_generated:
             remarks.append("Simulated figure generated")

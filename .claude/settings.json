@@ -32,7 +32,12 @@
       "Bash(git ls-tree *)",
       "Bash(.venv/Scripts/python -c ' *)",
       "Bash(.venv/Scripts/python -c \"from tflshell.data.sop_content import build_sop_content; s = build_sop_content\\('2.1'\\); print\\(f'Sections: {len\\(s.sections\\)}'\\); [print\\(f'  {sec[\\\\\"number\\\\\"]} {sec[\\\\\"title\\\\\"]}'\\) for sec in s.sections]\")",
-      "Bash(.venv/Scripts/python -m tflshell generate --sponsor \"EpimAb Biotherapeutics\" --protocol \"EMB01X201\")"
+      "Bash(.venv/Scripts/python -m tflshell generate --sponsor \"EpimAb Biotherapeutics\" --protocol \"EMB01X201\")",
+      "Bash(python -m pytest tests/ -v --tb=short)",
+      "Bash(.venv/Scripts/ruff check *)",
+      "Bash(.venv/Scripts/python -m pytest tests/unit/test_catalog_integrity.py::test_catalog_consistency_with_output_manifest -v --tb=short)",
+      "Bash(.venv/Scripts/python -m pytest tests/ -v --tb=short)",
+      "Bash(.venv/Scripts/python -m pytest tests/unit/test_skill_package_generate_script.py tests/unit/test_skill_package_recommend_then_generate.py -v --tb=short)"
     ]
   }
 }

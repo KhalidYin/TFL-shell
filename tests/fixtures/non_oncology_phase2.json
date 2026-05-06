@@ -1,0 +1,29 @@
+{
+  "description": "Phase II Non-Oncology study context (Respiratory Exacerbation)",
+  "study_context": {
+    "study_phase": "Phase II",
+    "therapeutic_area": "Non-Oncology",
+    "indication": "Chronic Obstructive Pulmonary Disease (COPD)",
+    "development_intent": "efficacy-signal"
+  },
+  "analysis_context": {
+    "primary_endpoints": ["Time to First Moderate or Severe Exacerbation"],
+    "secondary_endpoints": ["Annualized Exacerbation Rate", "Change from Baseline in FEV1"],
+    "analysis_populations": ["Intent-to-Treat (ITT)", "Safety Population"],
+    "key_time_to_event": true,
+    "key_responder": false,
+    "key_safety_focus": ["Adverse Events", "Vital Signs"]
+  },
+  "expected_sections": ["14.1", "14.2", "14.3", "16.2"],
+  "expected_families": [
+    "Demographics and Baseline",
+    "General Efficacy",
+    "Non-Oncology Efficacy",
+    "Respiratory Exacerbation",
+    "Safety",
+    "Patient Listings",
+    "Non-Oncology Listings"
+  ],
+  "min_expected_shells": 10,
+  "therapeutic_area_focus": "Non-Oncology only"
+}

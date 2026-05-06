@@ -6,10 +6,13 @@ All clinical figure types inherit from ClinicalFigure and implement:
 """
 
 import io
+
 import matplotlib
+
 matplotlib.use("Agg")  # Non-interactive backend — required for headless generation
-import matplotlib.pyplot as plt
 from abc import ABC, abstractmethod
+
+import matplotlib.pyplot as plt
 
 from tflshell.figures import color_schemes
 
@@ -48,8 +51,14 @@ class ClinicalFigure(ABC):
         """
         fig = self.build(data)
         buf = io.BytesIO()
-        fig.savefig(buf, format="png", dpi=self.dpi, bbox_inches="tight",
-                    facecolor="white", edgecolor="none")
+        fig.savefig(
+            buf,
+            format="png",
+            dpi=self.dpi,
+            bbox_inches="tight",
+            facecolor="white",
+            edgecolor="none",
+        )
         buf.seek(0)
         plt.close(fig)  # Free memory — critical for batch generation
         return buf
@@ -58,6 +67,7 @@ class ClinicalFigure(ABC):
 def _generate_mock_demographics(n=300, seed=42):
     """Generate mock demographics data for figures."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     arms = ["Group 1"] * (n // 2) + ["Group 2"] * (n - n // 2)
     ages = rng.normal(58, 12, n).clip(18, 90)
@@ -68,6 +78,7 @@ def _generate_mock_demographics(n=300, seed=42):
 def _generate_mock_survival_data(n=300, seed=42):
     """Generate mock survival data for KM curves."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     half = n // 2
     arm_a_time = rng.weibull(1.2, half) * 12
@@ -75,14 +86,17 @@ def _generate_mock_survival_data(n=300, seed=42):
     arm_a_event = rng.binomial(1, 0.7, half).astype(bool)
     arm_b_event = rng.binomial(1, 0.6, n - half).astype(bool)
     return {
-        "time_a": arm_a_time, "event_a": arm_a_event,
-        "time_b": arm_b_time, "event_b": arm_b_event,
+        "time_a": arm_a_time,
+        "event_a": arm_a_event,
+        "time_b": arm_b_time,
+        "event_b": arm_b_event,
     }
 
 
 def _generate_mock_tumor_data(n=200, seed=42):
     """Generate mock tumor response data for waterfall/spider/swimmer."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     best_pct = rng.normal(-25, 30, n)
     best_pct = np.clip(best_pct, -100, 200)
@@ -104,6 +118,7 @@ def _generate_mock_tumor_data(n=200, seed=42):
 def _generate_mock_lab_data(n=200, seed=42):
     """Generate mock lab data for box/longitudinal plots."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     visits = ["Baseline", "Week 4", "Week 8", "Week 12", "Week 16"]
     arms = ["Group 1", "Group 2"]
@@ -121,20 +136,28 @@ def _generate_mock_lab_data(n=200, seed=42):
 def _generate_mock_ae_data(seed=42):
     """Generate mock AE frequency data."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     soc_pt = {
         "Gastrointestinal disorders": [
-            ("Nausea", 25, 18), ("Diarrhea", 20, 15), ("Vomiting", 15, 10),
-            ("Constipation", 12, 14), ("Abdominal pain", 10, 8),
+            ("Nausea", 25, 18),
+            ("Diarrhea", 20, 15),
+            ("Vomiting", 15, 10),
+            ("Constipation", 12, 14),
+            ("Abdominal pain", 10, 8),
         ],
         "General disorders": [
-            ("Fatigue", 30, 22), ("Asthenia", 18, 15), ("Pyrexia", 12, 10),
+            ("Fatigue", 30, 22),
+            ("Asthenia", 18, 15),
+            ("Pyrexia", 12, 10),
         ],
         "Skin disorders": [
-            ("Rash", 20, 8), ("Pruritus", 10, 6),
+            ("Rash", 20, 8),
+            ("Pruritus", 10, 6),
         ],
         "Nervous system disorders": [
-            ("Headache", 15, 12), ("Dizziness", 10, 8),
+            ("Headache", 15, 12),
+            ("Dizziness", 10, 8),
         ],
     }
     return soc_pt
@@ -143,13 +166,18 @@ def _generate_mock_ae_data(seed=42):
 def _generate_mock_subgroup_data(seed=42):
     """Generate mock subgroup analysis data for forest plots."""
     import numpy as np
+
     rng = np.random.default_rng(seed)
     subgroups = [
         ("Overall", None),
-        ("Age <65", None), ("Age >=65", None),
-        ("Male", None), ("Female", None),
-        ("ECOG 0", None), ("ECOG 1", None),
-        ("Prior Therapy 0-1", None), ("Prior Therapy >=2", None),
+        ("Age <65", None),
+        ("Age >=65", None),
+        ("Male", None),
+        ("Female", None),
+        ("ECOG 0", None),
+        ("ECOG 1", None),
+        ("Prior Therapy 0-1", None),
+        ("Prior Therapy >=2", None),
     ]
     result = []
     for i, (name, _) in enumerate(subgroups):
@@ -157,14 +185,16 @@ def _generate_mock_subgroup_data(seed=42):
         hr = max(0.3, min(1.5, hr))
         ci_low = hr * rng.uniform(0.7, 0.9)
         ci_high = hr * rng.uniform(1.1, 1.4)
-        result.append({
-            "subgroup": name,
-            "hr": hr,
-            "ci_low": ci_low,
-            "ci_high": ci_high,
-            "n_trt_a": rng.integers(100, 150),
-            "n_trt_b": rng.integers(100, 150),
-            "events_a": rng.integers(30, 80),
-            "events_b": rng.integers(30, 80),
-        })
+        result.append(
+            {
+                "subgroup": name,
+                "hr": hr,
+                "ci_low": ci_low,
+                "ci_high": ci_high,
+                "n_trt_a": rng.integers(100, 150),
+                "n_trt_b": rng.integers(100, 150),
+                "events_a": rng.integers(30, 80),
+                "events_b": rng.integers(30, 80),
+            }
+        )
     return result

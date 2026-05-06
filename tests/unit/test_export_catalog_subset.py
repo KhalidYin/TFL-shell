@@ -3,10 +3,11 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "export_catalog_subset.py"
-CONTRACT_SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "export_product_contracts.py"
+CONTRACT_SCRIPT = (
+    ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "export_product_contracts.py"
+)
 
 
 def test_export_catalog_subset_writes_stable_structure(tmp_path):
@@ -48,7 +49,12 @@ def test_export_product_contracts_writes_manifest_and_registry(tmp_path):
     registry = json.loads(registry_path.read_text(encoding="utf-8"))
     assert manifest["manifest_version"] == "product-aligned-output-contract-v1"
     assert manifest["formal_outputs"]["xlsx_toc_workbook"]["sheet_names"][0] == "TOC_Master"
-    assert manifest["formal_outputs"]["docx_shell_template"]["body_contract"]["table_and_listing_body_table_count"] >= 1
+    assert (
+        manifest["formal_outputs"]["docx_shell_template"]["body_contract"][
+            "table_and_listing_body_table_count"
+        ]
+        >= 1
+    )
     assert registry["registry_version"] == "1.1.0"
     assert "xlsx_workbook" in registry["contracts"]
     assert "docx_layout" in registry["contracts"]

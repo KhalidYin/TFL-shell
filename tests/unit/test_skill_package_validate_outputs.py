@@ -3,7 +3,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "validate_outputs.py"
 
@@ -30,7 +29,15 @@ def test_validate_outputs_accepts_current_product_outputs():
     payload = json.loads(result.stdout)
     assert payload["passed"] is True
     assert payload["cross_output_checks"]["xlsx_workbook"]["sheet_names_match_contract"] is True
-    assert payload["cross_output_checks"]["docx_layout"]["body_table_count_matches_table_and_listing_shells"] is True
-    assert payload["cross_output_checks"]["sop_governance_doc"]["classification_confidential_present"] is True
+    assert (
+        payload["cross_output_checks"]["docx_layout"][
+            "body_table_count_matches_table_and_listing_shells"
+        ]
+        is True
+    )
+    assert (
+        payload["cross_output_checks"]["sop_governance_doc"]["classification_confidential_present"]
+        is True
+    )
     assert "xlsx_workbook" in payload["declared_references"]
     assert "docx_layout" in payload["declared_references"]

@@ -35,7 +35,7 @@ FONT_SIZE_HEADER_BLOCK = 9
 
 # Three-line table border sizes (in eighths of a point)
 THREE_LINE_THICK_SZ = 12  # ~1.5pt
-THREE_LINE_THIN_SZ = 4    # ~0.5pt
+THREE_LINE_THIN_SZ = 4  # ~0.5pt
 
 # Figure settings
 FIGURE_DPI = 200

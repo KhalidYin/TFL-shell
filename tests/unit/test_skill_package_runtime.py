@@ -3,7 +3,6 @@ import json
 import sys
 from pathlib import Path
 
-
 ROOT = Path(__file__).resolve().parents[2]
 SKILL_DIR = ROOT / ".trae" / "skills" / "tfls-shell"
 
@@ -33,7 +32,10 @@ def test_registry_loader_reads_package_contract_registry():
     assert "xlsx_master_sheet" in registry["contracts"]
     assert "xlsx_workbook" in registry["contracts"]
     assert "docx_layout" in registry["contracts"]
-    assert registry_loader.get_contract("docx_shell_template")["helper_module"] == "scripts/alignment_contracts.py"
+    assert (
+        registry_loader.get_contract("docx_shell_template")["helper_module"]
+        == "scripts/alignment_contracts.py"
+    )
     assert set(registry_loader.list_contracts()) >= {
         "xlsx_master_sheet",
         "xlsx_workbook",
@@ -54,14 +56,18 @@ def test_wrappers_expose_unified_generate_entrypoint():
 
 
 def test_package_catalog_subset_matches_json_asset():
-    payload = json.loads((SKILL_DIR / "package_assets" / "catalog_subset.json").read_text(encoding="utf-8"))
+    payload = json.loads(
+        (SKILL_DIR / "package_assets" / "catalog_subset.json").read_text(encoding="utf-8")
+    )
 
     assert payload["catalog_version"] == "product-aligned-subset-v1"
     assert payload["item_count"] == len(payload["items"])
 
 
 def test_output_manifest_captures_product_output_contract():
-    payload = json.loads((SKILL_DIR / "package_assets" / "output_manifest.json").read_text(encoding="utf-8"))
+    payload = json.loads(
+        (SKILL_DIR / "package_assets" / "output_manifest.json").read_text(encoding="utf-8")
+    )
 
     assert payload["manifest_version"] == "product-aligned-output-contract-v1"
     assert payload["formal_outputs"]["xlsx_toc_workbook"]["sheet_names"] == [
@@ -75,5 +81,13 @@ def test_output_manifest_captures_product_output_contract():
         "Usage_Guide",
         "Change_Log",
     ]
-    assert payload["formal_outputs"]["docx_shell_template"]["heading_contract"]["tfl_shell_heading_style"] == "Heading 4"
-    assert payload["formal_outputs"]["sop_governance_doc"]["scope_text"] == "14.1, 14.2, 14.3, 14.4, and 16.2"
+    assert (
+        payload["formal_outputs"]["docx_shell_template"]["heading_contract"][
+            "tfl_shell_heading_style"
+        ]
+        == "Heading 4"
+    )
+    assert (
+        payload["formal_outputs"]["sop_governance_doc"]["scope_text"]
+        == "14.1, 14.2, 14.3, 14.4, and 16.2"
+    )

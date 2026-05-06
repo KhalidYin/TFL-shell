@@ -13,8 +13,6 @@ Analysis Set: [ITT / Safety / PP Population]
 """
 
 from docx.shared import Pt
-from docx.enum.text import WD_ALIGN_PARAGRAPH
-from docx.oxml.ns import qn
 
 from tflshell import config
 from tflshell.docx_utils.page_numbering import add_page_number_fields

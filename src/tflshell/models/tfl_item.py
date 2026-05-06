@@ -3,9 +3,8 @@
 from dataclasses import dataclass, field
 
 from tflshell import config
-from tflshell.models.enums import TFLType, Section
+from tflshell.models.enums import Section, TFLType
 from tflshell.utils.naming import display_label_from_id, display_number_from_id
-
 
 PLACEHOLDER_STYLE_MAP = {
     "text": "XX",
@@ -153,9 +152,11 @@ class TFLItem:
         if self.source_listing:
             notes.insert(0, f"Source Listing: {self.source_listing}")
         if self.dataset_source:
-            notes.append(f"Dataset: {self.dataset_source}."
-                         f" Program: {self.program_ref}." if self.program_ref
-                         else f"Dataset: {self.dataset_source}.")
+            notes.append(
+                f"Dataset: {self.dataset_source}. Program: {self.program_ref}."
+                if self.program_ref
+                else f"Dataset: {self.dataset_source}."
+            )
         if self.dictionary_versions:
             dict_str = ", ".join(f"{k} {v}" for k, v in self.dictionary_versions.items())
             notes.append(f"Coding dictionary versions: {dict_str}.")
@@ -212,4 +213,6 @@ class TFLItem:
                 else:
                     result.append(list(row))
             return result
-        return [[self.placeholder_example] * max(len(self.placeholder_columns), 1) for _ in range(3)]
+        return [
+            [self.placeholder_example] * max(len(self.placeholder_columns), 1) for _ in range(3)
+        ]

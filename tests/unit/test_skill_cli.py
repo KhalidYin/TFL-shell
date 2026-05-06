@@ -1,6 +1,5 @@
 import pytest
 
-
 pytestmark = pytest.mark.skip(
     reason=(
         "Historical tests for the repository-level workflow prototype. "

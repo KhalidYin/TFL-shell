@@ -3,9 +3,9 @@
 import os
 
 from docx import Document
-from docx.shared import Pt, Inches
-from docx.enum.text import WD_ALIGN_PARAGRAPH
 from docx.enum.section import WD_ORIENT
+from docx.enum.text import WD_ALIGN_PARAGRAPH
+from docx.shared import Inches, Pt
 
 from tflshell import config
 from tflshell.data.sop_content import build_sop_content
@@ -59,16 +59,18 @@ class DocxSopGenerator:
         doc.add_page_break()
 
         for section in sop.sections:
-            h1 = doc.add_paragraph(f"{section['number']}.  {section['title']}",
-                                   style=doc.styles["Heading 1"])
+            h1 = doc.add_paragraph(
+                f"{section['number']}.  {section['title']}", style=doc.styles["Heading 1"]
+            )
             for run in h1.runs:
                 run.font.name = config.FONT_NAME
                 run.font.size = Pt(14)
                 run.font.bold = True
 
             for sub in section["subsections"]:
-                h2 = doc.add_paragraph(f"{sub['number']}  {sub['title']}",
-                                       style=doc.styles["Heading 2"])
+                h2 = doc.add_paragraph(
+                    f"{sub['number']}  {sub['title']}", style=doc.styles["Heading 2"]
+                )
                 for run in h2.runs:
                     run.font.name = config.FONT_NAME
                     run.font.size = Pt(12)

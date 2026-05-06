@@ -5,23 +5,19 @@ generates a PNG buffer suitable for embedding in DOCX.
 """
 
 import io
+
 import numpy as np
 
-from tflshell.figures.km_curve import KMCurveFigure
-from tflshell.figures.waterfall import WaterfallFigure
-from tflshell.figures.spider import SpiderFigure
-from tflshell.figures.swimmer import SwimmerFigure
-from tflshell.figures.forest import ForestFigure
-from tflshell.figures.box_plot import BoxPlotFigure
-from tflshell.figures.longitudinal import LongitudinalFigure
-
 from tflshell.figures.base import (
-    _generate_mock_survival_data,
-    _generate_mock_tumor_data,
-    _generate_mock_lab_data,
     _generate_mock_subgroup_data,
 )
-
+from tflshell.figures.box_plot import BoxPlotFigure
+from tflshell.figures.forest import ForestFigure
+from tflshell.figures.km_curve import KMCurveFigure
+from tflshell.figures.longitudinal import LongitudinalFigure
+from tflshell.figures.spider import SpiderFigure
+from tflshell.figures.swimmer import SwimmerFigure
+from tflshell.figures.waterfall import WaterfallFigure
 
 FIGURE_CLASS_MAP = {
     "km_curve": KMCurveFigure,
@@ -76,10 +72,16 @@ def _auto_generate_mock_data(figure_type: str) -> dict:
         event_a = rng.binomial(1, 0.7, n).astype(bool)
         event_b = rng.binomial(1, 0.6, n).astype(bool)
         return {
-            "time_a": time_a, "event_a": event_a,
-            "time_b": time_b, "event_b": event_b,
-            "arm_a_label": "Group 1", "arm_b_label": "Group 2",
-            "hr": 0.72, "hr_ci_low": 0.58, "hr_ci_high": 0.89, "p_value": 0.004,
+            "time_a": time_a,
+            "event_a": event_a,
+            "time_b": time_b,
+            "event_b": event_b,
+            "arm_a_label": "Group 1",
+            "arm_b_label": "Group 2",
+            "hr": 0.72,
+            "hr_ci_low": 0.58,
+            "hr_ci_high": 0.89,
+            "p_value": 0.004,
         }
 
     if figure_type == "waterfall":
@@ -88,13 +90,16 @@ def _auto_generate_mock_data(figure_type: str) -> dict:
         bor = []
         groups = []
         for i, p in enumerate(best_pct):
-            if p < -100: bor.append("CR")
-            elif p < -30: bor.append("PR")
-            elif p < 20: bor.append("SD")
-            else: bor.append("PD")
+            if p < -100:
+                bor.append("CR")
+            elif p < -30:
+                bor.append("PR")
+            elif p < 20:
+                bor.append("SD")
+            else:
+                bor.append("PD")
             groups.append(i % 3)
-        return {"best_pct": best_pct, "bor": bor,
-                "groups": groups, "color_by": "bor"}
+        return {"best_pct": best_pct, "bor": bor, "groups": groups, "color_by": "bor"}
 
     if figure_type in ("spider", "swimmer"):
         return {}  # These use internal mock generators
@@ -110,8 +115,11 @@ def _auto_generate_mock_data(figure_type: str) -> dict:
             arm_a[v] = rng.lognormal(3.5, 0.35, 50).tolist()
             arm_b[v] = rng.lognormal(3.55, 0.35, 50).tolist()
         return {
-            "visits": visits, "arm_a_values": arm_a, "arm_b_values": arm_b,
-            "parameter": "ALT (U/L)", "uln": 55,
+            "visits": visits,
+            "arm_a_values": arm_a,
+            "arm_b_values": arm_b,
+            "parameter": "ALT (U/L)",
+            "uln": 55,
         }
 
     if figure_type in ("longitudinal", "cdf"):

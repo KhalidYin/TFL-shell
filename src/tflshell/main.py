@@ -10,9 +10,9 @@ from tflshell import __version__
 from tflshell.config import DEFAULT_OUTPUT_DIR
 from tflshell.data.definitions import build_catalog
 from tflshell.generators.docx_shell import DocxShellGenerator
-from tflshell.generators.xlsx_toc import XlsxTocGenerator
 from tflshell.generators.docx_sop import DocxSopGenerator
-from tflshell.models.enums import TFLType, Section
+from tflshell.generators.xlsx_toc import XlsxTocGenerator
+from tflshell.models.enums import Section, TFLType
 from tflshell.recommend import (
     InputSource,
     RecommendRequest,
@@ -47,10 +47,12 @@ def cmd_generate(args):
                 make_filename("TFL_Shell_Template", __version__, ".docx"),
             )
             gen = DocxShellGenerator(
-                catalog, output_path=out,
+                catalog,
+                output_path=out,
                 therapeutic_area=args.area,
                 generate_figures=not args.no_figures,
-                sponsor=args.sponsor, protocol=args.protocol,
+                sponsor=args.sponsor,
+                protocol=args.protocol,
                 presentation_profile=args.presentation_profile,
             )
             path = gen.generate()
@@ -80,8 +82,10 @@ def cmd_generate(args):
 
     stats = catalog.summary_stats()
     print(f"\n  TFLs in catalog: {stats['total']}")
-    print(f"  Tables: {stats['tables']} | Figures: {stats['figures']} "
-          f"({stats['figures_generated']} generated) | Listings: {stats['listings']}")
+    print(
+        f"  Tables: {stats['tables']} | Figures: {stats['figures']} "
+        f"({stats['figures_generated']} generated) | Listings: {stats['listings']}"
+    )
     return 0
 
 
@@ -105,17 +109,21 @@ def cmd_list(args):
     for item in items:
         areas = "+".join(item.therapeutic_areas)
         ds = item.dataset_source[:14] if item.dataset_source else "-"
-        print(f"{item.id:12s} {item.tfl_type.value:8s} {item.section.number:8s} "
-              f"{areas:22s} {ds:15s} {item.title}")
+        print(
+            f"{item.id:12s} {item.tfl_type.value:8s} {item.section.number:8s} "
+            f"{areas:22s} {ds:15s} {item.title}"
+        )
 
     print(f"\n  Total: {len(items)} TFL(s)")
     if not args.section:
         print("\n  Summary by Section:")
         summary = catalog.section_summary()
         for sec_num, counts in summary.items():
-            print(f"    Section {sec_num} ({counts['title']}): "
-                  f"{counts['total']} TFLs "
-                  f"(T:{counts['tables']} F:{counts['figures']} L:{counts['listings']})")
+            print(
+                f"    Section {sec_num} ({counts['title']}): "
+                f"{counts['total']} TFLs "
+                f"(T:{counts['tables']} F:{counts['figures']} L:{counts['listings']})"
+            )
     return 0
 
 
@@ -129,11 +137,15 @@ def cmd_validate(args):
         return 1
     stats = catalog.summary_stats()
     print(f"Catalog validation passed. ({stats['total']} TFLs)")
-    print(f"  Tables: {stats['tables']} | Figures: {stats['figures']} "
-          f"({stats['figures_generated']} with matplotlib) | Listings: {stats['listings']}")
-    print(f"  Oncology-only: {stats['oncology_only']} | "
-          f"Non-Oncology-only: {stats['non_oncology_only']} | "
-          f"General: {stats['general']}")
+    print(
+        f"  Tables: {stats['tables']} | Figures: {stats['figures']} "
+        f"({stats['figures_generated']} with matplotlib) | Listings: {stats['listings']}"
+    )
+    print(
+        f"  Oncology-only: {stats['oncology_only']} | "
+        f"Non-Oncology-only: {stats['non_oncology_only']} | "
+        f"General: {stats['general']}"
+    )
     return 0
 
 
@@ -194,50 +206,61 @@ def main(argv=None):
     subparsers = parser.add_subparsers(dest="command")
 
     gen = subparsers.add_parser("generate", help="Generate TFL deliverables")
-    gen.add_argument("--type", "-t", default="all",
-                     choices=["docx", "xlsx", "sop", "all"])
-    gen.add_argument("--area", "-a", default="all",
-                     choices=["oncology", "non-oncology", "all"])
+    gen.add_argument("--type", "-t", default="all", choices=["docx", "xlsx", "sop", "all"])
+    gen.add_argument("--area", "-a", default="all", choices=["oncology", "non-oncology", "all"])
     gen.add_argument("--output-docx", "-d", default=None)
     gen.add_argument("--output-xlsx", "-x", default=None)
     gen.add_argument("--output-sop", "-s", default=None)
     gen.add_argument("--output-dir", "-o", default=DEFAULT_OUTPUT_DIR)
     gen.add_argument("--sponsor", default=None, help="Sponsor name override")
     gen.add_argument("--protocol", default=None, help="Protocol number override")
-    gen.add_argument("--presentation-profile", default="csr_standard",
-                     choices=["csr_standard", "compact_review", "authoring_shell"],
-                     help="Presentation profile for DOCX shell rendering.")
-    gen.add_argument("--no-figures", action="store_true",
-                     help="Disable figure generation")
+    gen.add_argument(
+        "--presentation-profile",
+        default="csr_standard",
+        choices=["csr_standard", "compact_review", "authoring_shell"],
+        help="Presentation profile for DOCX shell rendering.",
+    )
+    gen.add_argument("--no-figures", action="store_true", help="Disable figure generation")
     gen.set_defaults(func=cmd_generate)
 
     lst = subparsers.add_parser("list", help="List TFLs")
     lst.add_argument("--section", "-s", choices=["14.1", "14.2", "14.3", "14.4", "16.2"])
     lst.add_argument("--type", "-t", choices=["Table", "Figure", "Listing"])
-    lst.add_argument("--area", "-a", default="all",
-                     choices=["oncology", "non-oncology", "all"])
+    lst.add_argument("--area", "-a", default="all", choices=["oncology", "non-oncology", "all"])
     lst.set_defaults(func=cmd_list)
 
     val = subparsers.add_parser("validate", help="Validate TFL catalog")
     val.set_defaults(func=cmd_validate)
 
     rec = subparsers.add_parser("recommend", help="Recommend governed TFL shell packages")
-    rec.add_argument("--text", action="append",
-                     help="Inline text input such as prompt, SAP excerpt, or protocol excerpt.")
-    rec.add_argument("--input-file", action="append",
-                     help="Path to an input text file; source type is inferred from the filename.")
-    rec.add_argument("--section", action="append",
-                     choices=["14.1", "14.2", "14.3", "14.4", "16.2"])
-    rec.add_argument("--area", default="unknown",
-                     choices=["oncology", "non-oncology", "all", "unknown"])
-    rec.add_argument("--phase", default="unknown",
-                     choices=["phase-i", "phase-ii", "phase-iii", "mixed", "unknown"])
-    rec.add_argument("--no-figures", action="store_true",
-                     help="Exclude figure shells from the recommendation.")
-    rec.add_argument("--no-listings", action="store_true",
-                     help="Exclude listing shells from the recommendation.")
-    rec.add_argument("--json", action="store_true",
-                     help="Print the structured recommendation result as JSON.")
+    rec.add_argument(
+        "--text",
+        action="append",
+        help="Inline text input such as prompt, SAP excerpt, or protocol excerpt.",
+    )
+    rec.add_argument(
+        "--input-file",
+        action="append",
+        help="Path to an input text file; source type is inferred from the filename.",
+    )
+    rec.add_argument("--section", action="append", choices=["14.1", "14.2", "14.3", "14.4", "16.2"])
+    rec.add_argument(
+        "--area", default="unknown", choices=["oncology", "non-oncology", "all", "unknown"]
+    )
+    rec.add_argument(
+        "--phase",
+        default="unknown",
+        choices=["phase-i", "phase-ii", "phase-iii", "mixed", "unknown"],
+    )
+    rec.add_argument(
+        "--no-figures", action="store_true", help="Exclude figure shells from the recommendation."
+    )
+    rec.add_argument(
+        "--no-listings", action="store_true", help="Exclude listing shells from the recommendation."
+    )
+    rec.add_argument(
+        "--json", action="store_true", help="Print the structured recommendation result as JSON."
+    )
     rec.set_defaults(func=cmd_recommend)
 
     args = parser.parse_args(argv)

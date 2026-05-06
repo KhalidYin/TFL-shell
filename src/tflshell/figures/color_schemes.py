@@ -14,22 +14,22 @@ TRT_COLORS_LIST = ["#0072B2", "#D55E00", "#009E73"]
 
 # Best Overall Response colors (RECIST convention)
 BOR_COLORS = {
-    "CR": "#006837",   # Dark green
-    "PR": "#66BD63",   # Medium green
-    "SD": "#4575B4",   # Blue
-    "PD": "#D73027",   # Red
-    "NE": "#BDBDBD",   # Gray
+    "CR": "#006837",  # Dark green
+    "PR": "#66BD63",  # Medium green
+    "SD": "#4575B4",  # Blue
+    "PD": "#D73027",  # Red
+    "NE": "#BDBDBD",  # Gray
 }
 
 BOR_ORDER = ["CR", "PR", "SD", "PD", "NE"]
 
 # CTCAE Grade colors (modified from NCI CTCAE palette)
 GRADE_COLORS = {
-    1: "#FFF5CC",   # Very light yellow
-    2: "#FED976",   # Light yellow
-    3: "#FD8D3C",   # Orange
-    4: "#E31A1C",   # Red
-    5: "#800026",   # Dark red
+    1: "#FFF5CC",  # Very light yellow
+    2: "#FED976",  # Light yellow
+    3: "#FD8D3C",  # Orange
+    4: "#E31A1C",  # Red
+    5: "#800026",  # Dark red
 }
 
 # AE severity/relationship colors

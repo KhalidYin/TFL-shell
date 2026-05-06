@@ -4,10 +4,10 @@ Each line = one subject. Trajectories of % change from baseline.
 Colored by BOR. Terminal markers: triangle=PD, X=death.
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
-from tflshell.figures.base import ClinicalFigure, _generate_mock_tumor_data
+from tflshell.figures.base import ClinicalFigure
 from tflshell.figures.color_schemes import BOR_COLORS
 
 
@@ -41,11 +41,11 @@ class SpiderFigure(ClinicalFigure):
 
             ax.plot(times, pcts, color=color, linewidth=0.5, alpha=0.6)
             if has_pd and times:
-                ax.scatter(times[-1], pcts[-1], marker="^", color=color,
-                           s=20, alpha=0.8, zorder=5)
+                ax.scatter(times[-1], pcts[-1], marker="^", color=color, s=20, alpha=0.8, zorder=5)
             if has_death and times:
-                ax.scatter(times[-1], pcts[-1], marker="x", color="black",
-                           s=25, alpha=0.9, zorder=6)
+                ax.scatter(
+                    times[-1], pcts[-1], marker="x", color="black", s=25, alpha=0.9, zorder=6
+                )
 
         ax.axhline(y=0, color="gray", linestyle="-", linewidth=0.8, alpha=0.5)
         ax.axhline(y=20, color="gray", linestyle="--", linewidth=0.5, alpha=0.4)
@@ -59,16 +59,27 @@ class SpiderFigure(ClinicalFigure):
 
         # Legend
         from matplotlib.patches import Patch
+
         bors = set(s.get("bor", "SD") for s in subjects)
         from tflshell.figures.color_schemes import BOR_ORDER
-        legend_patches = [Patch(facecolor=BOR_COLORS[b], label=b)
-                          for b in BOR_ORDER if b in bors]
-        legend_patches.append(plt.Line2D([0], [0], marker="^", color="gray",
-                                         markersize=8, linewidth=0, label="PD"))
-        legend_patches.append(plt.Line2D([0], [0], marker="x", color="black",
-                                         markersize=8, linewidth=0, label="Death"))
-        ax.legend(handles=legend_patches, loc="upper left", fontsize=7,
-                  frameon=True, facecolor="white", edgecolor="#DDDDDD")
+
+        legend_patches = [Patch(facecolor=BOR_COLORS[b], label=b) for b in BOR_ORDER if b in bors]
+        legend_patches.append(
+            plt.Line2D([0], [0], marker="^", color="gray", markersize=8, linewidth=0, label="PD")
+        )
+        legend_patches.append(
+            plt.Line2D(
+                [0], [0], marker="x", color="black", markersize=8, linewidth=0, label="Death"
+            )
+        )
+        ax.legend(
+            handles=legend_patches,
+            loc="upper left",
+            fontsize=7,
+            frameon=True,
+            facecolor="white",
+            edgecolor="#DDDDDD",
+        )
 
         return fig
 
@@ -83,7 +94,7 @@ class SpiderFigure(ClinicalFigure):
         for _ in range(n_subjects):
             bor = rng.choice(bors, p=bor_probs)
             n_visits = rng.integers(4, len(visits))
-            times = visits[:n_visits + 1]
+            times = visits[: n_visits + 1]
             base_effect = {"CR": -70, "PR": -40, "SD": -5, "PD": 30}[bor]
             noise = rng.normal(0, 8, len(times))
             drift = np.linspace(0, base_effect, len(times))
@@ -91,12 +102,14 @@ class SpiderFigure(ClinicalFigure):
             has_pd = bor == "PD" or rng.random() < 0.15
             has_death = rng.random() < 0.05
 
-            subjects.append({
-                "bor": bor,
-                "timepoints": times,
-                "pct_changes": pcts.tolist(),
-                "has_pd": has_pd,
-                "has_death": has_death,
-            })
+            subjects.append(
+                {
+                    "bor": bor,
+                    "timepoints": times,
+                    "pct_changes": pcts.tolist(),
+                    "has_pd": has_pd,
+                    "has_death": has_death,
+                }
+            )
 
         return {"subjects": subjects}

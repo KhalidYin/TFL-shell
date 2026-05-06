@@ -1,7 +1,7 @@
 """Longitudinal line plot — Mean (+/- SD) change from baseline over time."""
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 
 from tflshell.figures.base import ClinicalFigure
 from tflshell.figures.color_schemes import TRT_COLORS
@@ -40,27 +40,43 @@ class LongitudinalFigure(ClinicalFigure):
         fig, ax = plt.subplots(figsize=self.figsize)
 
         # Group 1
-        ax.errorbar(x - 0.15, arm_a_mean, yerr=arm_a_sd,
-                    color=TRT_COLORS["A"], marker="o", markersize=6,
-                    linewidth=1.8, capsize=4, capthick=1.2,
-                    label=arm_a_label)
+        ax.errorbar(
+            x - 0.15,
+            arm_a_mean,
+            yerr=arm_a_sd,
+            color=TRT_COLORS["A"],
+            marker="o",
+            markersize=6,
+            linewidth=1.8,
+            capsize=4,
+            capthick=1.2,
+            label=arm_a_label,
+        )
 
         # Group 2
-        ax.errorbar(x + 0.15, arm_b_mean, yerr=arm_b_sd,
-                    color=TRT_COLORS["B"], marker="s", markersize=6,
-                    linewidth=1.8, capsize=4, capthick=1.2,
-                    label=arm_b_label)
+        ax.errorbar(
+            x + 0.15,
+            arm_b_mean,
+            yerr=arm_b_sd,
+            color=TRT_COLORS["B"],
+            marker="s",
+            markersize=6,
+            linewidth=1.8,
+            capsize=4,
+            capthick=1.2,
+            label=arm_b_label,
+        )
 
         if ref_line is not None:
-            ax.axhline(y=ref_line, color="#666666", linestyle="--",
-                       linewidth=0.8, alpha=0.6)
+            ax.axhline(y=ref_line, color="#666666", linestyle="--", linewidth=0.8, alpha=0.6)
 
         ax.set_xticks(x)
         ax.set_xticklabels(visits, fontsize=8)
         ax.set_xlabel(xlabel, fontsize=10)
         ax.set_ylabel(ylabel, fontsize=10)
-        ax.legend(loc="upper right", fontsize=8, frameon=True,
-                  facecolor="white", edgecolor="#DDDDDD")
+        ax.legend(
+            loc="upper right", fontsize=8, frameon=True, facecolor="white", edgecolor="#DDDDDD"
+        )
         ax.spines["top"].set_visible(False)
         ax.spines["right"].set_visible(False)
 
@@ -77,6 +93,8 @@ class LongitudinalFigure(ClinicalFigure):
         arm_b_sd = [1.9, 2.0, 2.1, 2.2, 2.4, 2.5]
         return {
             "visits": visits,
-            "arm_a_mean": arm_a_mean, "arm_a_sd": arm_a_sd,
-            "arm_b_mean": arm_b_mean, "arm_b_sd": arm_b_sd,
+            "arm_a_mean": arm_a_mean,
+            "arm_a_sd": arm_a_sd,
+            "arm_b_mean": arm_b_mean,
+            "arm_b_sd": arm_b_sd,
         }

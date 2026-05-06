@@ -2,76 +2,32 @@
 
 from __future__ import annotations
 
-from dataclasses import asdict, dataclass, field
-from pathlib import Path
+import json
 import re
+from dataclasses import asdict, dataclass, field
+from functools import lru_cache
+from pathlib import Path
 
 from tflshell.data.definitions import build_catalog
 from tflshell.models.catalog import TFLCatalog
-from tflshell.models.enums import Section, TFLType
-
+from tflshell.models.enums import TFLType
 
 _DEFAULT_CORE_SECTIONS = ["14.1", "14.3", "16.2"]
 _ALL_SECTIONS = ["14.1", "14.2", "14.3", "14.4", "16.2"]
 
-_EFFICACY_KEYWORDS = [
-    "primary endpoint",
-    "efficacy",
-    "response",
-    "survival",
-    "time-to-event",
-    "time to event",
-    "responder",
-    "exacerbation",
-    "mace",
-    "cardiovascular event",
-    "heart failure hospitalization",
-]
-_SPECIAL_KEYWORDS = [
-    "pk",
-    "ada",
-    "biomarker",
-    "pd",
-    "pro",
-    "food effect",
-    "crossover",
-]
-_PHASE_I_KEYWORDS = [
-    "phase i",
-    "phase 1",
-    "dose escalation",
-    "dlt",
-    "mtd",
-    "rp2d",
-    "3+3",
-    "boin",
-    "crm",
-]
-_ONCOLOGY_KEYWORDS = [
-    "tumor",
-    "recist",
-    "bor",
-    "orr",
-    "dcr",
-    "dor",
-    "ttr",
-    "target lesion",
-    "waterfall",
-    "spider",
-    "swimmer",
-    "pfs",
-    "os",
-]
-_NON_ONCOLOGY_KEYWORDS = [
-    "exacerbation",
-    "mace",
-    "cardiovascular",
-    "heart failure hospitalization",
-    "autoimmune",
-    "flare",
-    "copd",
-    "pulmonary",
-]
+
+@lru_cache(maxsize=1)
+def _load_registry() -> dict:
+    registry_path = Path(__file__).resolve().parent / "data" / "domain_registry.json"
+    return json.loads(registry_path.read_text(encoding="utf-8"))
+
+
+def _r_keywords(*path: str) -> list[str]:
+    """Read a keyword list from the domain registry by JSON path."""
+    node = _load_registry()
+    for key in path:
+        node = node.get(key, {})
+    return node if isinstance(node, list) else []
 
 
 @dataclass
@@ -213,7 +169,9 @@ def _build_ingestion_state(sources: list[InputSource]) -> tuple[dict, str]:
             input_warnings.extend(issues)
 
     if not combined_chunks:
-        input_warnings.append("No usable source content detected; recommendation falls back to governed defaults.")
+        input_warnings.append(
+            "No usable source content detected; recommendation falls back to governed defaults."
+        )
 
     ingestion_state = {
         "recognized_sources": recognized_sources,
@@ -232,9 +190,11 @@ def _detect_phase(text: str, hint: str) -> tuple[str, list[str]]:
         return "Phase III", assumptions
     if _contains_keyword(text, "phase ii") or _contains_keyword(text, "phase 2"):
         return "Phase II", assumptions
-    if _contains_any(text, _PHASE_I_KEYWORDS):
+    if _contains_any(text, _r_keywords("phase_keywords", "phase_i")):
         return "Phase I", assumptions
-    assumptions.append("Study phase remains unknown; default recommendation uses cross-phase core sections.")
+    assumptions.append(
+        "Study phase remains unknown; default recommendation uses cross-phase core sections."
+    )
     return "Unknown", assumptions
 
 
@@ -245,8 +205,12 @@ def _detect_area(text: str, hint: str) -> tuple[str, list[dict], list[str]]:
 
     explicit_non_oncology = _contains_keyword(text, "non oncology")
     explicit_oncology = _contains_keyword(text, "oncology") and not explicit_non_oncology
-    has_oncology = explicit_oncology or _contains_any(text, _ONCOLOGY_KEYWORDS)
-    has_non_oncology = explicit_non_oncology or _contains_any(text, _NON_ONCOLOGY_KEYWORDS)
+    has_oncology = explicit_oncology or _contains_any(
+        text, _r_keywords("therapeutic_area_keywords", "oncology")
+    )
+    has_non_oncology = explicit_non_oncology or _contains_any(
+        text, _r_keywords("therapeutic_area_keywords", "non_oncology")
+    )
 
     inferred = "Unknown"
     if has_oncology and not has_non_oncology:
@@ -275,7 +239,9 @@ def _detect_area(text: str, hint: str) -> tuple[str, list[dict], list[str]]:
                 "value_b": inferred,
             }
         )
-        assumptions.append(f"Use user-provided therapeutic area hint '{normalized_hint}' over conflicting textual signals.")
+        assumptions.append(
+            f"Use user-provided therapeutic area hint '{normalized_hint}' over conflicting textual signals."
+        )
         return normalized_hint, conflicts, assumptions
 
     if normalized_hint != "Unknown":
@@ -283,7 +249,9 @@ def _detect_area(text: str, hint: str) -> tuple[str, list[dict], list[str]]:
     if inferred != "Unknown":
         return inferred, conflicts, assumptions
 
-    assumptions.append("Therapeutic area remains unknown; recommendation keeps general shells unless stronger evidence appears.")
+    assumptions.append(
+        "Therapeutic area remains unknown; recommendation keeps general shells unless stronger evidence appears."
+    )
     return "Unknown", conflicts, assumptions
 
 
@@ -310,25 +278,27 @@ def _extract_primary_endpoints(text: str) -> list[str]:
 
 def _extract_populations(text: str) -> list[str]:
     populations = []
-    if _contains_keyword(text, "safety population"):
-        populations.append("Safety Population")
-    if _contains_keyword(text, "fas") or _contains_keyword(text, "full analysis set"):
-        populations.append("Full Analysis Set")
-    if _contains_keyword(text, "itt") or _contains_keyword(text, "intent to treat"):
-        populations.append("Intent-to-Treat Population")
+    pop_kw = _load_registry().get("population_keywords", {})
+    for label, keywords in pop_kw.items():
+        if _contains_any(text, keywords):
+            display = label.replace("_", " ").title()
+            populations.append(display)
     return populations
 
 
 def _extract_safety_focus(text: str) -> list[str]:
     focus = []
-    if _contains_keyword(text, "ae") or _contains_keyword(text, "adverse event"):
-        focus.append("Adverse Events")
-    if _contains_keyword(text, "lab") or _contains_keyword(text, "laboratory"):
-        focus.append("Laboratory")
-    if _contains_keyword(text, "ecg") or _contains_keyword(text, "qtc"):
-        focus.append("ECG / QTc")
-    if _contains_keyword(text, "vital sign"):
-        focus.append("Vital Signs")
+    safety_kw = _load_registry().get("safety_focus_keywords", {})
+    display_map = {
+        "adverse_events": "Adverse Events",
+        "laboratory": "Laboratory",
+        "ecg_qtc": "ECG / QTc",
+        "vital_signs": "Vital Signs",
+    }
+    for key, keywords in safety_kw.items():
+        if _contains_any(text, keywords):
+            label = display_map.get(key, key.replace("_", " ").title())
+            focus.append(label)
     return focus
 
 
@@ -344,13 +314,17 @@ def _build_extraction_state(text: str, phase_hint: str, area_hint: str) -> tuple
             "study_phase": phase,
             "therapeutic_area": area,
             "indication": "Unknown",
-            "development_intent": "dose-escalation" if phase == "Phase I" and _contains_any(text, _PHASE_I_KEYWORDS) else "unknown",
+            "development_intent": "dose-escalation"
+            if phase == "Phase I"
+            and _contains_any(text, _r_keywords("phase_keywords", "phase_i"))
+            else "unknown",
         },
         "analysis_context": {
             "primary_endpoints": primary_endpoints,
             "secondary_endpoints": [],
             "analysis_populations": analysis_populations,
-            "key_time_to_event": "Time-to-Event" in primary_endpoints or "Survival" in primary_endpoints,
+            "key_time_to_event": "Time-to-Event" in primary_endpoints
+            or "Survival" in primary_endpoints,
             "key_responder": "Response / Responder" in primary_endpoints,
             "key_safety_focus": safety_focus,
         },
@@ -376,9 +350,9 @@ def _build_extraction_state(text: str, phase_hint: str, area_hint: str) -> tuple
 
 def _derive_section_scope(text: str, requested_sections: list[str]) -> list[str]:
     sections = set(_DEFAULT_CORE_SECTIONS)
-    if _contains_any(text, _EFFICACY_KEYWORDS):
+    if _contains_any(text, _r_keywords("efficacy_keywords")):
         sections.add("14.2")
-    if _contains_any(text, _SPECIAL_KEYWORDS):
+    if _contains_any(text, _r_keywords("special_assessment_keywords")):
         sections.add("14.4")
     if requested_sections:
         allowed = {s for s in requested_sections if s in _ALL_SECTIONS}
@@ -390,65 +364,56 @@ def _derive_section_scope(text: str, requested_sections: list[str]) -> list[str]
 
 def _derive_family_candidates(text: str, phase: str, area: str, sections: list[str]) -> list[str]:
     families: list[str] = []
+    registry = _load_registry()
+    rules = registry["shell_family_rules"]
 
     def add(name: str):
         if name not in families:
             families.append(name)
 
-    if "14.1" in sections:
-        add("Demographics and Baseline")
+    # Always-add base families per section
+    for section_key in sections:
+        section_rule = rules.get(f"section_{section_key}")
+        if section_rule and section_rule.get("always_add"):
+            for family in section_rule["families"]:
+                add(family)
 
-    if "14.2" in sections:
-        add("General Efficacy")
-        if area == "Oncology":
-            add("Oncology Efficacy")
-        elif area == "Non-Oncology":
-            add("Non-Oncology Efficacy")
-            if _contains_keyword(text, "exacerbation"):
-                add("Respiratory Exacerbation")
-            if (
-                _contains_keyword(text, "mace")
-                or _contains_keyword(text, "cardiovascular")
-                or _contains_keyword(text, "heart failure hospitalization")
-            ):
-                add("Cardiovascular MACE and HF Hospitalization")
-            if _contains_keyword(text, "autoimmune") or _contains_keyword(text, "flare"):
-                add("Autoimmune Flare and Responder")
-
-    if "14.3" in sections:
-        add("Safety")
-        if phase == "Phase I" and _contains_any(text, _PHASE_I_KEYWORDS):
-            add("Phase I Safety and Dose Escalation")
-
-    if "14.4" in sections:
-        add("Special Assessments")
-        if phase == "Phase I" and (
-            _contains_keyword(text, "food effect")
-            or _contains_keyword(text, "crossover")
-            or _contains_keyword(text, "pk")
-        ):
-            add("Phase I Clinical Pharmacology")
-
-    if "16.2" in sections:
-        add("Patient Listings")
-        if phase == "Phase I" and _contains_any(text, _PHASE_I_KEYWORDS):
-            add("Specialized Patient Listings")
-        if area == "Oncology":
-            add("Oncology Listings")
-        elif area == "Non-Oncology":
-            add("Non-Oncology Listings")
-            if _contains_keyword(text, "exacerbation"):
-                add("Respiratory Exacerbation")
-            if (
-                _contains_keyword(text, "mace")
-                or _contains_keyword(text, "cardiovascular")
-                or _contains_keyword(text, "heart failure hospitalization")
-            ):
-                add("Cardiovascular MACE and HF Hospitalization")
-            if _contains_keyword(text, "autoimmune") or _contains_keyword(text, "flare"):
-                add("Autoimmune Flare and Responder")
+    # Evaluate conditional families
+    for rule in rules.get("conditional_families", []):
+        cond = rule["condition"]
+        if _evaluate_condition(cond, text=text, phase=phase, area=area, sections=sections):
+            add(rule["family"])
 
     return families
+
+
+def _evaluate_condition(
+    cond: dict,
+    *,
+    text: str,
+    phase: str,
+    area: str,
+    sections: list[str],
+) -> bool:
+    if "sections" in cond:
+        if not any(s in sections for s in cond["sections"]):
+            return False
+    if "section" in cond:
+        if cond["section"] not in sections:
+            return False
+    if "therapeutic_area" in cond:
+        if cond["therapeutic_area"] != area:
+            return False
+    if "study_phase" in cond:
+        if cond["study_phase"] != phase:
+            return False
+    if "keyword" in cond:
+        if not _contains_keyword(text, cond["keyword"]):
+            return False
+    if "keyword_any" in cond:
+        if not any(_contains_keyword(text, kw) for kw in cond["keyword_any"]):
+            return False
+    return True
 
 
 def _filter_items(
@@ -605,7 +570,9 @@ def _build_recommendation_state(
     return recommendation_state, risk_notes, optimization_suggestions
 
 
-def recommend_shells(request: RecommendRequest, catalog: TFLCatalog | None = None) -> RecommendResult:
+def recommend_shells(
+    request: RecommendRequest, catalog: TFLCatalog | None = None
+) -> RecommendResult:
     """Return a governed recommendation result for the minimal recommend prototype."""
     if not request.sources:
         raise ValueError("RecommendRequest requires at least one input source.")
@@ -673,9 +640,7 @@ def format_recommendation(result: RecommendResult) -> str:
     if context["primary_endpoints"]:
         lines.append(f"- Primary endpoint signals: {', '.join(context['primary_endpoints'])}")
     if result.ambiguity_state["missing_fields"]:
-        lines.append(
-            f"- Missing context: {', '.join(result.ambiguity_state['missing_fields'])}"
-        )
+        lines.append(f"- Missing context: {', '.join(result.ambiguity_state['missing_fields'])}")
     if result.recommendation_state["optional_expansions"]:
         lines.append("- Optional expansions:")
         for item in result.recommendation_state["optional_expansions"]:
