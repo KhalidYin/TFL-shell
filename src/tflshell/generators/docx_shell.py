@@ -150,7 +150,7 @@ class DocxShellGenerator:
         doc.add_paragraph(
             "This document is the master TFL (Tables, Figures, and Listings) shell "
             "template for clinical study reports covering CSR Sections 14.1, 14.2, 14.3, "
-            "14.4, and 16.2 only; Section 16.1 is intentionally excluded from this generator. "
+            "14.4, and 16.2. "
             "Each shell includes a sponsor/protocol header block, "
             "descriptive title, analysis population, shell-first table/listing structure or "
             "simulated figure, and traceability footnotes. No actual study results are "

@@ -109,7 +109,6 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 
 当前不在范围内：
 
-- `16.1`
 - 真实研究结果
 - 最终 study-specific SAP 决策
 - 绕过治理约束的任意 shell 结构编辑

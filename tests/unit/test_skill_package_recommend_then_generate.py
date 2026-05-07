@@ -54,7 +54,7 @@ def test_recommend_then_generate_returns_schema_first_payload(tmp_path):
     assert result.returncode == 0
     payload = json.loads(result.stdout)
 
-    assert payload["runtime_summary"]["mode"] in ("repo_backed", "standalone")
+    assert payload["runtime_summary"]["mode"] == "skill_runtime_preferred"
     assert payload["runtime_summary"]["catalog_source"].endswith(
         "package_assets/catalog_subset.json"
     )

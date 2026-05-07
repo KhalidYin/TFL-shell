@@ -108,7 +108,6 @@
 
 以下内容不在当前生成器正式范围内：
 
-- `16.1`
 - 真实分析结果
 - study-specific SAP 的最终裁决
 - 伪造 subject-level mock records

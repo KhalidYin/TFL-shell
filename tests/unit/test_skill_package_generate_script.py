@@ -23,7 +23,7 @@ def test_generate_script_creates_project_named_xlsx_output(tmp_path):
 
     assert result.returncode == 0
     payload = json.loads(result.stdout)
-    assert payload["runtime_summary"]["mode"] in ("repo_backed", "standalone")
+    assert payload["runtime_summary"]["mode"] == "skill_runtime_preferred"
     assert payload["runtime_summary"]["catalog_source"].endswith(
         "package_assets/catalog_subset.json"
     )

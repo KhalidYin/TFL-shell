@@ -44,7 +44,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                     "title": "Scope",
                     "content": [
                         "This SOP applies to clinical studies that use the ICH E3 CSR structure and require shell outputs before statistical results are produced.",
-                        "The governed shell scope includes CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2 only; Section 16.1 is excluded from this generator scope.",
+                        "The governed shell scope includes CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2.",
                         "It applies to Biostatistics, Statistical Programming, and Medical Writing functions involved in shell review, generation, and downstream execution.",
                     ],
                 },

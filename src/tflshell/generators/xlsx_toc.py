@@ -194,7 +194,7 @@ class XlsxTocGenerator:
             ],
             [
                 "Scope",
-                "The workbook covers CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2 only; Section 16.1 is out of scope for this generator.",
+                "The workbook covers CSR Sections 14.1, 14.2, 14.3, 14.4, and 16.2.",
             ],
             [
                 "Coverage metadata",

@@ -28,8 +28,6 @@ Product 对齐的 DOCX shell template 输出为：
 - table/listing shell convention text
 - figure shell explanation
 
-Introduction 必须说明章节 `16.1` 被有意排除。
-
 ## 4. Heading 契约
 
 shell 文档必须使用：

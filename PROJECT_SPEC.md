@@ -24,7 +24,6 @@
 
 ### 2.2 当前不纳入范围
 
-- `16.1`
 - 最终统计结果
 - study-specific SAP 最终裁决
 - 受试者级伪造数据
@@ -215,3 +214,39 @@ SKILL 不直接等于本规范，但若要生成高保真结果，应尽量对�
 - 自动校验 coverage matrix 与 catalog 元数据
 - 校验 DOCX、XLSX、SOP 与规范文案一致性
 - 在 CI 中运行 `generate`、`validate` 与 `pytest`
+
+## 13. 规范变更同步规则
+
+规范文档是本项目的治理来源。任何规范变更必须同步到实现层面。
+
+### 13.1 规范文档定义
+
+以下文件视为规范文档，修改其中任何一条受控规则都视为规范变更：
+
+- `PROJECT_SPEC.md` — 编号规则、applicability、shell 构造规则、元数据要求、覆盖矩阵
+- `PROJECT_GUIDE.md` — 治理范围、工作原则、边界定义
+- `CODE_STYLE.md` — 命名规则、文档同步规则、编辑标准
+- `test_guide.md` — 测试契约、最小回归集合
+
+### 13.2 规范变更的必须动作
+
+| 规范变更类型 | 必须同步更新 |
+|-------------|-------------|
+| 范围边界变化（新增/删除 section） | `definitions.py` 的 catalog、`output_manifest.json`、SKILL.md §6、contract 文档 |
+| 编号或标签规则变化 | `definitions.py` 中所有相关 TFLItem、naming 工具、测试、contract 文档 |
+| applicability 措辞变化 | `definitions.py` 中相关 shell 的 applicability 标签、catalog 验证测试、contract 文档 |
+| metadata 字段变化 | `models/tfl_item.py`、`definitions.py`、catalog_subset 导出脚本、XLSX workbook contract |
+| shell family 解释变化 | `domain_registry.json`、`definitions.py` 中 shell_family 标签、测试 fixture、contract 文档 |
+| 测试契约变化 | 对应测试文件 + CI 配置 |
+
+### 13.3 同步质量闸
+
+规范变更提交前必须通过：
+
+- [ ] `pytest` 全量通过
+- [ ] `tflshell validate` 通过
+- [ ] `tflshell generate -t all` 成功生成
+- [ ] `scripts/validate_skill_package.py` 通过
+- [ ] `.trae/skills/tfls-shell/scripts/validate_outputs.py` 对生成物通过
+- [ ] `git diff -- output/` 确认 output 变更符合预期
+- [ ] 规范文档中修改的条款已反映在代码变更中（人工 review）

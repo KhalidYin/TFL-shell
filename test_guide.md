@@ -51,7 +51,6 @@ tests/
 ### 4.2 Scope Control
 
 - 仅出现受控 section
-- `16.1` 保持排除，除非规范变化
 - applicability 标签保持在受控集合内
 
 ### 4.3 Output Structure

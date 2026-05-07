@@ -18,10 +18,9 @@ def _bootstrap_repo_imports() -> None:
 
 _bootstrap_repo_imports()
 
+from tflshell import __version__  # noqa: E402
 from tflshell.data.definitions import build_catalog  # noqa: E402
-from runtime import runtime_mode  # noqa: E402
-from runtime.naming import make_filename  # noqa: E402
-from runtime.version_loader import get_version  # noqa: E402
+from tflshell.utils.naming import make_filename  # noqa: E402
 from runtime.wrappers.docx_wrapper import generate as generate_docx  # noqa: E402
 from runtime.wrappers.sop_wrapper import generate as generate_sop  # noqa: E402
 from runtime.wrappers.xlsx_wrapper import generate as generate_xlsx  # noqa: E402
@@ -34,16 +33,12 @@ def _resolve_requested_outputs(raw: str) -> list[str]:
 
 
 def _runtime_summary() -> dict:
-    mode_info = runtime_mode()
     package_root = Path(__file__).resolve().parents[1]
     return {
-        "mode": "standalone" if not mode_info["has_repo_backend"] else "repo_backed",
-        "runtime_details": mode_info,
+        "mode": "skill_runtime_preferred",
         "catalog_source": str(package_root / "package_assets" / "catalog_subset.json").replace("\\", "/"),
         "registry_source": str(package_root / "package_assets" / "contract_registry.json").replace("\\", "/"),
         "wrapper_layer": "runtime/wrappers",
-        "version_source": "runtime/version_loader (from output_manifest.json)",
-        "naming_source": "runtime/naming",
     }
 
 
@@ -57,7 +52,7 @@ def generate_outputs(args) -> dict:
 
     for output_kind in requested_outputs:
         if output_kind == "docx":
-            output_path = output_dir / make_filename("TFL_Shell_Template", get_version(), ".docx")
+            output_path = output_dir / make_filename("TFL_Shell_Template", __version__, ".docx")
             generated_path = Path(
                 generate_docx(
                     catalog,
@@ -70,10 +65,10 @@ def generate_outputs(args) -> dict:
                 )
             )
         elif output_kind == "xlsx":
-            output_path = output_dir / make_filename("TFL_TOC", get_version(), ".xlsx")
+            output_path = output_dir / make_filename("TFL_TOC", __version__, ".xlsx")
             generated_path = Path(generate_xlsx(catalog, str(output_path)))
         elif output_kind == "sop":
-            output_path = output_dir / make_filename("TFL_Shell_SOP", get_version(), ".docx")
+            output_path = output_dir / make_filename("TFL_Shell_SOP", __version__, ".docx")
             generated_path = Path(generate_sop(catalog, str(output_path)))
         else:
             raise ValueError(f"不支持的输出类型：{output_kind}")
@@ -88,7 +83,7 @@ def generate_outputs(args) -> dict:
 
     return {
         "runtime_summary": _runtime_summary(),
-        "version": get_version(),
+        "version": __version__,
         "requested_outputs": requested_outputs,
         "artifact_count": len(artifacts),
         "output_dir": str(output_dir),

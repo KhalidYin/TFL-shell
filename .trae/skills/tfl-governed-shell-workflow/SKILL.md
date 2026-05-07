@@ -65,7 +65,6 @@ description: "用于把 protocol/SAP/统计需求解释为受控 TFL shell 推�
 
 超出范围：
 
-- `16.1`
 - 真实研究结果
 - 最终的 study-specific SAP 结论
 - 绕过治理约束的自由 shell 结构编辑
