@@ -25,14 +25,14 @@
     {
       "id": "T14.1.2",
       "display_label": "Table 14.1.2",
-      "title": "Summary of Baseline Disease Characteristics",
+      "title": "Summary of Baseline Oncology Disease Characteristics",
       "type": "Table",
       "section": "14.1",
       "shell_family": "Demographics and Baseline",
       "study_phase_scope": "Phase I-III",
       "coverage_summary": "Core",
       "population": "Intent-to-Treat (ITT) Population",
-      "applicability": "General",
+      "applicability": "Oncology only",
       "source_listing": "L16.2.2"
     },
     {

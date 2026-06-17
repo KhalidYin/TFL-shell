@@ -96,6 +96,13 @@
 - 如行为有明显变化，需同步更新设计稿
 - 同步更新测试或测试说明
 
+Catalog 定义必须按 section 维护在 `src/tflshell/data/sections/` 下。
+`src/tflshell/data/definitions.py` 只承担 catalog 编排、治理归一化和最终 `TFLCatalog` 返回，
+不得重新堆积大量 `TFLItem(...)` 定义。
+
+Figure shell 的 renderer、mock data factory 与支持类型清单必须集中在
+`src/tflshell/figures/registry.py`；DOCX 生成器只调用该 registry，不直接维护 figure 类型映射。
+
 ### 8.3 规范变更
 
 规范文档（`docs/main/PROJECT_SPEC.md` / `docs/main/PROJECT_GUIDE.md` / `docs/main/CODE_STYLE.md` / `docs/main/TEST_GUIDE.md`）

@@ -362,7 +362,7 @@ class DocxShellGenerator:
 
         if self.generate_figures and tfl.is_figure_generated:
             try:
-                from tflshell.generators.figure_engine import generate_figure_buffer
+                from tflshell.figures.registry import generate_figure_buffer
 
                 buf = generate_figure_buffer(tfl)
                 # Insert image directly

@@ -13,6 +13,12 @@
 python -m tflshell generate
 ```
 
+默认生成会把可支持的 figure shell 渲染为模拟 PNG 并嵌入 DOCX。仅在需要跳过图形时使用：
+
+```powershell
+python -m tflshell generate --no-figures
+```
+
 校验 catalog：
 
 ```powershell

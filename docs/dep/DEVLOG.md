@@ -38,3 +38,39 @@
 - `src/tflshell/skill.py`（修改）— (uncommitted)
 - `tests/unit/`（新增/修改）— (uncommitted)
 
+---
+
+### Round 2 [15:57]
+
+#### Done
+- 将 catalog 定义拆成 `src/tflshell/data/common.py` 与 `src/tflshell/data/sections/*.py`，`definitions.py` 只保留治理归一化、source listing 映射和 `build_catalog()` 编排。
+- 修正 14.1 实践边界：`T14.1.1` 限定为通用人口学/体格基线表，移除 ECOG、疾病分期、组织学等肿瘤特异内容；`T14.1.2` 改为 `Summary of Baseline Oncology Disease Characteristics` 并标记为 `Oncology only`。
+- 新增 `src/tflshell/figures/registry.py`，集中维护 figure renderer、mock data factory 与 PNG buffer 生成；`DocxShellGenerator` 改为调用 registry。
+- 保留 `src/tflshell/generators/figure_engine.py` 为向后兼容入口，避免既有调用方断裂。
+- 新增测试覆盖 catalog 模块结构、14.1 实践边界、figure registry 支持类型、代表性 PNG buffer 生成与 DOCX 嵌图。
+- 重新导出 `Skill/tfls-shell/package_assets/catalog_subset.json` 与 `output_manifest.json`，并重新生成 DOCX / XLSX / SOP 正式输出。
+- 验证正式 DOCX 当前包含 28 个 inline figure image，`Skill/tfls-shell/scripts/validate_outputs.py` 对重新生成的 DOCX/XLSX/SOP 通过。
+- 全量测试通过：`PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python -m pytest -q`，结果为 `66 passed, 24 warnings`。
+
+#### Issues / Blockers
+- 部分 figure 仍是语义近似 renderer，例如 CDF 复用 longitudinal、eDISH/heatmap 复用 box plot；本轮已通过 registry 集中管理，但尚未新增专门 renderer。
+- 14.1 的 shell family 仍较粗，后续可继续细分 disposition、protocol deviation、exposure、medical history、medication 等子家族。
+- openpyxl 在 Python 3.14 下仍有 `datetime.utcnow()` 弃用警告。
+
+#### Next
+1. 为 CDF、eDISH、heatmap、PK overlay 增加语义专用 renderer 或显式 renderer profile。
+2. 为 14.1 增加更细的 shell family / denominator / sorting metadata，并考虑在 XLSX 增加 row/column 审阅视图。
+
+#### Files Changed / Commits
+- `src/tflshell/data/common.py`（新增）— (uncommitted)
+- `src/tflshell/data/sections/`（新增）— (uncommitted)
+- `src/tflshell/data/definitions.py`（重构）— (uncommitted)
+- `src/tflshell/figures/registry.py`（新增）— (uncommitted)
+- `src/tflshell/generators/docx_shell.py`（修改）— (uncommitted)
+- `src/tflshell/generators/figure_engine.py`（修改）— (uncommitted)
+- `tests/unit/test_catalog_module_structure.py`（新增）— (uncommitted)
+- `tests/unit/test_figure_shell_rendering.py`（新增）— (uncommitted)
+- `tests/unit/test_section_14_1_practice.py`（新增）— (uncommitted)
+- `Skill/tfls-shell/package_assets/`（更新）— (uncommitted)
+- `output/`（重新生成）— (uncommitted)
+- `docs/main/`、`USAGE.md`、`docs/main/memory/`（更新）— (uncommitted)

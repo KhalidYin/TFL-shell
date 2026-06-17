@@ -119,6 +119,8 @@
 - 样本量表头保持通用，例如 `N=xx`
 - 若主表加 forest plot 更合适，则不保留冗余 subgroup-only 表
 - 如存在受控 listing，应使用具体 source-listing 引用
+- 14.1 中通用人口学表不得混入疾病分期、ECOG、组织学等肿瘤特异 baseline disease 内容
+- 14.1 中 baseline disease shell 如使用肿瘤分期、组织学或 ECOG 审阅语境，应显式标记 `Oncology only`
 
 ### 6.2 Listings
 
@@ -131,6 +133,8 @@
 - 允许模拟示意图
 - 不得暗示最终分析输出
 - 标题、图体、注释与分页应尽量保持成组
+- figure shell 应通过 `src/tflshell/figures/registry.py` 注册 renderer 与 mock data factory
+- DOCX 生成默认应把可生成 figure 嵌入为 PNG；只有显式关闭或生成失败时才回退到文本占位
 
 ## 7. 元数据要求
 
@@ -232,11 +236,11 @@ SKILL 不直接等于本规范，但若要生成高保真结果，应尽量对�
 
 | 规范变更类型 | 必须同步更新 |
 |-------------|-------------|
-| 范围边界变化（新增/删除 section） | `definitions.py` 的 catalog、`output_manifest.json`、SKILL.md §6、contract 文档 |
-| 编号或标签规则变化 | `definitions.py` 中所有相关 TFLItem、naming 工具、测试、contract 文档 |
+| 范围边界变化（新增/删除 section） | `data/sections/` 的 catalog builder、`output_manifest.json`、SKILL.md §6、contract 文档 |
+| 编号或标签规则变化 | `data/sections/` 中所有相关 TFLItem、naming 工具、测试、contract 文档 |
 | applicability 措辞变化 | `definitions.py` 中相关 shell 的 applicability 标签、catalog 验证测试、contract 文档 |
-| metadata 字段变化 | `models/tfl_item.py`、`definitions.py`、catalog_subset 导出脚本、XLSX workbook contract |
-| shell family 解释变化 | `domain_registry.json`、`definitions.py` 中 shell_family 标签、测试 fixture、contract 文档 |
+| metadata 字段变化 | `models/tfl_item.py`、`data/sections/`、catalog_subset 导出脚本、XLSX workbook contract |
+| shell family 解释变化 | `domain_registry.json`、`data/sections/` 中 shell_family 标签、测试 fixture、contract 文档 |
 | 测试契约变化 | 对应测试文件 + CI 配置 |
 
 ### 13.3 同步质量闸

@@ -77,6 +77,9 @@
 ## 5. 目录说明
 
 - `src/tflshell/`：Product 代码实现，包括模型、catalog、生成器与推荐支持逻辑
+- `src/tflshell/data/common.py`：catalog 共享 section/type/header/ellipsis 模板常量
+- `src/tflshell/data/sections/`：按 CSR section 拆分的 catalog builder，避免所有 TFL 表格定义集中在单一脚本
+- `src/tflshell/figures/registry.py`：figure shell 的 renderer 注册、mock data 构造与 PNG buffer 生成入口
 - `Skill/tfls-shell/`：正式可复用 Skill 源目录
 - `Skill/tfl-governed-shell-workflow/`：历史 workflow skill 归档，不是当前正式交付
 - `scripts/`：仓库级维护脚本，包括 Skill 校验、回归基线校验与安装脚本
@@ -162,6 +165,9 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - 仓库已新增 `scripts/validate_skill_baseline.py`，用于把 `output_manifest.json`、`contract_registry.json` 与生成脚本清单作为回归基线校验
 - 长期规范文档已按 personal-assistant 结构迁移到 `docs/main/`，头脑风暴设计草稿不再作为项目规范保留
 - 上述检查已同步进入测试契约，作为当前 Skill 输出对齐的最小基线
+- catalog 已拆分为 `data/common.py` + `data/sections/*.py`，`definitions.py` 只保留治理后处理和 `build_catalog()` 编排
+- figure shell 已通过 `figures/registry.py` 统一注册 renderer 并在 DOCX 中嵌入模拟 PNG，当前正式 DOCX 输出包含 28 个 figure image
+- `T14.1.1` 已限定为通用人口学/体格基线表；肿瘤疾病分期、ECOG 等内容集中到 `T14.1.2` 并标记为 `Oncology only`
 
 ## 11. 风险提示
 

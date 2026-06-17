@@ -59,6 +59,7 @@ tests/
 - SOP 输出包含 TOC field
 - workbook sheet 与字段符合治理模型
 - 生成输出保持受控标题与标签
+- DOCX figure shell 在默认生成时应嵌入模拟 PNG image，而不只是文本占位
 
 ### 4.4 Cross-Output Consistency
 
@@ -79,6 +80,8 @@ tests/
 - recommendation 逻辑或输出契约变化
 - `TFLs-Shell SKILL` 的触发条件、示例或输出契约变化
 - Product 的格式契约或输出基线变化
+- catalog section builder 拆分或迁移
+- figure renderer registry 或 mock data factory 变化
 
 ## 6. 不要过度测试什么
 
