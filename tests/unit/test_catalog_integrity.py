@@ -121,8 +121,7 @@ def test_catalog_consistency_with_output_manifest():
 
     manifest_path = (
         Path(__file__).parent.parent.parent
-        / ".trae"
-        / "skills"
+        / "Skill"
         / "tfls-shell"
         / "package_assets"
         / "output_manifest.json"

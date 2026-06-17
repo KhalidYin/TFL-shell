@@ -4,9 +4,9 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "export_catalog_subset.py"
+SCRIPT = ROOT / "Skill" / "tfls-shell" / "scripts" / "export_catalog_subset.py"
 CONTRACT_SCRIPT = (
-    ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "export_product_contracts.py"
+    ROOT / "Skill" / "tfls-shell" / "scripts" / "export_product_contracts.py"
 )
 
 

@@ -1,7 +1,7 @@
 """Historical workflow prototype kept for reference.
 
 This module is not the canonical reusable Skill package. The active Skill
-delivery target lives under `.trae/skills/`.
+delivery target lives under `Skill/`.
 """
 
 from __future__ import annotations

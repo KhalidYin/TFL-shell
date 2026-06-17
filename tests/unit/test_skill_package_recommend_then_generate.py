@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "recommend_then_generate.py"
+SCRIPT = ROOT / "Skill" / "tfls-shell" / "scripts" / "recommend_then_generate.py"
 
 
 def _run_script(*args: str) -> subprocess.CompletedProcess[str]:

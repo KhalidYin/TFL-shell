@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SCRIPT = ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "validate_outputs.py"
+SCRIPT = ROOT / "Skill" / "tfls-shell" / "scripts" / "validate_outputs.py"
 
 
 def test_validate_outputs_accepts_current_product_outputs():

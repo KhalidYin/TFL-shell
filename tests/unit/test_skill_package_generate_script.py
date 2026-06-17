@@ -5,7 +5,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = (
-    ROOT / ".trae" / "skills" / "tfls-shell" / "scripts" / "generate_project_aligned_outputs.py"
+    ROOT / "Skill" / "tfls-shell" / "scripts" / "generate_project_aligned_outputs.py"
 )
 
 

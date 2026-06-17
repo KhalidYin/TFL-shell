@@ -4,7 +4,7 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
-SKILL_DIR = ROOT / ".trae" / "skills" / "tfls-shell"
+SKILL_DIR = ROOT / "Skill" / "tfls-shell"
 
 
 def _import_runtime_module(module_name: str):

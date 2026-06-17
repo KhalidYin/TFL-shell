@@ -24,6 +24,9 @@ REQUIRED_RUNTIME_SCRIPTS = (
     "scripts/alignment_contracts.py",
     "scripts/export_catalog_subset.py",
     "scripts/export_product_contracts.py",
+    "scripts/generate_project_aligned_outputs.py",
+    "scripts/package_bundle.py",
+    "scripts/recommend_then_generate.py",
     "scripts/validate_outputs.py",
 )
 FORBIDDEN_SKILL_PATTERNS = (
@@ -119,7 +122,7 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument(
         "package_dir",
         nargs="?",
-        default=str(Path(".trae/skills/tfls-shell")),
+        default=str(Path("Skill/tfls-shell")),
         help="待校验的 Skill 包目录。",
     )
     args = parser.parse_args(argv)

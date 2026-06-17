@@ -4,7 +4,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / "scripts" / "validate_skill_package.py"
-PACKAGE_DIR = ROOT / ".trae" / "skills" / "tfls-shell"
+PACKAGE_DIR = ROOT / "Skill" / "tfls-shell"
 
 
 def _run_validator(target: Path) -> subprocess.CompletedProcess[str]:
