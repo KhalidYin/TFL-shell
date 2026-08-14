@@ -45,13 +45,13 @@ shell 文档必须使用：
 
 每个 shell 必须包含 header block，其中包括：
 
-- sponsor
+- sponsor 与右对齐的 `Page X of Y`（同一行）
 - protocol
-- display label
-- title
+- study title / compound name
+- 一个合并的粗体 `<Display Label>  <Title>` Heading 4
 - analysis set
 
-验证 helper 会检查 `Display Label`、`Title` 与 `Analysis Set` 是否按 catalog 顺序出现。
+不得再生成独立的 display-label 行或重复 title 行。验证 helper 会检查合并 Heading 4、无重复标题、`Analysis Set` 顺序，以及每个 shell 的 Sponsor/Page、Protocol 和 study-title 行。
 
 ## 6. Body 契约
 
@@ -59,4 +59,4 @@ Tables 与 listings 渲染为 Word tables。
 
 Figures 在启用生成时渲染为模拟 shell 图示，否则使用 figure placeholder fallback。
 
-Footnotes 在可用时包含 source listing 与 dataset/program traceability。
+Footnotes 在可用时包含 source listing 与 dataset/program traceability。缩写、统计定义和 coding/grading version 按 `table_layout_contract.md` 去重并受控生成；listing 本身不显示 `Source Listing:` 自引用。

@@ -113,12 +113,20 @@
 - 保留表达展示语义所需的结构行
 - 结果相关单元格保持通用 placeholder
 - 允许使用与目标展示相符的 placeholder 样式
-- 使用受控的 `Group 1 / Group 2` 结构
-- 如需表示更多组，允许额外 ellipsis expansion 列，但不要与分析列合并
+- 治疗组可按列、按行或作为多级表头下的 subheader 展示，选择取决于分析语义、信息密度和编程实现可行性
+- 首列是参数、分类或层级标签列时，首列表头和数据均左对齐；数值列按声明式 alignment 渲染
+- 模型 estimate 与 treatment comparison 必须在视觉和列结构上独立可识别，不得为统一模板而塞入某个治疗组列
+- 如需表示更多组，允许额外 ellipsis expansion 列，但不要与 comparison、Overall 或其他分析列合并
 - 仅在临床上合理时保留 `Overall`
 - 样本量表头保持通用，例如 `N=xx`
 - 若主表加 forest plot 更合适，则不保留冗余 subgroup-only 表
 - 如存在受控 listing，应使用具体 source-listing 引用
+- 每张表仅对实际出现的缩写提供定义；百分比、模型估计、描述统计或时间事件展示应按实际分析语义提供 denominator 或统计定义，不得填充无关指标概念
+- 通用 AE 按事件日期记录，不按 cycle 汇总；DLT、输注、PK/PD sampling 等明确由 protocol/SAP 定义周期或时点的场景单独判断
+- AE 最大 Grade 作为 SOC/PT 下的行层级，不得按 Grade 拆成结果列；实验室 shift 等本身以 Grade 表示迁移维度的表不受此规则影响
+- 单一 by-visit endpoint 以 Visit 为最高行层级；多参数安全性综述可保留 `Parameter > Visit > Statistic`，但必须与医学审阅目的和 long-form 编程键一致
+- 同表 MedDRA/CTCAE version 只生成一条 coding/grading footnote；缩写和统计定义分别受控生成，不重复填充
+- AESI、IRR、late-onset、onset-window 和 follow-up 表仅在 protocol/SAP 明确定义概念、窗口与 denominator 时保留
 - 14.1 中通用人口学表不得混入疾病分期、ECOG、组织学等肿瘤特异 baseline disease 内容
 - 14.1 中 baseline disease shell 如使用肿瘤分期、组织学或 ECOG 审阅语境，应显式标记 `Oncology only`
 
@@ -127,11 +135,21 @@
 - 保留 listing 结构与关键变量标签
 - 不引入虚构受试者记录
 - 在需要时保留排序与展示规则
+- 宽 listing 应声明稳定排序，并保留足以指导编程的结构示例
+- Listing 本身不显示 `Source Listing`；该追溯字段仅用于需要引用患者明细的表或图
 
-### 6.3 Figures
+### 6.3 DOCX 标题与页眉
+
+- 每个 shell 只显示一条黑色粗体 `Display Label + Title`，该段同时承担 Heading 4 和书签目标，不再生成重复斜体标题
+- 首页眉行采用 `Sponsor` 左侧、`Page X of Y` 右侧的同一行布局；页码使用 Word 字段占位
+- `Protocol` 独占下一行，随后显示 study title 和 analysis set
+
+### 6.4 Figures
 
 - 允许模拟示意图
 - 不得暗示最终分析输出
+- 模拟图体必须明确标为 illustrative shell data
+- CDF、eDISH、heatmap、concentration-QTcF、PK profile 等专门图型不得复用语义不匹配的通用 renderer
 - 标题、图体、注释与分页应尽量保持成组
 - figure shell 应通过 `src/tflshell/figures/registry.py` 注册 renderer 与 mock data factory
 - DOCX 生成默认应把可生成 figure 嵌入为 PNG；只有显式关闭或生成失败时才回退到文本占位
@@ -154,6 +172,10 @@
 - `Program Reference`
 - `Dictionary / Standard`
 - `Placeholder Style`
+- `Layout Profile`
+- `Comparison Position`
+- `Sorting Note`
+- `Denominator Note`
 - `Footnotes`
 - `Remarks`
 

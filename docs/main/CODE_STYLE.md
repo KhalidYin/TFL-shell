@@ -103,6 +103,27 @@ Catalog 定义必须按 section 维护在 `src/tflshell/data/sections/` 下。
 Figure shell 的 renderer、mock data factory 与支持类型清单必须集中在
 `src/tflshell/figures/registry.py`；DOCX 生成器只调用该 registry，不直接维护 figure 类型映射。
 
+复杂表格使用 `TFLItem` 的声明式 layout contract 表达多级表头和列对齐；shell section
+定义中不得直接写 OOXML。简单表继续使用 `placeholder_columns` 兼容路径。模型 comparison
+应有独立列组或明确声明为 descriptive-only，不能隐藏在治疗组列中。
+
+表格渲染器默认将第 1 个结构列的表头和数据左对齐，其余列居中；特殊语义通过
+`column_alignments` 或 header cell 的 `alignment` 显式覆盖。AE Grade 应编码为
+`shell_rows` 的层级标签，不应扩展为治疗结果列。
+
+`source_listing` 的显式定义优先于标题关键词 fallback。若没有受控且合理的 listing，保持为空并
+写明 study-specific，不得为了字段非空而引用无关 listing。
+Listing 类型强制保持 `source_listing` 为空，避免自引用或在患者明细输出中出现无意义的
+`Source Listing` 脚注。
+
+受控 catalog 归一化可根据表内实际可见文本补充缩写和统计定义脚注；新增缩写必须进入受控映射并
+由目录级测试逐表核验，不得把通用模型术语无条件附加到无关表格。
+dictionary/version 文本必须在 `TFLItem.footnote_text()` 中收敛为单一 coding/grading note；section 定义中
+允许保留临床解释，但不得让同一 MedDRA/CTCAE version 在最终同表重复出现。
+
+当旧 row label 使用 `Visit — Statistic` 或 `Timepoint — Statistic` 编码语义时，归一化层必须先把语义值
+展开到显式列，再做 placeholder 补齐/截断；禁止用静默 padding 掩盖语义列错位。
+
 ### 8.3 规范变更
 
 规范文档（`docs/main/PROJECT_SPEC.md` / `docs/main/PROJECT_GUIDE.md` / `docs/main/CODE_STYLE.md` / `docs/main/TEST_GUIDE.md`）

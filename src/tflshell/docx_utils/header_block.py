@@ -2,17 +2,17 @@
 
 Every TFL page must carry this header block ABOVE the three-line table:
 
-Sponsor: [Sponsor Name]
-Protocol: [Protocol Number]                              Page X of Y
+Sponsor: [Sponsor Name]                                 Page X of Y
+Protocol: [Protocol Number]
 [Study Title / Compound Name]
 
-Table 14.X.X
-[Full Descriptive Title]
+Table 14.X.X  [Full Descriptive Title]
 
 Analysis Set: [ITT / Safety / PP Population]
 """
 
-from docx.shared import Pt
+from docx.enum.text import WD_TAB_ALIGNMENT
+from docx.shared import Inches, Pt, RGBColor
 
 from tflshell import config
 from tflshell.docx_utils.page_numbering import add_page_number_fields
@@ -32,7 +32,7 @@ def add_tfl_page_header(doc, tfl_item):
     F = config.FONT_NAME
     FS = config.FONT_SIZE_HEADER_BLOCK
 
-    # Line 1: Sponsor
+    # Line 1: Sponsor + Page X of Y
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(1)
@@ -41,25 +41,22 @@ def add_tfl_page_header(doc, tfl_item):
     run.font.size = Pt(FS)
     run.font.name = F
 
-    # Line 2: Protocol + Page X of Y (left+right via tab stops)
+    content_width = config.PAGE_WIDTH_INCHES - (2 * config.MARGIN_INCHES)
+    p.paragraph_format.tab_stops.add_tab_stop(
+        Inches(content_width), alignment=WD_TAB_ALIGNMENT.RIGHT
+    )
+    p.add_run("\t")
+    add_page_number_fields(p, prefix="Page ", suffix="")
+
+    # Line 2: Protocol
     p = doc.add_paragraph()
     p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(1)
     p.paragraph_format.keep_with_next = True
 
-    # Add right-aligned tab stop at page margin
-    tab_stops = p.paragraph_format.tab_stops
-    tab_stops.add_tab_stop(int(config.PAGE_WIDTH_INCHES * 914400))
-
-    run1 = p.add_run(f"Protocol: {tfl_item.protocol_placeholder}")
-    run1.font.size = Pt(FS)
-    run1.font.name = F
-
-    # Tab to right margin, then page numbering
-    run_tab = p.add_run("\t")
-    run_tab.font.size = Pt(FS)
-
-    add_page_number_fields(p, prefix="Page ", suffix="")
+    run = p.add_run(f"Protocol: {tfl_item.protocol_placeholder}")
+    run.font.size = Pt(FS)
+    run.font.name = F
 
     # Line 3: Study Title
     p = doc.add_paragraph()
@@ -71,25 +68,19 @@ def add_tfl_page_header(doc, tfl_item):
     run.font.name = F
     run.font.italic = True
 
-    # Line 4: TFL Type + display number
-    p = doc.add_paragraph()
+    # Line 4: One visible black TFL heading. Heading 4 supplies the TOC target;
+    # the bookmark is anchored here rather than in a duplicate italic heading.
+    p = doc.add_paragraph(style=doc.styles["Heading 4"])
     p.paragraph_format.space_before = Pt(6)
-    p.paragraph_format.space_after = Pt(2)
-    p.paragraph_format.keep_with_next = True
-    run = p.add_run(tfl_item.display_label)
-    run.font.size = Pt(config.FONT_SIZE_H3)
-    run.font.name = F
-    run.font.bold = True
-
-    # Line 5: Full Title
-    p = doc.add_paragraph()
-    p.paragraph_format.space_before = Pt(0)
     p.paragraph_format.space_after = Pt(3)
     p.paragraph_format.keep_with_next = True
-    run = p.add_run(tfl_item.title)
+    run = p.add_run(f"{tfl_item.display_label}  {tfl_item.title}")
     run.font.size = Pt(config.FONT_SIZE_H3)
     run.font.name = F
     run.font.bold = True
+    run.font.italic = False
+    run.font.color.rgb = RGBColor(0, 0, 0)
+    insert_bookmark(p, tfl_item.id)
 
     # Badge
     badge = tfl_item.badge
@@ -113,6 +104,3 @@ def add_tfl_page_header(doc, tfl_item):
     run.font.size = Pt(FS)
     run.font.name = F
     run.font.italic = True
-
-    # Insert bookmark for TOC hyperlinking (using tfl ID as bookmark name)
-    insert_bookmark(p, tfl_item.id)

@@ -140,6 +140,18 @@ description: "用于把 protocol、SAP 与统计需求解释为 TFL shell 推荐
 - applicability
 - phase / domain 提示
 
+在映射 table layout 时，必须同时考虑临床/统计报告实践、编程实现性和信息直观度：
+
+- 不要把治疗组机械固定在列；group 可作为列、行或 grouped subheader。
+- 单一 by-visit endpoint 以 Visit 为最高行层级；多参数安全性表可使用 Parameter > Visit > Statistic。
+- observed value、model-based treatment estimate 与 between-group comparison 必须保持可独立识别。
+- 不得因为模板可容纳某项统计量就硬塞 LS mean、CI、p-value 或其他指标；由 protocol/SAP 决定。
+- 通用 AE 不按 cycle 汇总；DLT、输注、PK/PD 等明确按计划周期/时点采集的场景需单独判断。
+- AE maximum CTCAE grade 在 SOC/PT 下作为行分组，不作为结果列。
+- 同一表的缩写、统计定义和 MedDRA/CTCAE version footnote 应受控且不重复。
+
+完整规则见 `docs/table_layout_contract.md`。
+
 ### 7.4 Recommend
 
 给出推荐结果，至少区分：

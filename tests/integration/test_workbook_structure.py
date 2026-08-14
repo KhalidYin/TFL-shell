@@ -34,11 +34,25 @@ def test_workbook_master_sheet_contains_governance_metadata(tmp_path):
     master_sheet = workbook["TOC_Master"]
 
     first_data_row = [cell.value for cell in next(master_sheet.iter_rows(min_row=2, max_row=2))]
-    header_to_value = dict(zip(MASTER_COLUMNS, first_data_row))
+    header_to_value = dict(zip(MASTER_COLUMNS, first_data_row, strict=True))
 
     assert header_to_value["Shell Family"]
     assert header_to_value["Study Phase Scope"]
     assert header_to_value["Coverage Summary"]
+    assert header_to_value["Layout Profile"]
+
+
+def test_workbook_exposes_minimal_layout_review_metadata(tmp_path):
+    output_path = tmp_path / "tfl_toc.xlsx"
+    generated = XlsxTocGenerator(build_catalog(), output_path=str(output_path)).generate()
+    workbook = load_workbook(generated, read_only=True, data_only=True)
+    master_sheet = workbook["TOC_Master"]
+    rows = list(master_sheet.iter_rows(min_row=2, values_only=True))
+    by_id = {row[0]: dict(zip(MASTER_COLUMNS, row, strict=True)) for row in rows}
+
+    assert by_id["T14.2.1"]["Layout Profile"] == "model-comparison"
+    assert "Independent" in by_id["T14.2.1"]["Comparison Position"]
+    assert "visit sequence" in by_id["L16.2.38"]["Sorting Note"]
 
 
 def test_workbook_includes_new_phase_i_and_non_oncology_rows(tmp_path):

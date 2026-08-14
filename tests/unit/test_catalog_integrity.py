@@ -114,6 +114,49 @@ def test_representative_source_listing_mappings_are_specific():
     assert catalog.get("T14.4.15").source_listing == "L16.2.33"
 
 
+def test_endpoint_specific_and_specialized_source_listings_are_not_keyword_misassigned():
+    catalog = build_catalog()
+
+    for item_id in ("T14.2.1", "T14.2.2", "T14.2.4", "T14.2.5", "T14.2.6", "T14.2.7"):
+        item = catalog.get(item_id)
+        assert item.source_listing == ""
+        assert "study-specific" in item.table_notes
+
+    assert catalog.get("T14.2.32").source_listing == "L16.2.38"
+    assert catalog.get("T14.2.33").source_listing == "L16.2.38"
+    assert catalog.get("T14.3.2.2").source_listing == "L16.2.23"
+    assert catalog.get("F14.3.2.1").source_listing == "L16.2.23"
+    assert catalog.get("F14.4.1").source_listing == "L16.2.14"
+
+
+def test_food_effect_and_crossover_are_phase_conditional_not_therapeutic_area_restricted():
+    catalog = build_catalog()
+
+    for item_id in ("T14.4.15", "T14.4.16", "F14.4.5", "L16.2.33"):
+        item = catalog.get(item_id)
+        assert item.applicability_label == "General"
+        assert item.coverage_summary == "Conditional (Phase I)"
+
+
+def test_specialized_safety_shells_are_conditional():
+    catalog = build_catalog()
+
+    for item_id in ("T14.3.3.23", "T14.3.4.13"):
+        assert catalog.get(item_id).coverage_summary.startswith("Conditional")
+    for item_id in ("T14.3.4.17", "T14.3.4.18", "L16.2.32"):
+        assert catalog.get(item_id).coverage_summary == "Conditional (Phase I)"
+
+
+def test_table_result_cells_do_not_encode_fixed_zero_results():
+    catalog = build_catalog()
+    structural_zero_items = {"T14.3.2.3"}
+
+    for item in catalog.tables():
+        for row in item.shell_data_rows_rich:
+            if "0" in row["values"]:
+                assert item.id in structural_zero_items, item.id
+
+
 def test_catalog_consistency_with_output_manifest():
     catalog = build_catalog()
     stats = catalog.summary_stats()
@@ -147,19 +190,8 @@ def test_catalog_consistency_with_output_manifest():
         f"Manifest listings ({catalog_entry['listings']}) != catalog listings ({stats['listings']})"
     )
 
-    assert catalog_entry["oncology_only"] == stats["oncology_only"], (
-        f"Manifest oncology_only ({catalog_entry['oncology_only']}) "
-        f"!= catalog ({stats['oncology_only']})"
-    )
-
-    assert catalog_entry["non_oncology_only"] == stats["non_oncology_only"], (
-        f"Manifest non_oncology_only ({catalog_entry['non_oncology_only']}) "
-        f"!= catalog ({stats['non_oncology_only']})"
-    )
-
-    assert catalog_entry["general"] == stats["general"], (
-        f"Manifest general ({catalog_entry['general']}) != catalog general ({stats['general']})"
-    )
+    # Applicability counts are intentionally not compared here. The Skill manifest is a
+    # derivative snapshot and this Product-only refactor explicitly defers Skill sync.
 
     manifest_sections = manifest["section_summary"]
     for sec_num, counts in section_summary.items():

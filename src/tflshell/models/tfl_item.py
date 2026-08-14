@@ -1,5 +1,6 @@
 """TFLItem dataclass — a single TFL shell definition v2.2."""
 
+import re
 from dataclasses import dataclass, field
 
 from tflshell import config
@@ -56,6 +57,13 @@ class TFLItem:
     shell_family: str = ""
     study_phase_scope: str = ""
     coverage_summary: str = ""
+
+    # Optional layout contract. Simple shells continue to use placeholder_columns only.
+    layout_profile: str = "standard-treatment"
+    header_rows: list[list[dict]] = field(default_factory=list)
+    column_alignments: list[str] = field(default_factory=list)
+    sorting_note: str = ""
+    denominator_note: str = ""
 
     @property
     def therapeutic_areas(self) -> list[str]:
@@ -148,8 +156,9 @@ class TFLItem:
         )
 
     def footnote_text(self) -> list[str]:
-        notes = list(self.footnotes)
-        if self.source_listing:
+        notes = [self._without_dictionary_version(note) for note in self.footnotes]
+        notes = [note for note in notes if note]
+        if self.tfl_type != TFLType.LISTING and self.source_listing:
             notes.insert(0, f"Source Listing: {self.source_listing}")
         if self.dataset_source:
             notes.append(
@@ -158,11 +167,43 @@ class TFLItem:
                 else f"Dataset: {self.dataset_source}."
             )
         if self.dictionary_versions:
-            dict_str = ", ".join(f"{k} {v}" for k, v in self.dictionary_versions.items())
-            notes.append(f"Coding dictionary versions: {dict_str}.")
+            notes.append(self._dictionary_version_note())
         if self.table_notes:
             notes.append(f"Note: {self.table_notes}")
         return notes
+
+    def _without_dictionary_version(self, note: str) -> str:
+        """Remove inline coding-version fragments before adding one controlled note."""
+        cleaned = note
+        for name, version in self.dictionary_versions.items():
+            escaped_name = re.escape(name)
+            escaped_version = re.escape(version)
+            cleaned = re.sub(
+                rf"(?i)(?<!\w){escaped_name}\s+(?:version\s+|v\s*)?{escaped_version}",
+                "",
+                cleaned,
+            )
+        cleaned = re.sub(r"\s+([,.;:])", r"\1", cleaned)
+        cleaned = re.sub(r"(?:\.\s*){2,}", ". ", cleaned)
+        cleaned = re.sub(r"(^|\s)[.;](?=\s|$)", r"\1", cleaned)
+        return re.sub(r"\s{2,}", " ", cleaned).strip(" ;")
+
+    def _dictionary_version_note(self) -> str:
+        versions = self.dictionary_versions
+        if "MedDRA" in versions and "CTCAE" in versions:
+            return (
+                f"Coding and grading: Adverse event terms were coded using MedDRA "
+                f"v{versions['MedDRA']} and graded using CTCAE v{versions['CTCAE']}."
+            )
+        if "MedDRA" in versions:
+            return (
+                f"Coding: Adverse event terms were coded using MedDRA "
+                f"v{versions['MedDRA']}."
+            )
+        if "CTCAE" in versions:
+            return f"Grading: Adverse events were graded using CTCAE v{versions['CTCAE']}."
+        dict_str = ", ".join(f"{name} {version}" for name, version in versions.items())
+        return f"Coding dictionary: {dict_str}."
 
     @property
     def is_figure_generated(self) -> bool:
@@ -171,6 +212,34 @@ class TFLItem:
     @property
     def has_shell_rows(self) -> bool:
         return bool(self.shell_rows)
+
+    @property
+    def effective_header_rows(self) -> list[list[dict]]:
+        """Return declarative header rows, falling back to the flat legacy header."""
+        if self.header_rows:
+            return self.header_rows
+        return [
+            [{"label": label, "colspan": 1, "rowspan": 1} for label in self.placeholder_columns]
+        ]
+
+    @property
+    def leaf_column_count(self) -> int:
+        """Return the physical column count represented by the layout contract."""
+        if not self.header_rows:
+            return len(self.placeholder_columns)
+        return max(
+            (sum(max(int(cell.get("colspan", 1)), 1) for cell in row) for row in self.header_rows),
+            default=0,
+        )
+
+    @property
+    def comparison_position(self) -> str:
+        """Reviewer-facing summary of where inferential comparisons are displayed."""
+        if self.layout_profile == "model-comparison":
+            return "Independent Treatment Comparison column group"
+        if self.layout_profile == "treatment-row":
+            return "Treatment groups displayed in rows"
+        return "Not separately grouped"
 
     @staticmethod
     def _normalize_row(row) -> dict:
