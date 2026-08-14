@@ -60,6 +60,9 @@ tests/
 - workbook sheet 与字段符合治理模型
 - 生成输出保持受控标题与标签
 - DOCX figure shell 在默认生成时应嵌入模拟 PNG image，而不只是文本占位
+- 多级表头的 colspan/rowspan 与跨页重复表头保留结构语义
+- 模型 comparison 独立于 treatment estimate，宽 listing 保留排序说明
+- 专用 figure 测试验证坐标轴、参考线和图形 mark，不只验证 PNG 非空
 
 ### 4.4 Cross-Output Consistency
 
@@ -82,6 +85,7 @@ tests/
 - Product 的格式契约或输出基线变化
 - catalog section builder 拆分或迁移
 - figure renderer registry 或 mock data factory 变化
+- layout profile、header spans、column alignment、sorting/denominator note 变化
 
 ## 6. 不要过度测试什么
 
@@ -123,12 +127,22 @@ tests/
 - `xlsx` 主表中的 Coverage Summary 与 catalog 一致
 - `xlsx` 主表中的 Population 与 catalog 一致
 - `xlsx` 主表中的 Applicability 与 catalog 一致
+- `xlsx` 主表中的 Layout Profile、Comparison Position、Sorting Note 与 Denominator Note 与 catalog 一致
 - `xlsx` 主表行数与推荐后的 shell 数量一致
 - `docx` 中 Heading 4 的 `Display Label + Title` 顺序与 catalog 一致
+- 每个 shell 仅有一条黑色粗体 Heading 4 标题，书签锚定在同一标题段，标题不重复
 - `docx` 中 shell heading 数量与推荐后的 shell 数量一致
 - `docx` 中推荐涉及的顶层 section heading 已出现
-- `docx` 中 header block 的 `Display Label / Title / Analysis Set` 顺序与 catalog 一致
-- `docx` 中每个 shell 的 `Protocol:` 与 `Sponsor:` 行已出现
+- `docx` 中合并的 `Display Label + Title` Heading 4 与 `Analysis Set` 顺序和 catalog 一致，且不存在独立重复标题行
+- `docx` 中每个 shell 的 `Sponsor:` 与 `Page X of Y` 位于同一行且页码使用右对齐 tab，`Protocol:` 位于下一行
+- flat/multilevel table 的第 1 个结构列表头左对齐，其余列及数据遵循声明式 alignment
+- Listing 的 `source_listing` 为空且输出脚注不出现 `Source Listing:`
+- 逐表核验受控缩写均在 `Abbreviations:` 中解释，百分比、模型、描述统计及时间事件展示存在与语义匹配的统计定义
+- 14.3.1 AE 表的 Grade 不出现在第 2 列以后的结果列，并在适用表中作为层级行出现
+- 通用 AE by-cycle、重复 full-frequency SOC/PT 和 relationship × grade 表不在受控 catalog 中
+- 每张表的 MedDRA/CTCAE version 在最终 footnote 中各只出现一次
+- 单一 by-visit endpoint 的 Visit 层级、模型 estimate 与 comparison 独立列组通过代表性回归
+- 显式 `Visit` / `Timepoint` / `Statistic` 列不得被 `xx` 类结果 placeholder 占位
 - `sop` 中标准标题与受控 scope 文案存在
 - `sop` 中三类正式输出的对齐要求文案存在
 - `sop` 中 generation、catalog validation、regression tests 的 quality gate 文案存在

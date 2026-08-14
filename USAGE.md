@@ -19,6 +19,9 @@ python -m tflshell generate
 python -m tflshell generate --no-figures
 ```
 
+XLSX catalog 中的 `Layout Profile`、`Comparison Position`、`Sorting Note` 与
+`Denominator Note` 用于联合复核临床展示与编程实现；它们不是工作流状态字段。
+
 校验 catalog：
 
 ```powershell

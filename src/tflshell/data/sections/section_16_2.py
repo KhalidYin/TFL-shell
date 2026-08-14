@@ -1442,7 +1442,7 @@ def build_16_2_items() -> list[TFLItem]:
             program_ref="l_dlt_review.sas",
             shell_family="Specialized Patient Listings",
             study_phase_scope="Phase I",
-            coverage_summary="Core (Phase I)",
+            coverage_summary="Conditional (Phase I)",
         )
     )
 
@@ -1453,7 +1453,6 @@ def build_16_2_items() -> list[TFLItem]:
             tfl_type=L,
             section=S162,
             sort_key=33,
-            non_oncology_only=True,
             population="PK Population in Food-Effect or Crossover Cohorts",
             placeholder_columns=[
                 "Site",
@@ -1479,7 +1478,7 @@ def build_16_2_items() -> list[TFLItem]:
             dataset_source="ADSL, ADPC",
             source_listing="L16.2.33",
             program_ref="l_food_effect_pk.sas",
-            shell_family="Non-Oncology Listings",
+            shell_family="Specialized Patient Listings",
             study_phase_scope="Phase I",
             coverage_summary="Conditional (Phase I)",
         )
@@ -1718,8 +1717,12 @@ def build_16_2_items() -> list[TFLItem]:
                 "Body Weight (kg)",
                 "BMI (kg/m2)",
             ],
+            layout_profile="listing-wide",
+            column_alignments=["left"] * 9,
+            sorting_note="Sorted by site, subject ID, visit sequence, and assessment date/time.",
             shell_rows=[
-                ["Subject listing rows omitted", "...", "...", "...", "...", "...", "...", "...", "..."],
+                ["xxx", "xxxx/xxx", "Group", "Protocol Visit", "DDMMMYYYY", "xx.x", "xx.x", "xx.x", "xx.x"],
+                ["[...]", "...", "...", "...", "...", "...", "...", "...", "..."],
             ],
             footnotes=[
                 "Metabolic parameters collected per protocol-specified schedule. "

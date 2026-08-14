@@ -9,14 +9,14 @@
     "16.2"
   ],
   "catalog_summary": {
-    "total": 206,
-    "tables": 140,
+    "total": 197,
+    "tables": 131,
     "figures": 28,
     "figures_generated": 28,
     "listings": 38,
     "oncology_only": 27,
-    "non_oncology_only": 25,
-    "general": 154
+    "non_oncology_only": 21,
+    "general": 149
   },
   "section_summary": {
     "14.1": {
@@ -37,8 +37,8 @@
     },
     "14.3": {
       "title": "Safety Analysis",
-      "total": 85,
-      "tables": 77,
+      "total": 76,
+      "tables": 68,
       "figures": 8,
       "figures_generated": 8,
       "listings": 0
@@ -80,10 +80,10 @@
           "1.3  Figure Shells"
         ],
         "tfl_shell_heading_style": "Heading 4",
-        "tfl_shell_heading_count": 206
+        "tfl_shell_heading_count": 197
       },
       "body_contract": {
-        "table_and_listing_body_table_count": 178,
+        "table_and_listing_body_table_count": 169,
         "required_intro_text": [
           "Controlled tables use `Group 1`, `Group 2`, and an optional separate ellipsis (`...`) expansion column",
           "must never be merged with Overall, HR, Total, or other analytic columns",
@@ -124,22 +124,27 @@
         "Program Reference",
         "Dictionary / Standard",
         "Placeholder Style",
+        "Layout Profile",
+        "Comparison Position",
+        "Sorting Note",
+        "Denominator Note",
         "Footnotes",
         "Remarks"
       ],
       "section_sheet_row_counts": {
         "14.1_Demographics": 17,
         "14.2_Efficacy": 45,
-        "14.3_Safety": 85,
+        "14.3_Safety": 76,
         "14.4_Special": 21,
         "16.2_Listings": 38
       },
-      "field_definition_count": 16,
+      "field_definition_count": 20,
       "usage_topics": [
         "Applicability",
         "Change management",
         "Coverage metadata",
         "Figures",
+        "Layout review",
         "Ordering",
         "Placeholder convention",
         "Scope",

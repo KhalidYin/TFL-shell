@@ -46,10 +46,35 @@ MASTER_COLUMNS = [
     "Program Reference",
     "Dictionary / Standard",
     "Placeholder Style",
+    "Layout Profile",
+    "Comparison Position",
+    "Sorting Note",
+    "Denominator Note",
     "Footnotes",
     "Remarks",
 ]
-MASTER_WIDTHS = [14, 18, 42, 10, 10, 22, 28, 32, 28, 18, 20, 22, 28, 24, 12, 30]
+MASTER_WIDTHS = [
+    14,
+    18,
+    42,
+    10,
+    10,
+    22,
+    28,
+    32,
+    28,
+    18,
+    20,
+    22,
+    28,
+    24,
+    20,
+    32,
+    40,
+    40,
+    12,
+    30,
+]
 SECTION_SHEETS = [
     ("14.1_Demographics", Section.SEC_14_1),
     ("14.2_Efficacy", Section.SEC_14_2),
@@ -172,6 +197,26 @@ class XlsxTocGenerator:
                 "Shell convention for non-first-column content.",
                 "First column preserved; non-structural cells use style-appropriate shell placeholders such as XX or xx (xx.x)",
             ],
+            [
+                "Layout Profile",
+                "Declarative layout family used by the DOCX renderer and programming review.",
+                "model-comparison / listing-wide",
+            ],
+            [
+                "Comparison Position",
+                "Where an inferential comparison is displayed relative to treatment estimates.",
+                "Independent Treatment Comparison column group",
+            ],
+            [
+                "Sorting Note",
+                "Declared row sort order for listings or other order-sensitive outputs.",
+                "Sorted by site, subject ID, visit sequence, and assessment date/time.",
+            ],
+            [
+                "Denominator Note",
+                "Declared denominator convention when it cannot be inferred safely from the header.",
+                "Percentages use subjects with non-missing assessment at each visit.",
+            ],
             ["Footnotes", "Whether shell-specific footnotes are present.", "Yes"],
             [
                 "Remarks",
@@ -206,7 +251,11 @@ class XlsxTocGenerator:
             ],
             [
                 "Placeholder convention",
-                "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Controlled treatment/group patterns use Group 1, Group 2, and may retain a separate ellipsis (...) expansion column; that expansion column must remain distinct and must not be merged with Overall, Total, HR, or other analytic columns. Header sample sizes remain generic rather than concrete.",
+                "Tables and listings preserve structural examples in the first column and use adaptive shell placeholders in non-structural cells. Treatment groups may appear as columns, rows, or grouped subheaders according to the analysis and available width. Model estimates and treatment comparisons remain independently identifiable. Header sample sizes remain generic rather than concrete.",
+            ],
+            [
+                "Layout review",
+                "Review Layout Profile together with Comparison Position, Sorting Note, and Denominator Note. These fields describe implementable display structure; they are not workflow status fields.",
             ],
             [
                 "Figures",
@@ -272,12 +321,16 @@ class XlsxTocGenerator:
             item.program_ref,
             dict_str,
             item.placeholder_summary,
+            item.layout_profile,
+            item.comparison_position,
+            item.sorting_note,
+            item.denominator_note,
             "Yes" if item.footnote_text() else "No",
             "; ".join(remarks),
         ]
 
     def _write_headers(self, ws, columns, widths):
-        for col_idx, (name, width) in enumerate(zip(columns, widths), 1):
+        for col_idx, (name, width) in enumerate(zip(columns, widths, strict=True), 1):
             cell = ws.cell(row=1, column=col_idx, value=name)
             cell.fill = HEADER_FILL
             cell.font = HEADER_FONT

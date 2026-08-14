@@ -8,7 +8,6 @@ from openpyxl import load_workbook
 from tflshell.models.catalog import TFLCatalog
 from tflshell.models.enums import Section, TFLType
 
-
 DOCX_SECTION_HEADINGS = {
     "14.1": "14.1  Demographics and Baseline Characteristics",
     "14.2": "14.2  Efficacy Analysis",
@@ -72,6 +71,10 @@ XLSX_CATALOG_COLUMNS = [
     "Program Reference",
     "Dictionary / Standard",
     "Placeholder Style",
+    "Layout Profile",
+    "Comparison Position",
+    "Sorting Note",
+    "Denominator Note",
     "Footnotes",
     "Remarks",
 ]
@@ -82,6 +85,7 @@ XLSX_USAGE_TOPICS = {
     "Coverage metadata",
     "Applicability",
     "Placeholder convention",
+    "Layout review",
     "Figures",
     "Ordering",
     "Word TOC",
@@ -286,9 +290,9 @@ def build_xlsx_workbook_contract(scoped_catalog: TFLCatalog, workbook_path: str)
         usage_topics_present = XLSX_USAGE_TOPICS.issubset(set(usage_rows))
         placeholder_text = usage_rows.get("Placeholder convention", "")
         usage_placeholder_contract_present = (
-            "Group 1, Group 2" in placeholder_text
-            and "ellipsis (...)" in placeholder_text
-            and "must not be merged with Overall, Total, HR" in placeholder_text
+            "Treatment groups may appear as columns, rows, or grouped subheaders" in placeholder_text
+            and "Model estimates and treatment comparisons remain independently identifiable"
+            in placeholder_text
         )
 
     change_log_columns_match = False
@@ -342,11 +346,13 @@ def build_docx_shell_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tup
     all_paragraphs = _collect_docx_paragraph_text(doc)
     heading4_paragraphs = _collect_docx_paragraph_text(doc, "Heading 4")
     heading2_paragraphs = set(_collect_docx_paragraph_text(doc, "Heading 2"))
-    display_label_lines = [text for text in all_paragraphs if text in expected_display_labels]
-    title_lines = [text for text in all_paragraphs if text in expected_titles]
+    duplicate_display_label_lines = [text for text in all_paragraphs if text in expected_display_labels]
+    duplicate_title_lines = [text for text in all_paragraphs if text in expected_titles]
     analysis_set_lines = [text for text in all_paragraphs if text.startswith("Analysis Set: ")]
     protocol_lines = [text for text in all_paragraphs if text.startswith("Protocol: ")]
     sponsor_lines = [text for text in all_paragraphs if text.startswith("Sponsor: ")]
+    sponsor_page_lines = [text for text in sponsor_lines if "\tPage " in text]
+    study_title_lines = [text for text in all_paragraphs if text == "[Study Title / Compound Name]"]
 
     checks = {
         "present": True,
@@ -355,21 +361,24 @@ def build_docx_shell_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tup
         "heading_count_matches_catalog": len(heading4_paragraphs) == len(expected_heading_labels),
         "heading_labels_match_catalog": heading4_paragraphs == expected_heading_labels,
         "section_headings_cover_recommendation": expected_section_headings.issubset(heading2_paragraphs),
-        "display_label_lines_match_catalog": display_label_lines == expected_display_labels,
-        "title_lines_match_catalog": title_lines == expected_titles,
+        "no_duplicate_display_label_lines": not duplicate_display_label_lines,
+        "no_duplicate_title_lines": not duplicate_title_lines,
         "analysis_set_lines_match_catalog": analysis_set_lines == expected_populations,
         "protocol_lines_present": len(protocol_lines) == len(expected_items),
         "sponsor_lines_present": len(sponsor_lines) == len(expected_items),
+        "sponsor_and_page_share_line": len(sponsor_page_lines) == len(expected_items),
+        "study_title_lines_present": len(study_title_lines) == len(expected_items),
     }
     reference = _declared_reference(
         detail_keys=[
             "Heading 4",
             "Section Heading",
-            "Display Label",
-            "Title",
+            "Combined Display Label + Title",
+            "No Duplicate Title Lines",
             "Analysis Set",
             "Protocol",
-            "Sponsor",
+            "Sponsor + Page",
+            "Study Title",
         ],
         notes=[
             "按 DOCX 实际生成顺序构造期望项，兼容 14.3 子分节重排。",

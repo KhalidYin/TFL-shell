@@ -80,6 +80,7 @@
 - `src/tflshell/data/common.py`：catalog 共享 section/type/header/ellipsis 模板常量
 - `src/tflshell/data/sections/`：按 CSR section 拆分的 catalog builder，避免所有 TFL 表格定义集中在单一脚本
 - `src/tflshell/figures/registry.py`：figure shell 的 renderer 注册、mock data 构造与 PNG buffer 生成入口
+- `src/tflshell/models/tfl_item.py`：兼容式 layout contract，包括多级表头、列对齐、comparison 位置与排序/分母说明
 - `Skill/tfls-shell/`：正式可复用 Skill 源目录
 - `Skill/tfl-governed-shell-workflow/`：历史 workflow skill 归档，不是当前正式交付
 - `scripts/`：仓库级维护脚本，包括 Skill 校验、回归基线校验与安装脚本
@@ -139,6 +140,7 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - `product-as-source`：Product 是格式与行为的主要维护源
 - `skill-for-reuse`：SKILL 是复用入口，不是仓库实现别名
 - `cross-output-alignment`：DOCX、XLSX、SOP 与文档口径保持一致
+- `layout-as-contract`：layout 同时服务于临床审阅、信息直观度和编程实现，不只是模型结果的平铺
 
 ## 10. 已知问题与方向
 
@@ -154,7 +156,7 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - `TFLs-Shell SKILL` 的 `recommend_then_generate` 已返回 schema-first 的 `validation_results`
 - `xlsx` 主表最小内容级一致性检查已覆盖 TFL ID、Display Label、Section、Shell Family、Applicability 与行数
 - `xlsx` 主表现已进一步覆盖 Type、Study Phase Scope、Coverage Summary、Population 等治理字段
-- `docx` 主模板现已进一步覆盖 header block 的 `Display Label / Title / Analysis Set` 顺序以及 `Protocol / Sponsor` 行存在性
+- `docx` 主模板现已覆盖单一 `Display Label + Title` Heading/书签、`Sponsor + Page X of Y` 同行、下一行 `Protocol` 以及 `Analysis Set` 顺序
 - `sop` 现已进一步覆盖头表关键标签、`CONFIDENTIAL` 分类值、关键 Heading 结构与 Appendix heading
 - 上述细节 contract 已开始从入口脚本中抽离到独立 helper，并可通过结构化字段声明本次实际引用内容
 - `TFLs-Shell SKILL` 包内已开始补齐最小自包含资产，包括 contract registry、catalog 子集、最小依赖清单与样例请求
@@ -167,6 +169,11 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - 上述检查已同步进入测试契约，作为当前 Skill 输出对齐的最小基线
 - catalog 已拆分为 `data/common.py` + `data/sections/*.py`，`definitions.py` 只保留治理后处理和 `build_catalog()` 编排
 - figure shell 已通过 `figures/registry.py` 统一注册 renderer 并在 DOCX 中嵌入模拟 PNG，当前正式 DOCX 输出包含 28 个 figure image
+- DOCX table renderer 已支持声明式多级表头、跨页重复表头与按列语义对齐；模型 comparison 可独立成组
+- XLSX catalog 已增加 Layout Profile、Comparison Position、Sorting Note 与 Denominator Note 作为最小布局审阅字段
+- table-layout 复核同时判断临床/统计报告合理性、编程可实现性和信息直观度；逐表审核矩阵保留初始范围、最终处置及条件性使用说明
+- Product→Skill 同步必须包含 table-layout contract、DOCX/XLSX contract helper、catalog subset、manifest 与基线验证，不能只同步数量
+- source listing 以 shell 显式声明为准，仅在无歧义时使用受控 fallback；study-specific endpoint 不再误指通用 protocol-deviation listing
 - `T14.1.1` 已限定为通用人口学/体格基线表；肿瘤疾病分期、ECOG 等内容集中到 `T14.1.2` 并标记为 `Oncology only`
 
 ## 11. 风险提示

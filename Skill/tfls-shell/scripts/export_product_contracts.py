@@ -28,8 +28,6 @@ def _bootstrap_repo_imports() -> None:
 
 _bootstrap_repo_imports()
 
-from tflshell import __version__  # noqa: E402
-from tflshell.data.definitions import build_catalog  # noqa: E402
 from alignment_contracts import (  # noqa: E402
     DOCX_EXPECTED_MARGIN_INCHES,
     DOCX_EXPECTED_PAGE_HEIGHT_INCHES,
@@ -49,6 +47,8 @@ from alignment_contracts import (  # noqa: E402
     XLSX_USAGE_TOPICS,
 )
 
+from tflshell import __version__  # noqa: E402
+from tflshell.data.definitions import build_catalog  # noqa: E402
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
@@ -162,11 +162,12 @@ def build_contract_registry() -> dict:
                 "detail_keys": [
                     "Heading 4",
                     "Section Heading",
-                    "Display Label",
-                    "Title",
+                    "Combined Display Label + Title",
+                    "No Duplicate Title Lines",
                     "Analysis Set",
                     "Protocol",
-                    "Sponsor",
+                    "Sponsor + Page",
+                    "Study Title",
                 ],
                 "notes": [
                     "用于声明 shell 模板 heading 与 header block 的稳定 contract。",

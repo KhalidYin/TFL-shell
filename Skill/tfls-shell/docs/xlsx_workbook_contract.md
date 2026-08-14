@@ -24,7 +24,7 @@ workbook 必须按顺序包含以下 9 个 sheet：
 
 ## 3. Catalog Sheet 字段
 
-`TOC_Master` 与每个 section sheet 必须使用同一组 16 个 catalog 字段：
+`TOC_Master` 与每个 section sheet 必须使用同一组 20 个 catalog 字段：
 
 - `TFL ID`
 - `Display Label`
@@ -40,6 +40,10 @@ workbook 必须按顺序包含以下 9 个 sheet：
 - `Program Reference`
 - `Dictionary / Standard`
 - `Placeholder Style`
+- `Layout Profile`
+- `Comparison Position`
+- `Sorting Note`
+- `Denominator Note`
 - `Footnotes`
 - `Remarks`
 
@@ -54,6 +58,7 @@ workbook 必须按顺序包含以下 9 个 sheet：
 - coverage metadata
 - applicability
 - placeholder convention
+- layout review
 - figures
 - ordering
 - Word TOC
@@ -67,6 +72,6 @@ workbook 必须按顺序包含以下 9 个 sheet：
 - `Change Description`
 - `Author`
 
-## 5. Placeholder 指引
+## 5. Layout 与 Placeholder 指引
 
-Usage Guide 必须说明：受控 treatment/group 表头使用 `Group 1`、`Group 2`，并可保留独立的 `...` 扩展列。扩展列不得与 `Overall`、`Total`、`HR` 或其他 analytic 列合并。
+Usage Guide 必须说明：treatment group 可按分析目的放在列、行或 grouped subheader；结构维度保留在左侧；model estimate 与 treatment comparison 保持独立可识别。`Layout Profile`、`Comparison Position`、`Sorting Note` 与 `Denominator Note` 用于解释可实现的展示结构，不是 workflow 状态字段。

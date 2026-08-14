@@ -41,11 +41,12 @@
       "detail_keys": [
         "Heading 4",
         "Section Heading",
-        "Display Label",
-        "Title",
+        "Combined Display Label + Title",
+        "No Duplicate Title Lines",
         "Analysis Set",
         "Protocol",
-        "Sponsor"
+        "Sponsor + Page",
+        "Study Title"
       ],
       "notes": [
         "用于声明 shell 模板 heading 与 header block 的稳定 contract。",
