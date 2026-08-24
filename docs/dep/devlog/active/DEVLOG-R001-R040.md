@@ -124,6 +124,6 @@
 3. 由用户审核并合并远端 draft PR；本任务不代替用户合并。
 
 #### Files Changed / Commits
-- `src/tflshell/data/`, `src/tflshell/models/tfl_item.py`, `src/tflshell/docx_utils/three_line_table.py`（modified）— pending release commit
-- `tests/unit/`, `tests/integration/`, `docs/main/`, `docs/dep/`, `Skill/tfls-shell/`（modified/added）— pending release commit
+- `src/tflshell/data/`, `src/tflshell/models/tfl_item.py`, `src/tflshell/docx_utils/three_line_table.py`（modified）— commit `f48f89d`
+- `tests/unit/`, `tests/integration/`, `docs/main/`, `docs/dep/`, `Skill/tfls-shell/`（modified/added）— commit `f48f89d`
 - `output/TFL_Shell_Template_v2.1.0_REVIEW_R4.docx`, `output/TFL_TOC_v2.1.0_REVIEW_R4.xlsx`, `output/TFL_Shell_SOP_v2.1.0_REVIEW_R4.docx`（generated, ignored）
