@@ -28,8 +28,6 @@ def _bootstrap_repo_imports() -> None:
 
 _bootstrap_repo_imports()
 
-from tflshell import __version__  # noqa: E402
-from tflshell.data.definitions import build_catalog  # noqa: E402
 from alignment_contracts import (  # noqa: E402
     DOCX_EXPECTED_MARGIN_INCHES,
     DOCX_EXPECTED_PAGE_HEIGHT_INCHES,
@@ -49,6 +47,8 @@ from alignment_contracts import (  # noqa: E402
     XLSX_USAGE_TOPICS,
 )
 
+from tflshell import __version__  # noqa: E402
+from tflshell.data.definitions import build_catalog  # noqa: E402
 
 PACKAGE_ROOT = Path(__file__).resolve().parents[1]
 
@@ -78,13 +78,26 @@ def build_output_manifest() -> dict:
                     "tfl_shell_heading_count": len(catalog.all()),
                 },
                 "body_contract": {
-                    "table_and_listing_body_table_count": len([
-                        item for item in catalog.all()
-                        if item.tfl_type.value in ("Table", "Listing")
-                    ]),
+                    "table_and_listing_body_table_count": len(
+                        [
+                            item
+                            for item in catalog.all()
+                            if item.tfl_type.value in ("Table", "Listing")
+                        ]
+                    ),
                     "required_intro_text": DOCX_REQUIRED_INTRO_TEXT,
                     "controlled_group_headers": ["Group 1", "Group 2"],
                     "separate_expansion_column": "...",
+                    "continuous_endpoint_layout": {
+                        "row_hierarchy": "Visit > Parameter > Treatment Group",
+                        "baseline_column": "separate",
+                        "difference_subheaders": [
+                            "Within-Group Difference",
+                            "Between-Group Difference",
+                        ],
+                        "comparison_mapping": "non-reference treatment row",
+                    },
+                    "summary_row_hierarchy": "Parameter > Visit/Timepoint > Statistic",
                 },
             },
             "xlsx_toc_workbook": {
@@ -162,11 +175,12 @@ def build_contract_registry() -> dict:
                 "detail_keys": [
                     "Heading 4",
                     "Section Heading",
-                    "Display Label",
-                    "Title",
+                    "Combined Display Label + Title",
+                    "No Duplicate Title Lines",
                     "Analysis Set",
                     "Protocol",
-                    "Sponsor",
+                    "Sponsor + Page",
+                    "Study Title",
                 ],
                 "notes": [
                     "用于声明 shell 模板 heading 与 header block 的稳定 contract。",
@@ -182,10 +196,14 @@ def build_contract_registry() -> dict:
                     "Usage Notes",
                     "Body Table Count",
                     "Group Headers",
+                    "Continuous Treatment Rows",
+                    "Within / Between Difference Subheaders",
+                    "Non-Reference Row Comparison",
+                    "Hierarchical Summary Rows",
                 ],
                 "notes": [
                     "用于声明 DOCX 主模板页面、说明文本和表格 layout contract。",
-                    "覆盖 Product 已实现的三线表和受控组别展示语义。",
+                    "覆盖 Product 已实现的三线表、连续终点治疗组行/比较映射及 14.3/14.4 层级汇总语义。",
                 ],
             },
             "sop_governance_doc": {

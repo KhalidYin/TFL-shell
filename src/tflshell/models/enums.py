@@ -51,6 +51,11 @@ class FigureType(Enum):
     BOX_PLOT = "box_plot"
     LONGITUDINAL = "longitudinal"
     CDF = "cdf"
+    EDISH = "edish"
+    LAB_TOXICITY_HEATMAP = "lab_toxicity_heatmap"
+    CONCENTRATION_QTC = "concentration_qtc"
+    PK_PROFILE = "pk_profile"
+    FOOD_EFFECT_PROFILE = "food_effect_profile"
 
 
 class TFLStatus(Enum):

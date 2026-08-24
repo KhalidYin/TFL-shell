@@ -126,7 +126,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                     "content": [
                         "Tables and listings preserve first-column structural examples such as row labels, categories, terms, or subject-structure identifiers needed to show the intended layout.",
                         "Non-structural cells use shell-style placeholders such as XX, xx (xx.x), x.xxx, or CI-like formats as appropriate to the intended display. No mock numeric results, subject-level details, or fabricated derived values are permitted in governed shell outputs.",
-                        "Controlled tables should use `Group 1`, `Group 2`, and an optional separate ellipsis (`...`) expansion column. The expansion column must remain distinct and must not be merged with Overall, HR, Total, or other analytic columns. Header sample sizes must remain generic (for example N=xx) rather than concrete counts.",
+                        "Treatment groups may be displayed as columns, rows, or grouped subheaders according to the analysis, information density, and programming feasibility. Model estimates and treatment comparisons must remain independently identifiable and must not be placed under a treatment group merely to preserve a uniform template. Header sample sizes must remain generic (for example N=xx) rather than concrete counts.",
                         "Listing shells must not introduce fabricated subject-level records; only structural examples and result-free placeholders are permitted.",
                         "If a shell requires placeholder headers before study-specific terminology is finalized, neutral labels may be used temporarily so long as they remain governance-appropriate and result-free.",
                     ],
@@ -144,7 +144,7 @@ def build_sop_content(version: str = "1.0") -> SOPDocument:
                     "title": "Document Formatting Rules",
                     "content": [
                         "Tables use the three-line table format (三线表) with no vertical gridlines and no internal horizontal gridlines between body rows.",
-                        "All shell header and body cells are left-aligned to preserve review readability and consistent shell semantics.",
+                        "Alignment follows column semantics: structural labels are generally left-aligned, numeric/statistical result columns are centered or decimal-aligned where supported, and listing identifiers or text fields may remain left-aligned. Multi-level headers must preserve their declared column spans.",
                         "Each TFL page includes sponsor, protocol, title, analysis set, and page numbering in the header block.",
                         "The main DOCX and SOP use Word-native automatic Table of Contents fields. Users must update fields in Word after opening the document to populate the TOC.",
                         "Each TFL should remain on one page when reasonably possible through spacing control and layout tuning; this is a best-effort formatting rule rather than an absolute guarantee for every shell.",

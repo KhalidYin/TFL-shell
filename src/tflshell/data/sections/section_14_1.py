@@ -238,7 +238,13 @@ def build_14_1_items() -> list[TFLItem]:
             section=S141,
             sort_key=4,
             population="Safety Population",
-            placeholder_columns=H2_SOCPT,
+            placeholder_columns=[
+                "ATC Level 3\nPreferred Name",
+                "Group 1\n(N=XX)\nn (%)",
+                "Group 2\n(N=XX)\nn (%)",
+                "...",
+                "Overall\n(N=XX)\nn (%)",
+            ],
             shell_rows=[
                 ["Any Prior Medication", "xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"],
                 ["Drugs for acid-related disorders", "xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"],
@@ -429,7 +435,13 @@ def build_14_1_items() -> list[TFLItem]:
             section=S141,
             sort_key=9,
             population="Safety Population",
-            placeholder_columns=H2_SOCPT,
+            placeholder_columns=[
+                "ATC Level 2\nPreferred Name",
+                "Group 1\n(N=XX)\nn (%)",
+                "Group 2\n(N=XX)\nn (%)",
+                "...",
+                "Overall\n(N=XX)\nn (%)",
+            ],
             shell_rows=[
                 ["Prior Medications — Any", "xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"],
                 ["Concomitant Medications — Any", "xx (xx.x)", "xx (xx.x)", "...", "xx (xx.x)"],

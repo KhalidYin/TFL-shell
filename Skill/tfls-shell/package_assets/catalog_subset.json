@@ -7,7 +7,7 @@
     "14.4",
     "16.2"
   ],
-  "item_count": 206,
+  "item_count": 197,
   "items": [
     {
       "id": "T14.1.1",
@@ -241,7 +241,7 @@
       "coverage_summary": "Core (Phase II-III); Conditional (Phase I)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.2",
@@ -254,7 +254,7 @@
       "coverage_summary": "Core (Phase II-III); Conditional (Phase I)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.4",
@@ -267,7 +267,7 @@
       "coverage_summary": "Core (Phase II-III); Conditional (Phase I)",
       "population": "ITT and PP Populations",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.5",
@@ -280,7 +280,7 @@
       "coverage_summary": "Core (Phase II-III); Conditional (Phase I)",
       "population": "Per-Protocol (PP) Population",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.6",
@@ -293,7 +293,7 @@
       "coverage_summary": "Core (Phase II-III); Conditional (Phase I)",
       "population": "ITT Population",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.7",
@@ -306,7 +306,7 @@
       "coverage_summary": "Core (Phase II-III); Conditional (Phase I)",
       "population": "ITT Population",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.8",
@@ -423,7 +423,7 @@
       "coverage_summary": "Core (Oncology)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Oncology only",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "T14.2.19",
@@ -501,7 +501,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.37"
+      "source_listing": "L16.2.34"
     },
     {
       "id": "F14.2.2",
@@ -735,7 +735,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Full Analysis Set (FAS)",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.2"
+      "source_listing": "L16.2.38"
     },
     {
       "id": "F14.2.11",
@@ -761,7 +761,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Full Analysis Set (FAS)",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.37"
+      "source_listing": "L16.2.38"
     },
     {
       "id": "F14.2.12",
@@ -813,7 +813,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Full Analysis Set (FAS)",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.2"
+      "source_listing": "L16.2.38"
     },
     {
       "id": "T14.3.1.1",
@@ -883,7 +883,7 @@
     {
       "id": "T14.3.2.2",
       "display_label": "Table 14.3.2.2",
-      "title": "Hy's Law Cases — Liver Chemistry Screening",
+      "title": "Summary of Subjects Meeting Potential Hy's Law Laboratory Criteria",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -891,7 +891,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population with Baseline and Post-Baseline Labs",
       "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": "L16.2.23"
     },
     {
       "id": "T14.3.3.2",
@@ -922,7 +922,7 @@
     {
       "id": "T14.3.1.3",
       "display_label": "Table 14.3.1.3",
-      "title": "TEAEs by SOC, PT, and Maximum CTCAE Grade (Group 1)",
+      "title": "TEAEs by SOC, PT, and Maximum CTCAE Grade",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -974,7 +974,7 @@
     {
       "id": "T14.3.1.4",
       "display_label": "Table 14.3.1.4",
-      "title": "Drug-Related TEAEs by SOC, PT, and Relationship",
+      "title": "Drug-Related TEAEs by SOC and PT",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -987,7 +987,7 @@
     {
       "id": "T14.3.3.4",
       "display_label": "Table 14.3.3.4",
-      "title": "Laboratory Abnormalities — Grade >=3 Listing",
+      "title": "Summary of Grade >=3 Laboratory Abnormalities by Parameter",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -1013,7 +1013,7 @@
     {
       "id": "T14.3.2.4",
       "display_label": "Table 14.3.2.4",
-      "title": "Hy's Law — Component Parameters Detail at Peak Value per Subject",
+      "title": "Summary of Peak Liver Chemistry Threshold Categories",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -1021,7 +1021,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population with Baseline and >=1 Post-Baseline Labs",
       "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "T14.3.1.5",
@@ -1065,7 +1065,7 @@
     {
       "id": "T14.3.2.5",
       "display_label": "Table 14.3.2.5",
-      "title": "Deaths — Primary and Secondary Causes with Narrative Cross-Reference",
+      "title": "Summary of Deaths by Primary Cause",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -1125,7 +1125,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population with Baseline and Post-Baseline Labs",
       "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": "L16.2.23"
     },
     {
       "id": "T14.3.1.7",
@@ -1167,19 +1167,6 @@
       "source_listing": "L16.2.8"
     },
     {
-      "id": "T14.3.1.8",
-      "display_label": "Table 14.3.1.8",
-      "title": "TEAEs Occurring in >=5% of Subjects by PT",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
-    },
-    {
       "id": "T14.3.3.8",
       "display_label": "Table 14.3.3.8",
       "title": "Laboratory Parameters — Clinically Significant Abnormalities Summary",
@@ -1204,19 +1191,6 @@
       "population": "Safety Population with ECG Data",
       "applicability": "General",
       "source_listing": "L16.2.9"
-    },
-    {
-      "id": "T14.3.1.9",
-      "display_label": "Table 14.3.1.9",
-      "title": "TEAEs by Cycle / Treatment Period",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
     },
     {
       "id": "T14.3.3.9",
@@ -1369,7 +1343,7 @@
       "section": "14.3",
       "shell_family": "Phase I Safety and Dose Escalation",
       "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
+      "coverage_summary": "Conditional (Protocol-Defined Subset)",
       "population": "Safety Population (Subset with Holter Data)",
       "applicability": "General",
       "source_listing": "L16.2.9"
@@ -1437,7 +1411,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.2"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "T14.3.4.15",
@@ -1453,19 +1427,6 @@
       "source_listing": "L16.2.24"
     },
     {
-      "id": "T14.3.1.16",
-      "display_label": "Table 14.3.1.16",
-      "title": "TEAEs by Worst CTCAE Grade and System Organ Class",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
-    },
-    {
       "id": "T14.3.3.16",
       "display_label": "Table 14.3.3.16",
       "title": "Lipid Panel — NCEP ATP III Category Shift (Baseline to Worst Post-BL)",
@@ -1476,7 +1437,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.2"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "T14.3.4.16",
@@ -1505,19 +1466,6 @@
       "source_listing": "L16.2.8"
     },
     {
-      "id": "T14.3.1.17",
-      "display_label": "Table 14.3.1.17",
-      "title": "TEAEs by Preferred Term — Full Frequency Listing (All PTs)",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
-    },
-    {
       "id": "T14.3.3.17",
       "display_label": "Table 14.3.3.17",
       "title": "Thyroid Function (TSH, Free T3, Free T4) — Change from Baseline by Visit",
@@ -1528,20 +1476,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.2"
-    },
-    {
-      "id": "T14.3.1.18",
-      "display_label": "Table 14.3.1.18",
-      "title": "TEAEs — Maximum Severity by Relationship to Study Drug",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "T14.3.3.18",
@@ -1554,7 +1489,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.2"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "F14.3.4.2",
@@ -1619,20 +1554,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.2"
-    },
-    {
-      "id": "T14.3.1.21",
-      "display_label": "Table 14.3.1.21",
-      "title": "TEAEs by Preferred Term and Maximum CTCAE Grade — Group 2",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "T14.3.3.21",
@@ -1646,19 +1568,6 @@
       "population": "Safety Population",
       "applicability": "General",
       "source_listing": "L16.2.27"
-    },
-    {
-      "id": "T14.3.1.22",
-      "display_label": "Table 14.3.1.22",
-      "title": "TEAEs by Cycle — Detailed On-Treatment Period Analysis",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
     },
     {
       "id": "T14.3.3.22",
@@ -1694,7 +1603,7 @@
       "section": "14.3",
       "shell_family": "Safety",
       "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
+      "coverage_summary": "Conditional (Protocol-Defined Subset)",
       "population": "Safety Population (Subset with Cytokine Data)",
       "applicability": "General",
       "source_listing": "L16.2.28"
@@ -1707,7 +1616,7 @@
       "section": "14.3",
       "shell_family": "Safety",
       "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
+      "coverage_summary": "Conditional (Protocol-Defined Subset)",
       "population": "Safety Population",
       "applicability": "Oncology only",
       "source_listing": "L16.2.4"
@@ -1754,7 +1663,7 @@
     {
       "id": "T14.3.1.26",
       "display_label": "Table 14.3.1.26",
-      "title": "TEAE Outcomes by System Organ Class — Resolved / Recovering / Not Recovered",
+      "title": "TEAE Outcomes by System Organ Class",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -1780,13 +1689,13 @@
     {
       "id": "T14.3.1.27",
       "display_label": "Table 14.3.1.27",
-      "title": "Late-Onset TEAEs (>90 Days from First Dose) by SOC and PT",
+      "title": "Late-Onset TEAEs by SOC and PT",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
       "study_phase_scope": "Phase I-III",
       "coverage_summary": "Core",
-      "population": "Safety Population with >90 Days Exposure",
+      "population": "Safety Population Evaluable for Protocol-Defined Late-Onset TEAEs",
       "applicability": "General",
       "source_listing": "L16.2.4"
     },
@@ -1830,19 +1739,6 @@
       "source_listing": ""
     },
     {
-      "id": "T14.3.1.29",
-      "display_label": "Table 14.3.1.29",
-      "title": "Treatment-Emergent SAEs by PT and ICH E2A Criterion — Group 1",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": ""
-    },
-    {
       "id": "F14.3.3.4",
       "display_label": "Figure 14.3.3.4",
       "title": "Renal Safety Panel — eGFR Trajectory Over Time by Treatment Arm",
@@ -1853,20 +1749,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": ""
-    },
-    {
-      "id": "T14.3.1.30",
-      "display_label": "Table 14.3.1.30",
-      "title": "Recurrent TEAEs — Subjects with Same PT >=2 Occurrences",
-      "type": "Table",
-      "section": "14.3",
-      "shell_family": "Safety",
-      "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
-      "population": "Safety Population",
-      "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": "L16.2.7"
     },
     {
       "id": "F14.3.3.5",
@@ -1884,7 +1767,7 @@
     {
       "id": "T14.3.1.31",
       "display_label": "Table 14.3.1.31",
-      "title": "TEAEs During Follow-up Period (>30 Days Post Last Dose)",
+      "title": "Adverse Events During the Protocol-Defined Follow-up Period",
       "type": "Table",
       "section": "14.3",
       "shell_family": "Safety",
@@ -1902,7 +1785,7 @@
       "section": "14.3",
       "shell_family": "Phase I Safety and Dose Escalation",
       "study_phase_scope": "Phase I",
-      "coverage_summary": "Core (Phase I)",
+      "coverage_summary": "Conditional (Phase I)",
       "population": "DLT-Evaluable Population",
       "applicability": "General",
       "source_listing": "L16.2.32"
@@ -1915,7 +1798,7 @@
       "section": "14.3",
       "shell_family": "Phase I Safety and Dose Escalation",
       "study_phase_scope": "Phase I",
-      "coverage_summary": "Core (Phase I)",
+      "coverage_summary": "Conditional (Phase I)",
       "population": "All Treated Subjects in Dose Escalation",
       "applicability": "General",
       "source_listing": "L16.2.32"
@@ -2125,7 +2008,7 @@
       "study_phase_scope": "Phase I",
       "coverage_summary": "Conditional (Phase I)",
       "population": "PK Population in Food-Effect Cohorts",
-      "applicability": "Non-Oncology only",
+      "applicability": "General",
       "source_listing": "L16.2.33"
     },
     {
@@ -2151,7 +2034,7 @@
       "study_phase_scope": "Phase I",
       "coverage_summary": "Conditional (Phase I)",
       "population": "PK Population in Crossover / Relative Bioavailability Cohorts",
-      "applicability": "Non-Oncology only",
+      "applicability": "General",
       "source_listing": "L16.2.33"
     },
     {
@@ -2190,8 +2073,8 @@
       "study_phase_scope": "Phase I",
       "coverage_summary": "Conditional (Phase I)",
       "population": "PK Population in Food-Effect Cohorts",
-      "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.14"
+      "applicability": "General",
+      "source_listing": "L16.2.33"
     },
     {
       "id": "L16.2.1",
@@ -2204,7 +2087,7 @@
       "coverage_summary": "Core",
       "population": "All Screened Subjects",
       "applicability": "General",
-      "source_listing": "L16.2.1"
+      "source_listing": ""
     },
     {
       "id": "L16.2.2",
@@ -2217,7 +2100,7 @@
       "coverage_summary": "Core",
       "population": "All Randomized Subjects",
       "applicability": "General",
-      "source_listing": "L16.2.2"
+      "source_listing": ""
     },
     {
       "id": "L16.2.3",
@@ -2230,7 +2113,7 @@
       "coverage_summary": "Core",
       "population": "All Enrolled Subjects",
       "applicability": "General",
-      "source_listing": "L16.2.3"
+      "source_listing": ""
     },
     {
       "id": "L16.2.4",
@@ -2243,7 +2126,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.4"
+      "source_listing": ""
     },
     {
       "id": "L16.2.5",
@@ -2256,7 +2139,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.5"
+      "source_listing": ""
     },
     {
       "id": "L16.2.6",
@@ -2269,7 +2152,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.6"
+      "source_listing": ""
     },
     {
       "id": "L16.2.7",
@@ -2282,7 +2165,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.7"
+      "source_listing": ""
     },
     {
       "id": "L16.2.8",
@@ -2295,7 +2178,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.8"
+      "source_listing": ""
     },
     {
       "id": "L16.2.9",
@@ -2308,7 +2191,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population with ECG Data",
       "applicability": "General",
-      "source_listing": "L16.2.9"
+      "source_listing": ""
     },
     {
       "id": "L16.2.10",
@@ -2321,7 +2204,7 @@
       "coverage_summary": "Core (Oncology)",
       "population": "ITT Population",
       "applicability": "Oncology only",
-      "source_listing": "L16.2.10"
+      "source_listing": ""
     },
     {
       "id": "L16.2.11",
@@ -2334,7 +2217,7 @@
       "coverage_summary": "Core (Oncology)",
       "population": "ITT Population",
       "applicability": "Oncology only",
-      "source_listing": "L16.2.11"
+      "source_listing": ""
     },
     {
       "id": "L16.2.12",
@@ -2347,7 +2230,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.12"
+      "source_listing": ""
     },
     {
       "id": "L16.2.13",
@@ -2360,7 +2243,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.13"
+      "source_listing": ""
     },
     {
       "id": "L16.2.14",
@@ -2373,7 +2256,7 @@
       "coverage_summary": "Core",
       "population": "PK Population",
       "applicability": "General",
-      "source_listing": "L16.2.14"
+      "source_listing": ""
     },
     {
       "id": "L16.2.15",
@@ -2386,7 +2269,7 @@
       "coverage_summary": "Core",
       "population": "PK Population",
       "applicability": "General",
-      "source_listing": "L16.2.15"
+      "source_listing": ""
     },
     {
       "id": "L16.2.16",
@@ -2399,7 +2282,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population with ADA Samples",
       "applicability": "General",
-      "source_listing": "L16.2.16"
+      "source_listing": ""
     },
     {
       "id": "L16.2.17",
@@ -2412,7 +2295,7 @@
       "coverage_summary": "Core",
       "population": "ITT with Biomarker Data",
       "applicability": "General",
-      "source_listing": "L16.2.17"
+      "source_listing": ""
     },
     {
       "id": "L16.2.18",
@@ -2425,7 +2308,7 @@
       "coverage_summary": "Core",
       "population": "ITT with PRO Data",
       "applicability": "General",
-      "source_listing": "L16.2.18"
+      "source_listing": ""
     },
     {
       "id": "L16.2.19",
@@ -2438,7 +2321,7 @@
       "coverage_summary": "Core (Oncology)",
       "population": "ITT Population",
       "applicability": "Oncology only",
-      "source_listing": "L16.2.19"
+      "source_listing": ""
     },
     {
       "id": "L16.2.20",
@@ -2451,7 +2334,7 @@
       "coverage_summary": "Core",
       "population": "All Randomized Subjects",
       "applicability": "General",
-      "source_listing": "L16.2.20"
+      "source_listing": ""
     },
     {
       "id": "L16.2.21",
@@ -2464,7 +2347,7 @@
       "coverage_summary": "Core (Oncology)",
       "population": "Full Analysis Set",
       "applicability": "Oncology only",
-      "source_listing": "L16.2.21"
+      "source_listing": ""
     },
     {
       "id": "L16.2.22",
@@ -2477,7 +2360,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.22"
+      "source_listing": ""
     },
     {
       "id": "L16.2.23",
@@ -2490,7 +2373,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population with Baseline and Post-Baseline Labs",
       "applicability": "General",
-      "source_listing": "L16.2.23"
+      "source_listing": ""
     },
     {
       "id": "L16.2.24",
@@ -2503,7 +2386,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.24"
+      "source_listing": ""
     },
     {
       "id": "L16.2.25",
@@ -2516,7 +2399,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.25"
+      "source_listing": ""
     },
     {
       "id": "L16.2.26",
@@ -2529,7 +2412,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.26"
+      "source_listing": ""
     },
     {
       "id": "L16.2.27",
@@ -2542,7 +2425,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.27"
+      "source_listing": ""
     },
     {
       "id": "L16.2.28",
@@ -2552,10 +2435,10 @@
       "section": "16.2",
       "shell_family": "Patient Listings",
       "study_phase_scope": "Phase I-III",
-      "coverage_summary": "Core",
+      "coverage_summary": "Conditional (Protocol-Defined Subset)",
       "population": "Safety Population (Subset with Immunophenotyping)",
       "applicability": "General",
-      "source_listing": "L16.2.28"
+      "source_listing": ""
     },
     {
       "id": "L16.2.29",
@@ -2568,7 +2451,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.29"
+      "source_listing": ""
     },
     {
       "id": "L16.2.30",
@@ -2581,7 +2464,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population",
       "applicability": "General",
-      "source_listing": "L16.2.30"
+      "source_listing": ""
     },
     {
       "id": "L16.2.31",
@@ -2594,7 +2477,7 @@
       "coverage_summary": "Core",
       "population": "Safety Population (Subset with Hormone Data)",
       "applicability": "General",
-      "source_listing": "L16.2.31"
+      "source_listing": ""
     },
     {
       "id": "L16.2.32",
@@ -2604,10 +2487,10 @@
       "section": "16.2",
       "shell_family": "Specialized Patient Listings",
       "study_phase_scope": "Phase I",
-      "coverage_summary": "Core (Phase I)",
+      "coverage_summary": "Conditional (Phase I)",
       "population": "DLT-Evaluable Population",
       "applicability": "General",
-      "source_listing": "L16.2.32"
+      "source_listing": ""
     },
     {
       "id": "L16.2.33",
@@ -2615,12 +2498,12 @@
       "title": "Listing of Food-Effect / Crossover PK Samples by Subject, Period, and Timepoint",
       "type": "Listing",
       "section": "16.2",
-      "shell_family": "Non-Oncology Listings",
+      "shell_family": "Specialized Patient Listings",
       "study_phase_scope": "Phase I",
       "coverage_summary": "Conditional (Phase I)",
       "population": "PK Population in Food-Effect or Crossover Cohorts",
-      "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.33"
+      "applicability": "General",
+      "source_listing": ""
     },
     {
       "id": "L16.2.34",
@@ -2633,7 +2516,7 @@
       "coverage_summary": "Conditional (Phase II-III, Non-Oncology)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.34"
+      "source_listing": ""
     },
     {
       "id": "L16.2.35",
@@ -2646,7 +2529,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.35"
+      "source_listing": ""
     },
     {
       "id": "L16.2.36",
@@ -2659,7 +2542,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.36"
+      "source_listing": ""
     },
     {
       "id": "L16.2.37",
@@ -2672,7 +2555,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Intent-to-Treat (ITT) Population",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.37"
+      "source_listing": ""
     },
     {
       "id": "L16.2.38",
@@ -2685,7 +2568,7 @@
       "coverage_summary": "Core (Phase II-III, Non-Oncology)",
       "population": "Full Analysis Set (FAS)",
       "applicability": "Non-Oncology only",
-      "source_listing": "L16.2.38"
+      "source_listing": ""
     }
   ]
 }

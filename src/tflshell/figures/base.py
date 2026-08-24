@@ -50,6 +50,16 @@ class ClinicalFigure(ABC):
         The buffer is suitable for embedding in DOCX via python-docx.
         """
         fig = self.build(data)
+        if data.get("_shell_mock", False):
+            fig.text(
+                0.99,
+                0.01,
+                "Illustrative shell data — not study results",
+                ha="right",
+                va="bottom",
+                fontsize=7,
+                color="#666666",
+            )
         buf = io.BytesIO()
         fig.savefig(
             buf,
@@ -135,9 +145,6 @@ def _generate_mock_lab_data(n=200, seed=42):
 
 def _generate_mock_ae_data(seed=42):
     """Generate mock AE frequency data."""
-    import numpy as np
-
-    rng = np.random.default_rng(seed)
     soc_pt = {
         "Gastrointestinal disorders": [
             ("Nausea", 25, 18),
@@ -180,7 +187,7 @@ def _generate_mock_subgroup_data(seed=42):
         ("Prior Therapy >=2", None),
     ]
     result = []
-    for i, (name, _) in enumerate(subgroups):
+    for name, _ in subgroups:
         hr = rng.normal(0.75, 0.15)
         hr = max(0.3, min(1.5, hr))
         ci_low = hr * rng.uniform(0.7, 0.9)

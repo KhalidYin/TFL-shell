@@ -11,7 +11,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 
 from tflshell.figures.base import ClinicalFigure, _generate_mock_tumor_data
-from tflshell.figures.color_schemes import BOR_COLORS, BOR_ORDER
+from tflshell.figures.color_schemes import BOR_COLORS, BOR_ORDER, TRT_COLORS_LIST
 
 
 class WaterfallFigure(ClinicalFigure):
@@ -52,12 +52,12 @@ class WaterfallFigure(ClinicalFigure):
 
         if color_by == "group" and groups:
             group_colors_list = [TRT_COLORS_LIST[g % len(TRT_COLORS_LIST)] for g in groups]
-            bars = ax.bar(
+            ax.bar(
                 x, best_pct, color=group_colors_list, width=0.9, edgecolor="none", linewidth=0
             )
         else:
             bor_colors = [BOR_COLORS.get(b, BOR_COLORS["NE"]) for b in bor]
-            bars = ax.bar(x, best_pct, color=bor_colors, width=0.9, edgecolor="none", linewidth=0)
+            ax.bar(x, best_pct, color=bor_colors, width=0.9, edgecolor="none", linewidth=0)
 
         # Reference lines
         ax.axhline(y=20, color="red", linestyle="--", linewidth=1.0, alpha=0.7)

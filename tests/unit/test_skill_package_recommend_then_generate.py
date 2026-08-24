@@ -163,8 +163,10 @@ def test_recommend_then_generate_validates_docx_headings_against_recommendation(
     assert docx_checks["heading_count_matches_catalog"] is True
     assert docx_checks["heading_labels_match_catalog"] is True
     assert docx_checks["section_headings_cover_recommendation"] is True
-    assert docx_checks["display_label_lines_match_catalog"] is True
-    assert docx_checks["title_lines_match_catalog"] is True
+    assert docx_checks["no_duplicate_display_label_lines"] is True
+    assert docx_checks["no_duplicate_title_lines"] is True
+    assert docx_checks["sponsor_and_page_share_line"] is True
+    assert docx_checks["study_title_lines_present"] is True
     assert docx_checks["analysis_set_lines_match_catalog"] is True
     assert docx_checks["protocol_lines_present"] is True
     assert docx_checks["sponsor_lines_present"] is True
@@ -174,7 +176,7 @@ def test_recommend_then_generate_validates_docx_headings_against_recommendation(
     assert docx_refs["helper_module"].endswith("alignment_contracts.py")
     assert "Analysis Set" in docx_refs["detail_keys"]
     assert "Protocol" in docx_refs["detail_keys"]
-    assert "Sponsor" in docx_refs["detail_keys"]
+    assert "Sponsor + Page" in docx_refs["detail_keys"]
     layout_checks = payload["validation_results"]["cross_output_checks"]["docx_layout"]
     layout_refs = payload["validation_results"]["declared_references"]["docx_layout"]
     assert layout_checks["section_count_matches_contract"] is True

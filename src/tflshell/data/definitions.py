@@ -18,14 +18,227 @@ Section 14.4: Tables + Figures ONLY (no listings).
 Section 16.2: All patient-level listings (including PK/ADA/Biomarker moved from 14.4).
 """
 
-from tflshell.data.common import F, L, S141, S142, S143, S144, S162, T, TFLItem
+import re
+
+from tflshell.data.common import S141, S142, S143, S144, S162, L, T, TFLItem
 from tflshell.data.sections.section_14_1 import build_14_1_items
 from tflshell.data.sections.section_14_2 import build_14_2_items
 from tflshell.data.sections.section_14_3 import build_14_3_items
 from tflshell.data.sections.section_14_4 import build_14_4_items
 from tflshell.data.sections.section_16_2 import build_16_2_items
 from tflshell.models.catalog import TFLCatalog
-from tflshell.models.enums import Section, TFLType
+
+# Abbreviations are added only when they occur in visible table information
+# (title, population, columns, or row labels). Keep this list controlled so
+# shell footnotes remain deterministic and reviewable.
+CONTROLLED_TABLE_ABBREVIATIONS = (
+    (r"\bAE\b", "AE", "adverse event"),
+    (r"\bTEAE(?:s)?\b", "TEAE", "treatment-emergent adverse event"),
+    (r"\bSAE(?:s)?\b", "SAE", "serious adverse event"),
+    (r"\bAESI(?:s)?\b", "AESI", "adverse event of special interest"),
+    (r"\bSOC\b", "SOC", "system organ class"),
+    (r"\bPT(?:s)?\b", "PT", "preferred term"),
+    (r"\bCTCAE\b", "CTCAE", "Common Terminology Criteria for Adverse Events"),
+    (r"\bATC\b", "ATC", "Anatomical Therapeutic Chemical"),
+    (r"\bWHO\b", "WHO", "World Health Organization"),
+    (r"\bBL\b", "BL", "baseline"),
+    (r"\bChg\b", "Chg", "change from baseline"),
+    (r"\bWk\b", "Wk", "week"),
+    (r"\bBMI\b", "BMI", "body mass index"),
+    (r"\bECOG\b", "ECOG", "Eastern Cooperative Oncology Group"),
+    (r"\bITT\b", "ITT", "intent-to-treat"),
+    (r"\bFAS\b", "FAS", "full analysis set"),
+    (r"\bPP\b", "PP", "per-protocol"),
+    (r"\bPFS\b", "PFS", "progression-free survival"),
+    (r"\bOS\b", "OS", "overall survival"),
+    (r"\bTTD\b", "TTD", "time to treatment discontinuation"),
+    (r"\bDOR\b", "DOR", "duration of response"),
+    (r"\bTTR\b", "TTR", "time to response"),
+    (r"\bTFST\b", "TFST", "time to first subsequent therapy"),
+    (r"\bBOR\b", "BOR", "best overall response"),
+    (r"\bORR\b", "ORR", "objective response rate"),
+    (r"\bDCR\b", "DCR", "disease control rate"),
+    (r"\bCR\b", "CR", "complete response"),
+    (r"\bPR\b", "PR", "partial response"),
+    (r"\bNE\b", "NE", "not evaluable"),
+    (r"\bRECIST\b", "RECIST", "Response Evaluation Criteria in Solid Tumors"),
+    (r"\bICR\b", "ICR", "independent central review"),
+    (r"\bKM\b", "KM", "Kaplan-Meier"),
+    (r"\bNI\b", "NI", "non-inferiority"),
+    (r"\bMMRM\b", "MMRM", "mixed model for repeated measures"),
+    (r"\bMAR\b", "MAR", "missing at random"),
+    (r"\bCMH\b", "CMH", "Cochran-Mantel-Haenszel"),
+    (r"\bLS\b", "LS", "least squares"),
+    (r"\bSE\b", "SE", "standard error"),
+    (r"\bCI\b", "CI", "confidence interval"),
+    (r"\bHR\b", "HR", "hazard ratio"),
+    (r"\bGMR\b", "GMR", "geometric mean ratio"),
+    (r"\bCV\b", "CV", "coefficient of variation"),
+    (r"\bPK\b", "PK", "pharmacokinetic"),
+    (r"\bCmax\b", "Cmax", "maximum observed concentration"),
+    (r"\bCmin\b", "Cmin", "minimum observed concentration"),
+    (r"\bCtrough\b", "Ctrough", "trough concentration"),
+    (r"\bTmax\b", "Tmax", "time to maximum observed concentration"),
+    (r"\bCLr\b", "CLr", "renal clearance"),
+    (r"\bMACE\b", "MACE", "major adverse cardiovascular event"),
+    (r"\bALT\b", "ALT", "alanine aminotransferase"),
+    (r"\bAST\b", "AST", "aspartate aminotransferase"),
+    (r"\bALP\b", "ALP", "alkaline phosphatase"),
+    (r"\bTBL\b", "TBL", "total bilirubin"),
+    (r"\bULN\b", "ULN", "upper limit of normal"),
+    (r"\bECG\b", "ECG", "electrocardiogram"),
+    (r"\bQTcF\b", "QTcF", "QT interval corrected using Fridericia's formula"),
+    (r"\bQRS\b", "QRS", "ventricular depolarization complex"),
+    (r"\bBP\b", "BP", "blood pressure"),
+    (r"\bRR\b", "RR", "respiratory rate"),
+    (r"\bSBP\b", "SBP", "systolic blood pressure"),
+    (r"\bDBP\b", "DBP", "diastolic blood pressure"),
+    (r"\bSpO2\b", "SpO2", "peripheral oxygen saturation"),
+    (r"\bINR\b", "INR", "international normalized ratio"),
+    (r"\bHDL-C\b", "HDL-C", "high-density lipoprotein cholesterol"),
+    (r"\bLDL-C\b", "LDL-C", "low-density lipoprotein cholesterol"),
+    (r"\bTSH\b", "TSH", "thyroid-stimulating hormone"),
+    (r"\bCK-MB\b", "CK-MB", "creatine kinase-MB"),
+    (r"\bNT-proBNP\b", "NT-proBNP", "N-terminal pro-B-type natriuretic peptide"),
+    (r"\bAKI\b", "AKI", "acute kidney injury"),
+    (r"\bKDIGO\b", "KDIGO", "Kidney Disease: Improving Global Outcomes"),
+    (r"\bUPCR\b", "UPCR", "urine protein-to-creatinine ratio"),
+    (r"\bIRR\b", "IRR", "infusion-related reaction"),
+    (r"\bDLT(?:s)?\b", "DLT", "dose-limiting toxicity"),
+    (r"\bMTD\b", "MTD", "maximum tolerated dose"),
+    (r"\bRP2D\b", "RP2D", "recommended Phase II dose"),
+    (r"\bADA\b", "ADA", "anti-drug antibody"),
+    (r"\bN[Aa]b\b", "NAb", "neutralizing antibody"),
+    (r"\bPRO\b", "PRO", "patient-reported outcome"),
+    (r"\bEORTC\b", "EORTC", "European Organisation for Research and Treatment of Cancer"),
+    (r"\bQLQ-C30\b", "QLQ-C30", "Quality of Life Questionnaire-Core 30"),
+    (r"\bGHS\b", "GHS", "global health status"),
+    (r"\bANOVA\b", "ANOVA", "analysis of variance"),
+    (r"\bAUC(?:0)?\b", "AUC", "area under the concentration-time curve"),
+    (r"\bHbA1c\b", "HbA1c", "glycated hemoglobin"),
+    (r"\bFPG\b", "FPG", "fasting plasma glucose"),
+    (r"\bEGFR\b", "EGFR", "epidermal growth factor receptor"),
+    (r"\beGFR\b", "eGFR", "estimated glomerular filtration rate"),
+    (r"\bPD-L1\b", "PD-L1", "programmed death-ligand 1"),
+    (r"\bTPS\b", "TPS", "tumor proportion score"),
+    (r"\bEOT\b", "EOT", "end of treatment"),
+    (r"\bTC\b", "TC", "total cholesterol"),
+    (r"\bTG\b", "TG", "triglycerides"),
+    (r"(?<!-)\bHDL\b(?!-)", "HDL", "high-density lipoprotein"),
+    (r"(?<!-)\bLDL\b(?!-)", "LDL", "low-density lipoprotein"),
+    (r"\bNCEP\b", "NCEP", "National Cholesterol Education Program"),
+    (r"\bATP\b", "ATP", "Adult Treatment Panel"),
+    (r"\bT3\b", "T3", "triiodothyronine"),
+    (r"\bT4\b", "T4", "thyroxine"),
+    (r"\bIgG\b", "IgG", "immunoglobulin G"),
+    (r"\bIgA\b", "IgA", "immunoglobulin A"),
+    (r"\bIgM\b", "IgM", "immunoglobulin M"),
+    (r"\bIgE\b", "IgE", "immunoglobulin E"),
+    (r"\bCD3\b", "CD3", "cluster of differentiation 3"),
+    (r"\bCD4\b", "CD4", "cluster of differentiation 4"),
+    (r"\bCD8\b", "CD8", "cluster of differentiation 8"),
+    (r"\bCD19\b", "CD19", "cluster of differentiation 19"),
+    (r"\bCD16\b", "CD16", "cluster of differentiation 16"),
+    (r"\bCD56\b", "CD56", "cluster of differentiation 56"),
+    (r"\bNK\b", "NK", "natural killer"),
+    (r"\bIL-6\b", "IL-6", "interleukin 6"),
+    (r"\bIL-1b(?:eta)?\b", "IL-1beta", "interleukin 1 beta"),
+    (r"\bIL-10\b", "IL-10", "interleukin 10"),
+    (r"\bTNF-a(?:lpha)?\b", "TNF-alpha", "tumor necrosis factor alpha"),
+    (r"\bIFN-g(?:amma)?\b", "IFN-gamma", "interferon gamma"),
+    (r"\bICH\b", "ICH", "International Council for Harmonisation"),
+    (r"\bE2A\b", "E2A", "ICH Clinical Safety Data Management guidance"),
+    (r"\bHMG-CoA\b", "HMG-CoA", "3-hydroxy-3-methylglutaryl-coenzyme A"),
+)
+
+
+def _visible_table_text(item: TFLItem) -> str:
+    row_labels = [item._normalize_row(row)["label"] for row in item.shell_rows]
+    return " ".join((item.title, item.population, *item.placeholder_columns, *row_labels))
+
+
+def _table_abbreviation_definitions(item: TFLItem) -> list[str]:
+    text = " ".join((_visible_table_text(item), *item.footnotes))
+    definitions = [
+        f"{label} = {meaning}"
+        for pattern, label, meaning in CONTROLLED_TABLE_ABBREVIATIONS
+        if re.search(pattern, text)
+    ]
+    response_context = bool(
+        re.search(r"\b(?:CR|PR|PD|BOR|ORR|DCR|RECIST)\b|\bresponse\b", text, re.I)
+    )
+    if re.search(r"Mean\s*\(SD\)", text):
+        definitions.append("SD = standard deviation")
+    if response_context and re.search(r"\bSD\b", text):
+        definitions.append("SD (response) = stable disease")
+    elif re.search(r"\bSD\b", text):
+        definitions.append("SD = standard deviation")
+    if re.search(r"\bPD\b", text):
+        meaning = (
+            "progressive disease"
+            if re.search(r"\b(?:CR|PR|BOR|ORR|DCR)\b", text)
+            else "pharmacodynamic"
+        )
+        definitions.append(f"PD = {meaning}")
+    return list(dict.fromkeys(definitions))
+
+
+def _enrich_table_definition_footnotes(item: TFLItem) -> None:
+    if item.tfl_type != T:
+        return
+
+    visible_text = _visible_table_text(item)
+    abbreviations = _table_abbreviation_definitions(item)
+    if abbreviations:
+        item.footnotes.append("Abbreviations: " + "; ".join(abbreviations) + ".")
+
+    definitions: list[str] = []
+    percentage_display = bool(re.search(r"\bn\s*(?:/\s*N\d*)?\s*\(%\)", visible_text))
+    ratio_display = bool(re.search(r"\bn\s*/\s*N\d*\b", visible_text))
+    if percentage_display:
+        if not item.denominator_note:
+            if any(token in visible_text for token in ("AE", "TEAE", "SAE", "AESI")):
+                item.denominator_note = (
+                    "Percentages use the number of subjects in the Safety Population within "
+                    "each treatment group unless otherwise specified."
+                )
+            elif "Visit" in visible_text or "Cycle" in visible_text:
+                item.denominator_note = (
+                    "Percentages use subjects evaluable at the corresponding visit or cycle "
+                    "within each treatment group unless otherwise specified."
+                )
+            else:
+                item.denominator_note = (
+                    "Percentages use the stated analysis population within each treatment "
+                    "group unless otherwise specified."
+                )
+        definitions.append(item.denominator_note)
+    elif ratio_display:
+        definitions.append(
+            "n/N denotes the number of subjects meeting the stated criterion over the "
+            "number of evaluable subjects for that criterion and treatment group."
+        )
+
+    if re.search(r"LS Mean|p-value|\b(?:HR|GMR|MMRM|ANOVA|Cox)\b", visible_text):
+        definitions.append(
+            "Model-based estimates, contrasts, confidence intervals, and p-values follow "
+            "the model, covariate, missing-data, and multiplicity specifications in the SAP."
+        )
+    if re.search(
+        r"Mean\s*\(SD\)|Median\s*\(|\bMin\b|\bMax\b|Geometric Mean|\bGeo Mean\b",
+        visible_text,
+    ):
+        definitions.append(
+            "Descriptive statistics are calculated from non-missing observations unless "
+            "the SAP states otherwise."
+        )
+    if re.search(r"survival|time to|duration of response|\bPFS\b|\bOS\b", visible_text, re.I):
+        definitions.append(
+            "Time origin, event definitions, and censoring rules follow the endpoint "
+            "specifications in the SAP."
+        )
+    if definitions:
+        item.footnotes.append("Statistical definitions: " + " ".join(dict.fromkeys(definitions)))
 
 
 def _default_shell_family(item: TFLItem) -> str:
@@ -89,11 +302,13 @@ def _default_study_phase_scope(item: TFLItem) -> str:
 def _default_coverage_summary(item: TFLItem) -> str:
     title = item.title.lower()
     if any(keyword in title for keyword in ("dose-limiting", "mtd", "rp2d")):
-        return "Core (Phase I)"
+        return "Conditional (Phase I)"
     if any(
         keyword in title for keyword in ("food effect", "crossover", "relative bioavailability")
     ):
         return "Conditional (Phase I)"
+    if any(keyword in title for keyword in ("cytokine", "holter", "immune-related", "irae")):
+        return "Conditional (Protocol-Defined Subset)"
     if item.non_oncology_only and item.section == S142:
         return "Core (Phase II-III, Non-Oncology)"
     if item.non_oncology_only and item.section == S162:
@@ -151,6 +366,185 @@ def _normalize_placeholder_columns(columns: list[str]) -> list[str]:
     return normalized
 
 
+def _expand_compound_semantic_rows(item: TFLItem) -> None:
+    """Populate explicit Visit/Timepoint/Statistic columns encoded in legacy row labels."""
+    semantic_columns: list[str] = []
+    for column in item.placeholder_columns[1:]:
+        flat = column.replace("\n", " ").strip()
+        if flat in {"Visit", "Timepoint", "Statistic"}:
+            semantic_columns.append(flat)
+        else:
+            break
+    if not semantic_columns:
+        return
+
+    expanded_rows = []
+    for row in item.shell_rows:
+        rich = item._normalize_row(row)
+        label = rich["label"]
+        values = list(rich["values"])
+        if "\u2014" in label:
+            left, statistic = (part.strip() for part in label.rsplit("\u2014", 1))
+            if semantic_columns[0] == "Statistic":
+                rich["label"] = left
+                rich["values"] = [statistic, *values]
+            elif semantic_columns[:2] in (["Visit", "Statistic"], ["Timepoint", "Statistic"]):
+                rich["label"] = ""
+                rich["values"] = [left, statistic, *values]
+        elif semantic_columns[0] == "Statistic" and re.search(r",\s*n\s*\(%\)\s*$", label):
+            structural_label = re.sub(r",\s*n\s*\(%\)\s*$", "", label).rstrip()
+            rich["label"] = structural_label
+            rich["values"] = ["n (%)", *values]
+        elif semantic_columns[0] == "Statistic" and rich["indent"] and values:
+            rich["label"] = ""
+            rich["values"] = [label.strip(), *values]
+        expanded_rows.append(rich)
+    item.shell_rows = expanded_rows
+
+
+def _hierarchy_header(columns: list[str]) -> str:
+    """Build one reviewer-facing label for structural hierarchy columns."""
+    parts: list[str] = []
+    for column in columns:
+        text = re.sub(r"\n(\([^)]*\))", r" \1", column).replace("\n", " / ")
+        for part in (piece.strip() for piece in text.split(" / ")):
+            if part and part not in parts:
+                parts.append(part)
+    return " / ".join(parts)
+
+
+def _collapse_summary_statistic_column(item: TFLItem) -> None:
+    """Render 14.3/14.4 Statistic fields as row hierarchy, not dataset-like columns.
+
+    The programming source can remain long-form (parameter, visit/timepoint,
+    statistic, treatment, value).  This governance step changes only the
+    reviewer-facing shell structure and preserves treatment result columns.
+    """
+    if item.tfl_type != T or item.section not in (S143, S144):
+        return
+
+    statistic_idx = next(
+        (
+            idx
+            for idx, column in enumerate(item.placeholder_columns)
+            if column.replace("\n", " ").strip() == "Statistic"
+        ),
+        None,
+    )
+    if statistic_idx is None or statistic_idx == 0:
+        return
+
+    old_columns = list(item.placeholder_columns)
+    result_columns = old_columns[statistic_idx + 1 :]
+    item.placeholder_columns = [
+        _hierarchy_header(old_columns[: statistic_idx + 1]),
+        *result_columns,
+    ]
+    item.column_alignments = ["left", *(["center"] * len(result_columns))]
+    item.layout_profile = "hierarchical-summary"
+
+    first_header = old_columns[0].replace("\n", " ").lower()
+    has_parameter_axis = any(
+        token in first_header for token in ("parameter", "biomarker", "cytokine", "ada status")
+    )
+    statistic_value_idx = statistic_idx - 1
+    hierarchical_rows: list[dict] = []
+    last_path: tuple[str, ...] = ()
+    context_depth = 0
+    category_child_depth: int | None = None
+
+    def blank_results() -> list[str]:
+        return [""] * len(result_columns)
+
+    for raw_row in item.shell_rows:
+        rich = item._normalize_row(raw_row)
+        label = str(rich["label"]).strip()
+        values = list(rich["values"])
+        structural_values = [str(value).strip() for value in values[:statistic_value_idx]]
+        statistic = (
+            str(values[statistic_value_idx]).strip() if statistic_value_idx < len(values) else ""
+        )
+        result_values = values[statistic_idx:]
+        indent_level = int(rich.get("indent_level", 0))
+
+        if label.startswith("[") and all(str(value).strip() in {"", "..."} for value in values):
+            hierarchical_rows.append(
+                {
+                    "label": label,
+                    "values": ["..."] * len(result_columns),
+                    "indent_level": 0,
+                }
+            )
+            last_path = ()
+            continue
+
+        has_results = any(str(value).strip() for value in result_values)
+        structural_path = tuple(part for part in (label, *structural_values) if part)
+
+        if not statistic and not has_results:
+            is_category = (
+                bool(label) and label.upper() == label and any(char.isalpha() for char in label)
+            )
+            if is_category:
+                depth = 0
+                category_child_depth = 1
+            elif category_child_depth is not None:
+                depth = max(indent_level, category_child_depth)
+            else:
+                depth = indent_level
+            hierarchical_rows.append(
+                {
+                    "label": label,
+                    "bold": True,
+                    "indent_level": depth,
+                    "values": blank_results(),
+                }
+            )
+            context_depth = depth + 1
+            last_path = ()
+            continue
+
+        if statistic:
+            if structural_path:
+                path_depth = indent_level
+                if has_parameter_axis:
+                    path_depth = max(path_depth, context_depth)
+                if structural_path != last_path:
+                    for offset, part in enumerate(structural_path):
+                        hierarchical_rows.append(
+                            {
+                                "label": part,
+                                "bold": True,
+                                "indent_level": path_depth + offset,
+                                "values": blank_results(),
+                            }
+                        )
+                leaf_depth = path_depth + len(structural_path)
+                last_path = structural_path
+            else:
+                leaf_depth = max(indent_level, context_depth)
+            hierarchical_rows.append(
+                {
+                    "label": statistic,
+                    "indent_level": leaf_depth,
+                    "values": result_values,
+                }
+            )
+            continue
+
+        hierarchical_rows.append(
+            {
+                "label": " / ".join(structural_path),
+                "bold": rich["bold"],
+                "indent_level": indent_level,
+                "values": result_values,
+            }
+        )
+        last_path = ()
+
+    item.shell_rows = hierarchical_rows
+
+
 def _normalize_shell_rows(item: TFLItem) -> None:
     normalized_rows = []
     data_col_count = max(len(item.placeholder_columns) - 1, 0)
@@ -159,7 +553,9 @@ def _normalize_shell_rows(item: TFLItem) -> None:
         rich["label"] = _normalize_controlled_text(rich["label"])
         rich["values"] = [_normalize_controlled_text(str(value)) for value in rich["values"]]
         if data_col_count:
-            if not rich["values"]:
+            if rich["label"].startswith("[") and rich["values"] and set(rich["values"]) == {"..."}:
+                rich["values"] = ["..."] * data_col_count
+            elif not rich["values"]:
                 rich["values"] = [""] * data_col_count
             elif len(rich["values"]) > data_col_count:
                 rich["values"] = rich["values"][:data_col_count]
@@ -171,11 +567,14 @@ def _normalize_shell_rows(item: TFLItem) -> None:
 
 def _assign_controlled_source_listing(item: TFLItem) -> None:
     if item.tfl_type == L:
-        item.source_listing = item.id
+        item.source_listing = ""
         return
 
     title = item.title.lower()
     program_ref = item.program_ref.lower() if item.program_ref else ""
+    generic_source = item.source_listing in ("", "L16.2.1 / L16.2.2")
+    if not generic_source:
+        return
 
     if any(
         token in title
@@ -223,7 +622,19 @@ def _assign_controlled_source_listing(item: TFLItem) -> None:
             "tipping point",
         )
     ):
-        item.source_listing = "L16.2.3"
+        item.source_listing = ""
+        if "Source listing is study-specific" not in item.table_notes:
+            item.table_notes = " ".join(
+                part
+                for part in (
+                    item.table_notes,
+                    "Source listing is study-specific to the endpoint.",
+                )
+                if part
+            )
+        return
+    if any(token in title for token in ("glycemic", "metabolic", "body weight target")):
+        item.source_listing = "L16.2.38"
         return
     if any(token in title for token in ("respiratory exacerbation",)):
         item.source_listing = "L16.2.35"
@@ -298,7 +709,7 @@ def _assign_controlled_source_listing(item: TFLItem) -> None:
             "hys law",
         )
     ):
-        if "hys" in title:
+        if "hy's law" in title or "hys law" in title:
             item.source_listing = "L16.2.23"
         elif "aesi" in title:
             item.source_listing = "L16.2.22"
@@ -332,7 +743,19 @@ def _assign_controlled_source_listing(item: TFLItem) -> None:
     ):
         item.source_listing = "L16.2.21"
         return
-    if any(token in title for token in ("laboratory", "hematology", "chemistry")):
+    if any(
+        token in title
+        for token in (
+            "laboratory",
+            "hematology",
+            "chemistry",
+            "lipid",
+            "glucose",
+            "thyroid",
+            "renal safety",
+            "pancreatic enzyme",
+        )
+    ):
         item.source_listing = "L16.2.7"
         return
     if any(
@@ -371,12 +794,27 @@ def _assign_controlled_source_listing(item: TFLItem) -> None:
     if any(token in title for token in ("protocol deviation", "estimand strategy")):
         item.source_listing = "L16.2.3"
         return
-    if item.source_listing == "L16.2.1 / L16.2.2":
+    if generic_source:
         item.source_listing = ""
 
 
 def _normalize_controlled_shells(items: list[TFLItem]) -> list[TFLItem]:
-    removed_ids = {"T14.2.3", "T14.2.17", "T14.2.18", "T14.3.1.11", "T14.3.1.12"}
+    removed_ids = {
+        "T14.2.3",
+        "T14.2.17",
+        "T14.2.18",
+        "T14.3.1.8",
+        "T14.3.1.9",
+        "T14.3.1.11",
+        "T14.3.1.12",
+        "T14.3.1.16",
+        "T14.3.1.17",
+        "T14.3.1.18",
+        "T14.3.1.21",
+        "T14.3.1.22",
+        "T14.3.1.29",
+        "T14.3.1.30",
+    }
     retained: list[TFLItem] = []
 
     for item in items:
@@ -384,12 +822,15 @@ def _normalize_controlled_shells(items: list[TFLItem]) -> list[TFLItem]:
             continue
 
         item.placeholder_columns = _normalize_placeholder_columns(item.placeholder_columns)
+        _expand_compound_semantic_rows(item)
         _normalize_shell_rows(item)
+        _collapse_summary_statistic_column(item)
         item.population = _normalize_controlled_text(item.population)
         item.figure_description = _normalize_controlled_text(item.figure_description)
         item.footnotes = [_normalize_controlled_text(note) for note in item.footnotes]
         item.dataset_source = _normalize_controlled_text(item.dataset_source)
         _assign_controlled_source_listing(item)
+        _enrich_table_definition_footnotes(item)
         retained.append(item)
 
     return retained
