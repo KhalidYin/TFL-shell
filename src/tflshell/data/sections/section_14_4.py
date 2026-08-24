@@ -28,6 +28,14 @@ def build_14_4_items() -> list[TFLItem]:
             shell_rows=[
                 [
                     "Pre-dose (0h)",
+                    "n",
+                    "xx",
+                    "xx",
+                    "...",
+                    "xx",
+                ],
+                [
+                    "Pre-dose (0h)",
                     "Mean (SD), ng/mL",
                     "xx.x (xx.x)",
                     "xx.x (xx.x)",
@@ -35,7 +43,15 @@ def build_14_4_items() -> list[TFLItem]:
                     "xx.x (xx.x)",
                 ],
                 [
-                    "Cmax (Tmax)",
+                    "Protocol-Defined Post-Dose Timepoint 1",
+                    "n",
+                    "xx",
+                    "xx",
+                    "...",
+                    "xx",
+                ],
+                [
+                    "Protocol-Defined Post-Dose Timepoint 1",
                     "Mean (SD), ng/mL",
                     "xx.x (xx.x)",
                     "xx.x (xx.x)",
@@ -43,7 +59,7 @@ def build_14_4_items() -> list[TFLItem]:
                     "xx.x (xx.x)",
                 ],
                 [
-                    "Cmin (24h)",
+                    "Protocol-Defined Post-Dose Timepoint 2",
                     "Mean (SD), ng/mL",
                     "xx.x (xx.x)",
                     "xx.x (xx.x)",
@@ -245,7 +261,7 @@ def build_14_4_items() -> list[TFLItem]:
             ],
             footnotes=[
                 "Visits are the highest row hierarchy; PRO scale and statistics are nested beneath each visit.",
-                "Model, covariates, estimand, missing-data handling, and multiplicity control follow the SAP."
+                "Model, covariates, estimand, missing-data handling, and multiplicity control follow the SAP.",
             ],
             dataset_source="ADSL, ADPRO",
             source_listing="L16.2.1 / L16.2.2",

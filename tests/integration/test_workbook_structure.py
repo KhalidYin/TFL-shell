@@ -50,8 +50,8 @@ def test_workbook_exposes_minimal_layout_review_metadata(tmp_path):
     rows = list(master_sheet.iter_rows(min_row=2, values_only=True))
     by_id = {row[0]: dict(zip(MASTER_COLUMNS, row, strict=True)) for row in rows}
 
-    assert by_id["T14.2.1"]["Layout Profile"] == "model-comparison"
-    assert "Independent" in by_id["T14.2.1"]["Comparison Position"]
+    assert by_id["T14.2.1"]["Layout Profile"] == "treatment-row"
+    assert "non-reference treatment row" in by_id["T14.2.1"]["Comparison Position"]
     assert "visit sequence" in by_id["L16.2.38"]["Sorting Note"]
 
 

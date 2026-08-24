@@ -402,6 +402,149 @@ def _expand_compound_semantic_rows(item: TFLItem) -> None:
     item.shell_rows = expanded_rows
 
 
+def _hierarchy_header(columns: list[str]) -> str:
+    """Build one reviewer-facing label for structural hierarchy columns."""
+    parts: list[str] = []
+    for column in columns:
+        text = re.sub(r"\n(\([^)]*\))", r" \1", column).replace("\n", " / ")
+        for part in (piece.strip() for piece in text.split(" / ")):
+            if part and part not in parts:
+                parts.append(part)
+    return " / ".join(parts)
+
+
+def _collapse_summary_statistic_column(item: TFLItem) -> None:
+    """Render 14.3/14.4 Statistic fields as row hierarchy, not dataset-like columns.
+
+    The programming source can remain long-form (parameter, visit/timepoint,
+    statistic, treatment, value).  This governance step changes only the
+    reviewer-facing shell structure and preserves treatment result columns.
+    """
+    if item.tfl_type != T or item.section not in (S143, S144):
+        return
+
+    statistic_idx = next(
+        (
+            idx
+            for idx, column in enumerate(item.placeholder_columns)
+            if column.replace("\n", " ").strip() == "Statistic"
+        ),
+        None,
+    )
+    if statistic_idx is None or statistic_idx == 0:
+        return
+
+    old_columns = list(item.placeholder_columns)
+    result_columns = old_columns[statistic_idx + 1 :]
+    item.placeholder_columns = [
+        _hierarchy_header(old_columns[: statistic_idx + 1]),
+        *result_columns,
+    ]
+    item.column_alignments = ["left", *(["center"] * len(result_columns))]
+    item.layout_profile = "hierarchical-summary"
+
+    first_header = old_columns[0].replace("\n", " ").lower()
+    has_parameter_axis = any(
+        token in first_header for token in ("parameter", "biomarker", "cytokine", "ada status")
+    )
+    statistic_value_idx = statistic_idx - 1
+    hierarchical_rows: list[dict] = []
+    last_path: tuple[str, ...] = ()
+    context_depth = 0
+    category_child_depth: int | None = None
+
+    def blank_results() -> list[str]:
+        return [""] * len(result_columns)
+
+    for raw_row in item.shell_rows:
+        rich = item._normalize_row(raw_row)
+        label = str(rich["label"]).strip()
+        values = list(rich["values"])
+        structural_values = [str(value).strip() for value in values[:statistic_value_idx]]
+        statistic = (
+            str(values[statistic_value_idx]).strip() if statistic_value_idx < len(values) else ""
+        )
+        result_values = values[statistic_idx:]
+        indent_level = int(rich.get("indent_level", 0))
+
+        if label.startswith("[") and all(str(value).strip() in {"", "..."} for value in values):
+            hierarchical_rows.append(
+                {
+                    "label": label,
+                    "values": ["..."] * len(result_columns),
+                    "indent_level": 0,
+                }
+            )
+            last_path = ()
+            continue
+
+        has_results = any(str(value).strip() for value in result_values)
+        structural_path = tuple(part for part in (label, *structural_values) if part)
+
+        if not statistic and not has_results:
+            is_category = (
+                bool(label) and label.upper() == label and any(char.isalpha() for char in label)
+            )
+            if is_category:
+                depth = 0
+                category_child_depth = 1
+            elif category_child_depth is not None:
+                depth = max(indent_level, category_child_depth)
+            else:
+                depth = indent_level
+            hierarchical_rows.append(
+                {
+                    "label": label,
+                    "bold": True,
+                    "indent_level": depth,
+                    "values": blank_results(),
+                }
+            )
+            context_depth = depth + 1
+            last_path = ()
+            continue
+
+        if statistic:
+            if structural_path:
+                path_depth = indent_level
+                if has_parameter_axis:
+                    path_depth = max(path_depth, context_depth)
+                if structural_path != last_path:
+                    for offset, part in enumerate(structural_path):
+                        hierarchical_rows.append(
+                            {
+                                "label": part,
+                                "bold": True,
+                                "indent_level": path_depth + offset,
+                                "values": blank_results(),
+                            }
+                        )
+                leaf_depth = path_depth + len(structural_path)
+                last_path = structural_path
+            else:
+                leaf_depth = max(indent_level, context_depth)
+            hierarchical_rows.append(
+                {
+                    "label": statistic,
+                    "indent_level": leaf_depth,
+                    "values": result_values,
+                }
+            )
+            continue
+
+        hierarchical_rows.append(
+            {
+                "label": " / ".join(structural_path),
+                "bold": rich["bold"],
+                "indent_level": indent_level,
+                "values": result_values,
+            }
+        )
+        last_path = ()
+
+    item.shell_rows = hierarchical_rows
+
+
 def _normalize_shell_rows(item: TFLItem) -> None:
     normalized_rows = []
     data_col_count = max(len(item.placeholder_columns) - 1, 0)
@@ -681,6 +824,7 @@ def _normalize_controlled_shells(items: list[TFLItem]) -> list[TFLItem]:
         item.placeholder_columns = _normalize_placeholder_columns(item.placeholder_columns)
         _expand_compound_semantic_rows(item)
         _normalize_shell_rows(item)
+        _collapse_summary_statistic_column(item)
         item.population = _normalize_controlled_text(item.population)
         item.figure_description = _normalize_controlled_text(item.figure_description)
         item.footnotes = [_normalize_controlled_text(note) for note in item.footnotes]

@@ -87,3 +87,35 @@ def test_flat_header_remains_backward_compatible():
     assert [cell.text for cell in table.rows[1].cells] == ["Mean", "xx.x", "xx.x"]
     assert table.cell(0, 0).paragraphs[0].alignment == WD_ALIGN_PARAGRAPH.LEFT
     assert table.cell(0, 1).paragraphs[0].alignment == WD_ALIGN_PARAGRAPH.CENTER
+
+
+def test_hierarchical_rows_support_multiple_indent_levels():
+    item = TFLItem(
+        id="T14.3.99",
+        title="Hierarchical Summary",
+        tfl_type=TFLType.TABLE,
+        section=Section.SEC_14_3,
+        population="Safety Population",
+        placeholder_columns=["Parameter / Visit / Statistic", "Group 1"],
+        shell_rows=[
+            {"label": "Parameter", "bold": True, "values": [""]},
+            {"label": "Visit", "bold": True, "indent_level": 1, "values": [""]},
+            {"label": "Mean (SD)", "indent_level": 2, "values": ["xx.x (xx.x)"]},
+        ],
+    )
+
+    assert [row[0] for row in item.shell_data_rows] == [
+        "Parameter",
+        "    Visit",
+        "        Mean (SD)",
+    ]
+
+    doc = Document()
+    table = create_three_line_table(
+        doc,
+        rows=4,
+        cols=2,
+        headers=item.placeholder_columns,
+        data_rows=item.shell_data_rows_rich,
+    )
+    assert table.cell(3, 0).text.startswith("        ")

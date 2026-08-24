@@ -115,7 +115,7 @@
 - 允许使用与目标展示相符的 placeholder 样式
 - 治疗组可按列、按行或作为多级表头下的 subheader 展示，选择取决于分析语义、信息密度和编程实现可行性
 - 首列是参数、分类或层级标签列时，首列表头和数据均左对齐；数值列按声明式 alignment 渲染
-- 模型 estimate 与 treatment comparison 必须在视觉和列结构上独立可识别，不得为统一模板而塞入某个治疗组列
+- 模型 estimate 与 treatment comparison 必须通过独立列组或明确 subheader 可识别；治疗组按行时，参考组标记为 Reference，比较估计放在对应非参考组行的 comparison 列中，不再为同一比较重复增加独立行
 - 如需表示更多组，允许额外 ellipsis expansion 列，但不要与 comparison、Overall 或其他分析列合并
 - 仅在临床上合理时保留 `Overall`
 - 样本量表头保持通用，例如 `N=xx`
@@ -124,7 +124,8 @@
 - 每张表仅对实际出现的缩写提供定义；百分比、模型估计、描述统计或时间事件展示应按实际分析语义提供 denominator 或统计定义，不得填充无关指标概念
 - 通用 AE 按事件日期记录，不按 cycle 汇总；DLT、输注、PK/PD sampling 等明确由 protocol/SAP 定义周期或时点的场景单独判断
 - AE 最大 Grade 作为 SOC/PT 下的行层级，不得按 Grade 拆成结果列；实验室 shift 等本身以 Grade 表示迁移维度的表不受此规则影响
-- 单一 by-visit endpoint 以 Visit 为最高行层级；多参数安全性综述可保留 `Parameter > Visit > Statistic`，但必须与医学审阅目的和 long-form 编程键一致
+- 单一 by-visit endpoint 以 Visit 为最高行层级；多参数连续终点默认使用 `Visit > Parameter > Treatment Group`，Baseline 单独成列，组内差异与组间差异作为独立列组/subheader
+- 多参数安全性及 PK/PD 汇总使用 `Parameter > Visit/Timepoint > Statistic` 等缩进行层级；long-form 数据中的 Statistic 字段不应机械输出为重复独立列
 - 同表 MedDRA/CTCAE version 只生成一条 coding/grading footnote；缩写和统计定义分别受控生成，不重复填充
 - AESI、IRR、late-onset、onset-window 和 follow-up 表仅在 protocol/SAP 明确定义概念、窗口与 denominator 时保留
 - 14.1 中通用人口学表不得混入疾病分期、ECOG、组织学等肿瘤特异 baseline disease 内容

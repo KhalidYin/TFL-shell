@@ -95,3 +95,35 @@
 #### Files Changed / Commits
 - `src/tflshell/`, `tests/`, `docs/main/`, `Skill/tfls-shell/`, `scripts/generate_layout_audit.py`（modified/added）— release commit
 - `output/*_REVIEW_R3.*`, `output/TFL_Table_Layout_Audit_R3.xlsx`, `output/TFL_Table_Layout_Audit_Report_R3.docx`（generated, ignored）
+
+---
+
+## 2026-08-24
+
+### R004 [10:47] [P3-hierarchical-summary-layouts] P1-P2: 连续终点与汇总表层级布局重构
+
+#### Done
+- `T14.2.1/.4/.5/.32` 改为治疗组按行；Baseline 独立列，组内差异与组间差异使用多级子表头。
+- 共同参考组的比较值放在各非参考治疗组行；NI 表按控制组为参考，把组间估计与 NI 结论放在 test-treatment 行，不再创建冗余比较行。
+- 14.3/14.4 Table 的 `Statistic` 数据列收敛为左侧 `Parameter > Visit/Timepoint > Statistic` 缩进行层级；编程层仍可使用 long-form keys。
+- `T14.4.1` 将误作时间点的 Cmax/Tmax、Cmin 改为真实的 protocol-defined 浓度采样时间点；PK 参数仍由参数表承载。
+- renderer 与模型新增多级 `indent_level`，并保留旧 `indent` 兼容；主文档、布局审阅 memory 和 Skill contract 同步。
+- 生成 `output/*_REVIEW_R4.*`，Word 导出 PDF 共 212 页；目视抽查 `T14.2.1/.4/.5/.32`、`T14.3.3.2/.19`、`T14.4.1` 通过。
+- 验证：针对性 24 passed；全量 97 passed；catalog 197 items / 0 warning；Skill package、baseline、output contract、install、UTF-8 quick validation 均通过；R4 DOCX/XLSX/SOP 文件级契约全部通过。
+- Skill 已强制同步到 `C:/Users/DeanKevin/.agents/skills/tfls-shell` 和 `C:/Users/DeanKevin/.codex/skills/tfls-shell`，关键文件哈希与仓库源一致。
+
+#### Issues / Blockers
+- Word→PDF 已成功，但后置 `pdfinfo` 命令不在 PATH；改用 PyMuPDF 读取 212 页并渲染抽查页。根因是环境工具缺失，不是输出生成失败。
+- skill-creator 的 `quick_validate.py` 首次按 Windows GBK 读取 UTF-8 中文文件而报 `UnicodeDecodeError`；使用 `python -X utf8` 重跑通过。
+- Ruff 默认扫描遇到 catalog 既有 star-import 组织方式的 F401/F403/F405；未在本轮扩展为全 catalog 导入重构。忽略这三类既有规则后，其余变更文件 lint 通过。
+- pytest-asyncio 与 openpyxl 在 Python 3.14 下仍有弃用警告，不影响生成和验证结果。
+
+#### Next
+1. Study-specific 使用时由 protocol/SAP 确认参考组、contrast direction、visit/window、model、missing-data 与 multiplicity 规则。
+2. 只有无法映射到单一治疗组的 contrast 才单独增加 comparison row，避免把通用 shell 再次数据集化。
+3. 由用户审核并合并远端 draft PR；本任务不代替用户合并。
+
+#### Files Changed / Commits
+- `src/tflshell/data/`, `src/tflshell/models/tfl_item.py`, `src/tflshell/docx_utils/three_line_table.py`（modified）— pending release commit
+- `tests/unit/`, `tests/integration/`, `docs/main/`, `docs/dep/`, `Skill/tfls-shell/`（modified/added）— pending release commit
+- `output/TFL_Shell_Template_v2.1.0_REVIEW_R4.docx`, `output/TFL_TOC_v2.1.0_REVIEW_R4.xlsx`, `output/TFL_Shell_SOP_v2.1.0_REVIEW_R4.docx`（generated, ignored）

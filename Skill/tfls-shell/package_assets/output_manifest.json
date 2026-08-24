@@ -93,7 +93,17 @@
           "Group 1",
           "Group 2"
         ],
-        "separate_expansion_column": "..."
+        "separate_expansion_column": "...",
+        "continuous_endpoint_layout": {
+          "row_hierarchy": "Visit > Parameter > Treatment Group",
+          "baseline_column": "separate",
+          "difference_subheaders": [
+            "Within-Group Difference",
+            "Between-Group Difference"
+          ],
+          "comparison_mapping": "non-reference treatment row"
+        },
+        "summary_row_hierarchy": "Parameter > Visit/Timepoint > Statistic"
       }
     },
     "xlsx_toc_workbook": {

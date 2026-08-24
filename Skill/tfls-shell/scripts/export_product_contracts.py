@@ -78,13 +78,26 @@ def build_output_manifest() -> dict:
                     "tfl_shell_heading_count": len(catalog.all()),
                 },
                 "body_contract": {
-                    "table_and_listing_body_table_count": len([
-                        item for item in catalog.all()
-                        if item.tfl_type.value in ("Table", "Listing")
-                    ]),
+                    "table_and_listing_body_table_count": len(
+                        [
+                            item
+                            for item in catalog.all()
+                            if item.tfl_type.value in ("Table", "Listing")
+                        ]
+                    ),
                     "required_intro_text": DOCX_REQUIRED_INTRO_TEXT,
                     "controlled_group_headers": ["Group 1", "Group 2"],
                     "separate_expansion_column": "...",
+                    "continuous_endpoint_layout": {
+                        "row_hierarchy": "Visit > Parameter > Treatment Group",
+                        "baseline_column": "separate",
+                        "difference_subheaders": [
+                            "Within-Group Difference",
+                            "Between-Group Difference",
+                        ],
+                        "comparison_mapping": "non-reference treatment row",
+                    },
+                    "summary_row_hierarchy": "Parameter > Visit/Timepoint > Statistic",
                 },
             },
             "xlsx_toc_workbook": {
@@ -183,10 +196,14 @@ def build_contract_registry() -> dict:
                     "Usage Notes",
                     "Body Table Count",
                     "Group Headers",
+                    "Continuous Treatment Rows",
+                    "Within / Between Difference Subheaders",
+                    "Non-Reference Row Comparison",
+                    "Hierarchical Summary Rows",
                 ],
                 "notes": [
                     "用于声明 DOCX 主模板页面、说明文本和表格 layout contract。",
-                    "覆盖 Product 已实现的三线表和受控组别展示语义。",
+                    "覆盖 Product 已实现的三线表、连续终点治疗组行/比较映射及 14.3/14.4 层级汇总语义。",
                 ],
             },
             "sop_governance_doc": {

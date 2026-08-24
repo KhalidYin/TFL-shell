@@ -12,7 +12,7 @@ Tables 与 listings 只保留 layout structure，不包含最终统计结果或�
 
 - 治疗组可以在列、行或 grouped subheader 中出现。
 - 第一列或左侧结构区承载真正的分类维度、row group、visit、parameter、statistic 等键。
-- 模型治疗估计与 treatment comparison 必须可独立识别；comparison 不得伪装成某个治疗组的结果。
+- 模型治疗估计与 treatment comparison 必须通过独立列组或 subheader 识别；治疗组按行时，comparison 值可以放在对应非参考组行，但不能混入 observed 或 within-group 结果列。
 - `...` 仅表示可扩展的额外治疗组，不得与 `Overall`、`Total`、HR 或其他 analytic column 合并。
 
 ## 3. By-Visit 与连续终点
@@ -20,10 +20,13 @@ Tables 与 listings 只保留 layout structure，不包含最终统计结果或�
 对于单一 by-visit endpoint：
 
 - `Visit` 为最高行层级。
-- endpoint/scale/parameter 与 observed/model statistic 位于 visit 下方。
-- 若存在模型结果，治疗组 estimate 与 between-group comparison 使用独立列组或可独立识别的 subheader。
+- 多参数时使用 `Visit > Parameter > Treatment Group`；单参数时省略 Parameter 层级。
+- `Baseline` 单独作为列；observed at visit、within-group difference 与 between-group difference 分开显示。
+- `Within-Group Difference` 和 `Between-Group Difference` 使用 grouped subheader，具体 estimate、SE、CI、p-value 仅按 SAP 需要选择。
+- 参考组行显示 `Reference`；每个非参考治疗组的差值、比值、OR、HR 或其他比较估计放在该治疗组行的 between-group 列中，不为同一比较重复增加独立行。
+- 若 contrast 无法映射到单一治疗组，例如非参考组之间的比较或联合 contrast，才使用独立 comparison 行。
 
-对于多参数安全性综述，可保留 `Parameter > Visit > Statistic`，前提是该层级符合医学审阅目的且能直接由 long-form analysis data 编程实现。
+对于多参数安全性、PK/PD 综述，使用 `Parameter > Visit/Timepoint > Statistic` 的缩进行层级。编程数据可以继续保留 parameter、visit/timepoint、statistic、treatment、value 等 long-form keys，但最终表格不应把 `Statistic` 机械打印为独立重复列。
 
 不得仅因为表名含 `by visit` 就硬塞 LS mean、p-value 或其他模型指标；是否展示由 protocol/SAP 决定。
 
@@ -67,7 +70,7 @@ placeholder 样式必须匹配目标展示模式。
 - numeric/result headers and result cells centered unless a study standard explicitly requires another alignment
 - auto-fit to page width
 
-表头可以使用 grouped subheaders。不得通过静默补空或截断掩盖 `Visit`、`Timepoint`、`Statistic` 与结果列之间的语义错位。
+表头可以使用 grouped subheaders。层级行可使用兼容式 `indent_level` 表达两级以上关系。不得通过静默补空或截断掩盖 `Visit`、`Timepoint`、`Statistic` 与结果列之间的语义错位。
 
 ## 8. Listing 规则
 

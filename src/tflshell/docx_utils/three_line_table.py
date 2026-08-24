@@ -156,13 +156,18 @@ def _render_data_row(
     if isinstance(row_data, dict):
         label = row_data.get("label", "")
         bold = row_data.get("bold", False)
-        indent = row_data.get("indent", False)
+        indent_level = row_data.get("indent_level")
+        if indent_level is None:
+            indent_level = 1 if row_data.get("indent", False) else 0
+        indent_level = max(int(indent_level), 0)
+        indent = indent_level > 0
         values = row_data.get("values", [])
     else:
         label = row_data[0] if len(row_data) > 0 else ""
         values = list(row_data[1:]) if len(row_data) > 1 else []
         bold = False
         indent = False
+        indent_level = 0
 
     expected_value_count = max(col_count - 1, 0)
     if len(values) != expected_value_count:
@@ -183,7 +188,7 @@ def _render_data_row(
         space_after = profile.table.standard_row_space_after
 
     # Column 0: Parameter / Label — left-aligned, optional bold/indent
-    display_label = (profile.table.indent_prefix if indent else "") + label
+    display_label = (profile.table.indent_prefix * indent_level) + label
     set_cell_text(
         table.cell(row_idx, 0),
         display_label,

@@ -141,8 +141,9 @@ tests/
 - 14.3.1 AE 表的 Grade 不出现在第 2 列以后的结果列，并在适用表中作为层级行出现
 - 通用 AE by-cycle、重复 full-frequency SOC/PT 和 relationship × grade 表不在受控 catalog 中
 - 每张表的 MedDRA/CTCAE version 在最终 footnote 中各只出现一次
-- 单一 by-visit endpoint 的 Visit 层级、模型 estimate 与 comparison 独立列组通过代表性回归
-- 显式 `Visit` / `Timepoint` / `Statistic` 列不得被 `xx` 类结果 placeholder 占位
+- 单一 by-visit 连续终点的 Visit 最高层级、治疗组行、Baseline 独立列及组内/组间差异 grouped subheader 通过代表性回归
+- 参考组行标记 Reference，非参考组行承载对应比较值，不生成冗余独立比较行；SAP 定义 Control 为参考时允许参考组不是 Group 1
+- 14.3/14.4 汇总表的 `Parameter/Visit/Timepoint/Statistic` 通过多级 `indent_level` 渲染，结果表头不再保留重复独立 `Statistic` 列
 - `sop` 中标准标题与受控 scope 文案存在
 - `sop` 中三类正式输出的对齐要求文案存在
 - `sop` 中 generation、catalog validation、regression tests 的 quality gate 文案存在

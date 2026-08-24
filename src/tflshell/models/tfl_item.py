@@ -196,10 +196,7 @@ class TFLItem:
                 f"v{versions['MedDRA']} and graded using CTCAE v{versions['CTCAE']}."
             )
         if "MedDRA" in versions:
-            return (
-                f"Coding: Adverse event terms were coded using MedDRA "
-                f"v{versions['MedDRA']}."
-            )
+            return f"Coding: Adverse event terms were coded using MedDRA " f"v{versions['MedDRA']}."
         if "CTCAE" in versions:
             return f"Grading: Adverse events were graded using CTCAE v{versions['CTCAE']}."
         dict_str = ", ".join(f"{name} {version}" for name, version in versions.items())
@@ -238,7 +235,7 @@ class TFLItem:
         if self.layout_profile == "model-comparison":
             return "Independent Treatment Comparison column group"
         if self.layout_profile == "treatment-row":
-            return "Treatment groups displayed in rows"
+            return "Comparison shown on each non-reference treatment row"
         return "Not separately grouped"
 
     @staticmethod
@@ -249,22 +246,33 @@ class TFLItem:
         Dict form: {"label": ..., "bold": ..., "indent": ..., "values": [...]} passes through.
         """
         if isinstance(row, dict):
+            indent_level = row.get("indent_level")
+            if indent_level is None:
+                indent_level = 1 if row.get("indent", False) else 0
             return {
                 "label": row.get("label", ""),
                 "bold": row.get("bold", False),
-                "indent": row.get("indent", False),
+                "indent": bool(indent_level),
+                "indent_level": max(int(indent_level), 0),
                 "values": row.get("values", []),
             }
         # Flat list form
         label = row[0] if len(row) > 0 else ""
         values = list(row[1:]) if len(row) > 1 else []
-        return {"label": label, "bold": False, "indent": False, "values": values}
+        return {
+            "label": label,
+            "bold": False,
+            "indent": False,
+            "indent_level": 0,
+            "values": values,
+        }
 
     @property
     def shell_data_rows_rich(self) -> list[dict]:
         """Return shell rows as list of dicts with bold/indent/value metadata.
 
-        Each dict: {"label": str, "bold": bool, "indent": bool, "values": list[str]}
+        Each dict also exposes ``indent_level`` while retaining the legacy
+        boolean ``indent`` flag for backward compatibility.
         """
         return [self._normalize_row(r) for r in self.shell_rows]
 
@@ -277,7 +285,10 @@ class TFLItem:
             result = []
             for row in self.shell_rows:
                 if isinstance(row, dict):
-                    label = ("    " if row.get("indent") else "") + row.get("label", "")
+                    indent_level = row.get("indent_level")
+                    if indent_level is None:
+                        indent_level = 1 if row.get("indent") else 0
+                    label = ("    " * max(int(indent_level), 0)) + row.get("label", "")
                     result.append([label] + list(row.get("values", [])))
                 else:
                     result.append(list(row))

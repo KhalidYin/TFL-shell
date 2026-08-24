@@ -130,9 +130,18 @@ def _expected_docx_items(scoped_catalog: TFLCatalog) -> list:
 
     for section_enum in section_order:
         items = scoped_catalog.by_section(section_enum)
-        tables = sorted((item for item in items if item.tfl_type == TFLType.TABLE), key=lambda item: item.sort_key)
-        figures = sorted((item for item in items if item.tfl_type == TFLType.FIGURE), key=lambda item: item.sort_key)
-        listings = sorted((item for item in items if item.tfl_type == TFLType.LISTING), key=lambda item: item.sort_key)
+        tables = sorted(
+            (item for item in items if item.tfl_type == TFLType.TABLE),
+            key=lambda item: item.sort_key,
+        )
+        figures = sorted(
+            (item for item in items if item.tfl_type == TFLType.FIGURE),
+            key=lambda item: item.sort_key,
+        )
+        listings = sorted(
+            (item for item in items if item.tfl_type == TFLType.LISTING),
+            key=lambda item: item.sort_key,
+        )
 
         if section_enum == Section.SEC_14_3:
             for sub_num in ("1", "2", "3", "4"):
@@ -151,11 +160,17 @@ def _collect_docx_paragraph_text(doc: Document, style_name: str | None = None) -
     return [
         paragraph.text.strip()
         for paragraph in doc.paragraphs
-        if paragraph.text.strip() and (style_name is None or (paragraph.style is not None and paragraph.style.name == style_name))
+        if paragraph.text.strip()
+        and (
+            style_name is None
+            or (paragraph.style is not None and paragraph.style.name == style_name)
+        )
     ]
 
 
-def build_xlsx_master_sheet_contract(scoped_catalog: TFLCatalog, workbook_path: str) -> tuple[dict, dict]:
+def build_xlsx_master_sheet_contract(
+    scoped_catalog: TFLCatalog, workbook_path: str
+) -> tuple[dict, dict]:
     workbook = load_workbook(workbook_path, read_only=True, data_only=True)
     sheet = workbook["TOC_Master"] if "TOC_Master" in workbook.sheetnames else None
     expected_items = scoped_catalog.all()
@@ -181,7 +196,9 @@ def build_xlsx_master_sheet_contract(scoped_catalog: TFLCatalog, workbook_path: 
 
     if sheet is not None:
         header_row = next(sheet.iter_rows(min_row=1, max_row=1, values_only=True), ())
-        header_index = {str(value): idx for idx, value in enumerate(header_row) if value is not None}
+        header_index = {
+            str(value): idx for idx, value in enumerate(header_row) if value is not None
+        }
 
         id_idx = header_index.get("TFL ID", 0)
         label_idx = header_index.get("Display Label", 1)
@@ -200,11 +217,15 @@ def build_xlsx_master_sheet_contract(scoped_catalog: TFLCatalog, workbook_path: 
             actual_labels.append(str(row[label_idx]))
             actual_types.append("" if type_idx is None else str(row[type_idx]))
             actual_sections.append("" if section_idx is None else str(row[section_idx]))
-            actual_shell_families.append("" if shell_family_idx is None else str(row[shell_family_idx]))
+            actual_shell_families.append(
+                "" if shell_family_idx is None else str(row[shell_family_idx])
+            )
             actual_phase_scopes.append("" if phase_scope_idx is None else str(row[phase_scope_idx]))
             actual_coverage.append("" if coverage_idx is None else str(row[coverage_idx]))
             actual_populations.append("" if population_idx is None else str(row[population_idx]))
-            actual_applicability.append("" if applicability_idx is None else str(row[applicability_idx]))
+            actual_applicability.append(
+                "" if applicability_idx is None else str(row[applicability_idx])
+            )
     workbook.close()
 
     checks = {
@@ -215,11 +236,16 @@ def build_xlsx_master_sheet_contract(scoped_catalog: TFLCatalog, workbook_path: 
         "labels_match_catalog": sheet is not None and actual_labels == expected_labels,
         "types_match_catalog": sheet is not None and actual_types == expected_types,
         "sections_match_catalog": sheet is not None and actual_sections == expected_sections,
-        "shell_families_match_catalog": sheet is not None and actual_shell_families == expected_shell_families,
-        "study_phase_scope_match_catalog": sheet is not None and actual_phase_scopes == expected_phase_scopes,
-        "coverage_summary_match_catalog": sheet is not None and actual_coverage == expected_coverage,
-        "populations_match_catalog": sheet is not None and actual_populations == expected_populations,
-        "applicability_match_catalog": sheet is not None and actual_applicability == expected_applicability,
+        "shell_families_match_catalog": sheet is not None
+        and actual_shell_families == expected_shell_families,
+        "study_phase_scope_match_catalog": sheet is not None
+        and actual_phase_scopes == expected_phase_scopes,
+        "coverage_summary_match_catalog": sheet is not None
+        and actual_coverage == expected_coverage,
+        "populations_match_catalog": sheet is not None
+        and actual_populations == expected_populations,
+        "applicability_match_catalog": sheet is not None
+        and actual_applicability == expected_applicability,
     }
     reference = _declared_reference(
         detail_keys=[
@@ -242,7 +268,9 @@ def build_xlsx_master_sheet_contract(scoped_catalog: TFLCatalog, workbook_path: 
     return checks, reference
 
 
-def build_xlsx_workbook_contract(scoped_catalog: TFLCatalog, workbook_path: str) -> tuple[dict, dict]:
+def build_xlsx_workbook_contract(
+    scoped_catalog: TFLCatalog, workbook_path: str
+) -> tuple[dict, dict]:
     workbook = load_workbook(workbook_path, read_only=True, data_only=True)
     sheet_names = workbook.sheetnames
     expected_section_counts = {
@@ -265,16 +293,16 @@ def build_xlsx_workbook_contract(scoped_catalog: TFLCatalog, workbook_path: str)
         header_row = next(sheet.iter_rows(min_row=1, max_row=1, values_only=True), ())
         headers = [value for value in header_row if value is not None]
         catalog_headers_match = catalog_headers_match and headers == XLSX_CATALOG_COLUMNS
-        actual_count = sum(1 for row in sheet.iter_rows(min_row=2, values_only=True) if row and row[0])
+        actual_count = sum(
+            1 for row in sheet.iter_rows(min_row=2, values_only=True) if row and row[0]
+        )
         section_row_counts_match = section_row_counts_match and actual_count == expected_count
 
     field_definitions_present = False
     if "Field_Definitions" in workbook:
         field_sheet = workbook["Field_Definitions"]
         field_names = {
-            row[0]
-            for row in field_sheet.iter_rows(min_row=2, values_only=True)
-            if row and row[0]
+            row[0] for row in field_sheet.iter_rows(min_row=2, values_only=True) if row and row[0]
         }
         field_definitions_present = XLSX_FIELD_DEFINITIONS.issubset(field_names)
 
@@ -290,7 +318,8 @@ def build_xlsx_workbook_contract(scoped_catalog: TFLCatalog, workbook_path: str)
         usage_topics_present = XLSX_USAGE_TOPICS.issubset(set(usage_rows))
         placeholder_text = usage_rows.get("Placeholder convention", "")
         usage_placeholder_contract_present = (
-            "Treatment groups may appear as columns, rows, or grouped subheaders" in placeholder_text
+            "Treatment groups may appear as columns, rows, or grouped subheaders"
+            in placeholder_text
             and "Model estimates and treatment comparisons remain independently identifiable"
             in placeholder_text
         )
@@ -299,7 +328,9 @@ def build_xlsx_workbook_contract(scoped_catalog: TFLCatalog, workbook_path: str)
     if "Change_Log" in workbook:
         change_sheet = workbook["Change_Log"]
         header_row = next(change_sheet.iter_rows(min_row=1, max_row=1, values_only=True), ())
-        change_log_columns_match = [value for value in header_row if value is not None] == XLSX_CHANGE_LOG_COLUMNS
+        change_log_columns_match = [
+            value for value in header_row if value is not None
+        ] == XLSX_CHANGE_LOG_COLUMNS
 
     workbook.close()
     checks = {
@@ -346,7 +377,9 @@ def build_docx_shell_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tup
     all_paragraphs = _collect_docx_paragraph_text(doc)
     heading4_paragraphs = _collect_docx_paragraph_text(doc, "Heading 4")
     heading2_paragraphs = set(_collect_docx_paragraph_text(doc, "Heading 2"))
-    duplicate_display_label_lines = [text for text in all_paragraphs if text in expected_display_labels]
+    duplicate_display_label_lines = [
+        text for text in all_paragraphs if text in expected_display_labels
+    ]
     duplicate_title_lines = [text for text in all_paragraphs if text in expected_titles]
     analysis_set_lines = [text for text in all_paragraphs if text.startswith("Analysis Set: ")]
     protocol_lines = [text for text in all_paragraphs if text.startswith("Protocol: ")]
@@ -360,7 +393,9 @@ def build_docx_shell_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tup
         "expected_catalog_items": len(expected_heading_labels),
         "heading_count_matches_catalog": len(heading4_paragraphs) == len(expected_heading_labels),
         "heading_labels_match_catalog": heading4_paragraphs == expected_heading_labels,
-        "section_headings_cover_recommendation": expected_section_headings.issubset(heading2_paragraphs),
+        "section_headings_cover_recommendation": expected_section_headings.issubset(
+            heading2_paragraphs
+        ),
         "no_duplicate_display_label_lines": not duplicate_display_label_lines,
         "no_duplicate_title_lines": not duplicate_title_lines,
         "analysis_set_lines_match_catalog": analysis_set_lines == expected_populations,
@@ -395,13 +430,18 @@ def build_docx_layout_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tu
     heading1 = set(_collect_docx_paragraph_text(doc, "Heading 1"))
     heading2 = set(_collect_docx_paragraph_text(doc, "Heading 2"))
     joined_text = "\n".join(all_paragraphs)
-    expected_body_table_count = len([
-        item for item in scoped_catalog.all()
-        if item.tfl_type in (TFLType.TABLE, TFLType.LISTING)
-    ])
+    expected_body_table_count = len(
+        [item for item in scoped_catalog.all() if item.tfl_type in (TFLType.TABLE, TFLType.LISTING)]
+    )
     first_table_headers: list[str] = []
     if doc.tables:
         first_table_headers = [cell.text.strip() for cell in doc.tables[0].rows[0].cells]
+    continuous = scoped_catalog.get("T14.2.1")
+    hierarchical = [
+        item
+        for item_id in ("T14.3.3.2", "T14.4.1")
+        if (item := scoped_catalog.get(item_id)) is not None
+    ]
 
     checks = {
         "present": Path(docx_path).exists(),
@@ -422,12 +462,38 @@ def build_docx_layout_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tu
         ),
         "heading1_contract_present": DOCX_TEMPLATE_HEADING1.issubset(heading1),
         "intro_heading_contract_present": DOCX_TEMPLATE_INTRO_HEADINGS.issubset(heading2),
-        "required_intro_text_present": all(text in joined_text for text in DOCX_REQUIRED_INTRO_TEXT),
+        "required_intro_text_present": all(
+            text in joined_text for text in DOCX_REQUIRED_INTRO_TEXT
+        ),
         "body_table_count": len(doc.tables),
         "expected_body_table_count": expected_body_table_count,
-        "body_table_count_matches_table_and_listing_shells": len(doc.tables) == expected_body_table_count,
+        "body_table_count_matches_table_and_listing_shells": len(doc.tables)
+        == expected_body_table_count,
         "first_table_uses_group_headers": any("Group 1" in value for value in first_table_headers)
         and any("Group 2" in value for value in first_table_headers),
+        "continuous_treatment_rows_present": continuous is not None
+        and continuous.layout_profile == "treatment-row"
+        and any(
+            cell.get("label") == "Within-Group Difference" for cell in continuous.header_rows[0]
+        )
+        and any(
+            cell.get("label") == "Between-Group Difference" for cell in continuous.header_rows[0]
+        ),
+        "non_reference_row_comparison_present": continuous is not None
+        and any(
+            row["label"] == "Group 2" and row["values"][-2] not in ("", "Reference")
+            for row in continuous.shell_data_rows_rich
+        ),
+        "hierarchical_summary_rows_present": bool(hierarchical)
+        and all(
+            item.layout_profile == "hierarchical-summary"
+            and not any(
+                column.replace("\n", " ").strip() == "Statistic"
+                for column in item.placeholder_columns[1:]
+            )
+            and max(row["indent_level"] for row in item.shell_data_rows_rich) >= 1
+            for item in hierarchical
+        ),
     }
     reference = _declared_reference(
         detail_keys=[
@@ -437,10 +503,14 @@ def build_docx_layout_contract(scoped_catalog: TFLCatalog, docx_path: str) -> tu
             "Usage Notes",
             "Body Table Count",
             "Group Headers",
+            "Continuous Treatment Rows",
+            "Within / Between Difference Subheaders",
+            "Non-Reference Row Comparison",
+            "Hierarchical Summary Rows",
         ],
         notes=[
             "用于声明 Skill 已引用 DOCX 主模板的可观察 layout contract。",
-            "该 contract 覆盖页面设置、说明文本、表/listing 表格数量与受控组别表头。",
+            "该 contract 覆盖页面设置、表/listing 数量、连续终点治疗组行、组内/组间差异 subheader 与 14.3/14.4 层级汇总行。",
         ],
     )
     return checks, reference

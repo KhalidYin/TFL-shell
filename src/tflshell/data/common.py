@@ -70,6 +70,39 @@ MODEL_COMPARISON_HEADER = [
     ],
 ]
 
+CONTINUOUS_TREATMENT_ROW_HEADER = [
+    [
+        {"label": "Visit / Parameter / Treatment Group", "rowspan": 2, "alignment": "left"},
+        {"label": "n", "rowspan": 2},
+        {"label": "Baseline\nMean (SD)", "rowspan": 2},
+        {"label": "Observed at Visit\nMean (SD)", "rowspan": 2},
+        {"label": "Within-Group Difference", "colspan": 2},
+        {"label": "Between-Group Difference", "colspan": 2},
+    ],
+    [
+        {"label": "LS Mean Change (SE)"},
+        {"label": "95% CI"},
+        {"label": "Difference (SE)"},
+        {"label": "95% CI / p-value"},
+    ],
+]
+
+CONTINUOUS_CHANGE_TREATMENT_ROW_HEADER = [
+    [
+        {"label": "Analysis / Treatment Group", "rowspan": 2, "alignment": "left"},
+        {"label": "n", "rowspan": 2},
+        {"label": "Baseline\nMean (SD)", "rowspan": 2},
+        {"label": "Within-Group Difference", "colspan": 2},
+        {"label": "Between-Group Difference", "colspan": 2},
+    ],
+    [
+        {"label": "Estimate (SE)"},
+        {"label": "95% CI"},
+        {"label": "Estimate (SE)"},
+        {"label": "95% CI / p-value"},
+    ],
+]
+
 EROW = ["[Additional rows omitted in master shell]", "", "", ""]
 EROW5 = ["[Additional rows omitted in master shell]", "", "", "", ""]
 EROW6 = ["[Additional rows omitted in master shell]", "", "", "", "", ""]

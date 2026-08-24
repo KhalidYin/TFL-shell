@@ -4,37 +4,41 @@ from tflshell.data.definitions import CONTROLLED_TABLE_ABBREVIATIONS, build_cata
 from tflshell.models.enums import TFLType
 
 
-def test_primary_continuous_endpoint_uses_independent_comparison_group():
+def test_primary_continuous_endpoint_uses_treatment_rows_and_inline_reference_comparison():
     item = build_catalog().get("T14.2.1")
 
-    assert item.layout_profile == "model-comparison"
-    assert item.leaf_column_count == 5
-    assert item.header_rows[0][1]["label"] == "Treatment Estimates"
-    assert item.header_rows[0][2]["label"] == "Treatment Comparison"
-    difference = next(
-        row for row in item.shell_data_rows_rich if "LS Mean Difference" in row["label"]
-    )
-    assert difference["values"][:2] == ["", ""]
-    assert difference["values"][2]
+    assert item.layout_profile == "treatment-row"
+    assert item.leaf_column_count == 8
+    assert item.header_rows[0][2]["label"] == "Baseline\nMean (SD)"
+    assert item.header_rows[0][4]["label"] == "Within-Group Difference"
+    assert item.header_rows[0][5]["label"] == "Between-Group Difference"
+    group_1 = next(row for row in item.shell_data_rows_rich if row["label"] == "Group 1")
+    group_2 = next(row for row in item.shell_data_rows_rich if row["label"] == "Group 2")
+    assert group_1["values"][5:] == ["Reference", "—"]
+    assert group_2["values"][5] == "xx.x (xx.x)"
+    assert "p=" in group_2["values"][6]
     assert not any("Week 24" in row["label"] for row in item.shell_data_rows_rich)
     assert any(
         "Protocol-Defined Primary Visit" in row["label"] for row in item.shell_data_rows_rich
     )
 
 
-def test_metabolic_continuous_and_responder_shells_do_not_put_comparison_in_group_one():
+def test_metabolic_continuous_shell_uses_visit_parameter_and_treatment_hierarchy():
     catalog = build_catalog()
-
-    for item_id in ("T14.2.32", "T14.2.33"):
-        item = catalog.get(item_id)
-        assert item.layout_profile == "model-comparison"
-        assert item.comparison_position == "Independent Treatment Comparison column group"
-        assert all(len(row["values"]) == 4 for row in item.shell_data_rows_rich)
-
     continuous = catalog.get("T14.2.32")
-    model_rows = [row for row in continuous.shell_data_rows_rich if "LS Mean" in row["label"]]
-    assert model_rows
-    assert all(row["values"][2] and row["values"][3] for row in model_rows)
+
+    assert continuous.layout_profile == "treatment-row"
+    assert continuous.comparison_position == "Comparison shown on each non-reference treatment row"
+    assert continuous.shell_data_rows_rich[0]["label"] == "Protocol-Defined Visit"
+    assert continuous.shell_data_rows_rich[1]["label"] == "HbA1c (%)"
+    assert continuous.shell_data_rows_rich[2]["indent_level"] == 2
+    group_2_rows = [row for row in continuous.shell_data_rows_rich if row["label"] == "Group 2"]
+    assert group_2_rows
+    assert all(row["values"][5] and row["values"][6] for row in group_2_rows)
+
+    responder = catalog.get("T14.2.33")
+    assert responder.layout_profile == "model-comparison"
+    assert responder.comparison_position == "Independent Treatment Comparison column group"
 
 
 def test_model_shells_use_protocol_defined_visit_or_target_language():
@@ -45,6 +49,26 @@ def test_model_shells_use_protocol_defined_visit_or_target_language():
     assert any("Protocol-Defined Visit" in label for label in continuous_labels)
     assert any("Protocol-Defined" in label for label in responder_labels)
     assert not any("Week 24" in label for label in continuous_labels)
+
+
+def test_continuous_sensitivity_and_ni_comparisons_stay_on_non_reference_rows():
+    catalog = build_catalog()
+
+    sensitivity = catalog.get("T14.2.4")
+    assert sensitivity.layout_profile == "treatment-row"
+    assert sensitivity.header_rows[0][3]["label"] == "Within-Group Difference"
+    assert sensitivity.header_rows[0][4]["label"] == "Between-Group Difference"
+    sensitivity_group_2 = next(
+        row for row in sensitivity.shell_data_rows_rich if row["label"] == "Group 2"
+    )
+    assert sensitivity_group_2["values"][4] == "xx.x (xx.x)"
+
+    ni = catalog.get("T14.2.5")
+    test_group = next(row for row in ni.shell_data_rows_rich if row["label"] == "Group 1 (Test)")
+    control = next(row for row in ni.shell_data_rows_rich if row["label"] == "Group 2")
+    assert test_group["values"][4] == "xx.x (xx.x)"
+    assert control["values"][4:6] == ["Reference", "—"]
+    assert not any("Difference vs." in row["label"] for row in ni.shell_data_rows_rich)
 
 
 def test_subject_detail_content_is_not_presented_as_a_summary_table():
@@ -145,9 +169,9 @@ def test_statistical_displays_have_context_specific_definitions():
             )
         )
         if re.search(r"\bn\s*(?:/\s*N\d*)?\s*\(%\)", visible_text):
-            assert any(note.startswith("Statistical definitions:") for note in item.footnotes), (
-                item.id
-            )
+            assert any(
+                note.startswith("Statistical definitions:") for note in item.footnotes
+            ), item.id
 
     assert any(
         note.startswith("Statistical definitions:") for note in catalog.get("T14.2.1").footnotes
@@ -179,8 +203,8 @@ def test_ae_grade_is_a_row_hierarchy_not_a_result_column():
 def test_redundant_or_nonstandard_ae_tables_are_retired():
     catalog_ids = {item.id for item in build_catalog().all()}
     retired = {
-        "T14.3.1.8",   # duplicate threshold PT summary
-        "T14.3.1.9",   # generic AE-by-cycle summary
+        "T14.3.1.8",  # duplicate threshold PT summary
+        "T14.3.1.9",  # generic AE-by-cycle summary
         "T14.3.1.16",  # duplicate SOC/grade summary
         "T14.3.1.17",  # duplicate full SOC/PT frequency table
         "T14.3.1.18",  # nonstandard relationship-by-grade layout
@@ -209,25 +233,41 @@ def test_by_visit_endpoint_layouts_put_visit_first_and_separate_comparisons():
         item = catalog.get(item_id)
         assert item.placeholder_columns[0].startswith("Visit /"), item_id
         assert item.shell_data_rows_rich[0]["label"] == "Baseline", item_id
-        assert any("Protocol-Defined Post-Baseline Visit" in row["label"] for row in item.shell_data_rows_rich)
+        assert any(
+            "Protocol-Defined Post-Baseline Visit" in row["label"]
+            for row in item.shell_data_rows_rich
+        )
 
     pro = catalog.get("T14.4.5")
     assert pro.layout_profile == "model-comparison"
     assert pro.header_rows[0][1]["label"] == "Treatment Estimates"
     assert pro.header_rows[0][2]["label"] == "Treatment Comparison"
-    comparison = next(row for row in pro.shell_data_rows_rich if "LS Mean Difference" in row["label"])
+    comparison = next(
+        row for row in pro.shell_data_rows_rich if "LS Mean Difference" in row["label"]
+    )
     assert comparison["values"][:2] == ["", ""]
 
 
-def test_explicit_statistic_columns_contain_statistic_labels_not_result_placeholders():
+def test_summary_statistic_fields_render_as_hierarchical_rows_not_separate_columns():
     catalog = build_catalog()
-    for item_id in ("T14.3.3.2", "T14.3.4.1", "T14.4.11", "T14.4.12"):
+    for item_id in ("T14.3.3.2", "T14.3.3.19", "T14.3.4.1", "T14.4.11", "T14.4.12"):
         item = catalog.get(item_id)
-        assert item.placeholder_columns[1] == "Statistic"
-        populated = [
-            row["values"][0]
+        assert item.layout_profile == "hierarchical-summary"
+        assert not any(
+            column.replace("\n", " ").strip() == "Statistic"
+            for column in item.placeholder_columns[1:]
+        )
+        assert item.placeholder_columns[0].endswith("Statistic")
+        statistic_rows = [
+            row
             for row in item.shell_data_rows_rich
-            if row["values"] and any(value not in ("", "...") for value in row["values"][1:])
+            if row["label"] == "n"
+            or row["label"].startswith(("Mean (SD)", "Geo Mean (CV%)", "Fold Chg from BL"))
         ]
-        assert populated
-        assert all(value not in {"xx", "xx.x", "xx (xx.x)", "xx.x (xx.x)"} for value in populated)
+        assert statistic_rows, item_id
+        assert all(row["indent_level"] >= 1 for row in statistic_rows)
+
+    hematology = catalog.get("T14.3.3.2")
+    labels = [row["label"] for row in hematology.shell_data_rows_rich]
+    assert labels.count("Baseline") == 2  # one per displayed parameter, not one per statistic
+    assert any(row["indent_level"] == 2 for row in hematology.shell_data_rows_rich)

@@ -105,7 +105,8 @@ Figure shell 的 renderer、mock data factory 与支持类型清单必须集中�
 
 复杂表格使用 `TFLItem` 的声明式 layout contract 表达多级表头和列对齐；shell section
 定义中不得直接写 OOXML。简单表继续使用 `placeholder_columns` 兼容路径。模型 comparison
-应有独立列组或明确声明为 descriptive-only，不能隐藏在治疗组列中。
+应有独立列组或明确声明为 descriptive-only；治疗组按行时，可把 comparison 值放在对应非参考组行，
+但必须位于明确的组间差异列组，不能混入 observed/within-group 结果列。
 
 表格渲染器默认将第 1 个结构列的表头和数据左对齐，其余列居中；特殊语义通过
 `column_alignments` 或 header cell 的 `alignment` 显式覆盖。AE Grade 应编码为
@@ -121,8 +122,9 @@ Listing 类型强制保持 `source_listing` 为空，避免自引用或在患者
 dictionary/version 文本必须在 `TFLItem.footnote_text()` 中收敛为单一 coding/grading note；section 定义中
 允许保留临床解释，但不得让同一 MedDRA/CTCAE version 在最终同表重复出现。
 
-当旧 row label 使用 `Visit — Statistic` 或 `Timepoint — Statistic` 编码语义时，归一化层必须先把语义值
-展开到显式列，再做 placeholder 补齐/截断；禁止用静默 padding 掩盖语义列错位。
+当旧 row label 使用 `Visit — Statistic` 或 `Timepoint — Statistic` 编码语义时，归一化层必须先恢复
+long-form 语义，再按最终 layout profile 渲染。14.3/14.4 汇总表应折叠为多级 `indent_level` 行，
+不得把恢复出的 `Statistic` 机械保留为出版表独立列，也不得用静默 padding 掩盖语义列错位。
 
 ### 8.3 规范变更
 

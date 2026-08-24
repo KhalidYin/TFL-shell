@@ -61,11 +61,15 @@
         "Introduction Headings",
         "Usage Notes",
         "Body Table Count",
-        "Group Headers"
+        "Group Headers",
+        "Continuous Treatment Rows",
+        "Within / Between Difference Subheaders",
+        "Non-Reference Row Comparison",
+        "Hierarchical Summary Rows"
       ],
       "notes": [
         "用于声明 DOCX 主模板页面、说明文本和表格 layout contract。",
-        "覆盖 Product 已实现的三线表和受控组别展示语义。"
+        "覆盖 Product 已实现的三线表、连续终点治疗组行/比较映射及 14.3/14.4 层级汇总语义。"
       ]
     },
     "sop_governance_doc": {

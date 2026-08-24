@@ -172,6 +172,8 @@ Product 不等于 SKILL，但它应作为 SKILL 的高保真参考基线，使�
 - DOCX table renderer 已支持声明式多级表头、跨页重复表头与按列语义对齐；模型 comparison 可独立成组
 - XLSX catalog 已增加 Layout Profile、Comparison Position、Sorting Note 与 Denominator Note 作为最小布局审阅字段
 - table-layout 复核同时判断临床/统计报告合理性、编程可实现性和信息直观度；逐表审核矩阵保留初始范围、最终处置及条件性使用说明
+- 14.2 连续终点支持治疗组按行、Baseline 独立列以及组内/组间差异 grouped subheader；共同参考比较值映射到非参考组行
+- 14.3/14.4 汇总表将 long-form `Parameter/Visit/Statistic` 键渲染为多级缩进行，避免数据集字段式的重复 Statistic 列
 - Product→Skill 同步必须包含 table-layout contract、DOCX/XLSX contract helper、catalog subset、manifest 与基线验证，不能只同步数量
 - source listing 以 shell 显式声明为准，仅在无歧义时使用受控 fallback；study-specific endpoint 不再误指通用 protocol-deviation listing
 - `T14.1.1` 已限定为通用人口学/体格基线表；肿瘤疾病分期、ECOG 等内容集中到 `T14.1.2` 并标记为 `Oncology only`
